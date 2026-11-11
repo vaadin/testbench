@@ -12,10 +12,10 @@ import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jspecify.annotations.Nullable;
-import org.openqa.selenium.WebDriver;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.spi.Backend;
 
 /**
  * Which backend the JUnit integration starts its browser on, by
@@ -40,7 +40,7 @@ public final class BackendChoice {
      * @throws IllegalStateException
      *             if Playwright is asked for and not on the classpath
      */
-    public static @Nullable WebDriver launchBrowser(
+    public static @Nullable Backend launchBrowser(
             @Nullable Object ignoredSupplier) {
         String chosen = Parameters.getBackend();
         if (Parameters.SELENIUM.equals(chosen)) {

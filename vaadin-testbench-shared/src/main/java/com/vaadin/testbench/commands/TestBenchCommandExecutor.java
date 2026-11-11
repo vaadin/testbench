@@ -20,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
@@ -30,6 +29,7 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.testbench.Dimension;
 import com.vaadin.testbench.NotYetImplementedException;
 import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchElement;
@@ -106,14 +106,14 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
         return backend;
     }
 
-    // Screenshots, window size and the remote control's name are
+    // Screenshots and the remote control's name are
     // Selenium-only until v2
     private WebDriver seleniumDriver() {
         if (getBackend() instanceof SeleniumBackend selenium) {
             return selenium.getDriver();
         }
         throw NotYetImplementedException.notYetImplemented(
-                "Screenshots, window size and the remote control off Selenium");
+                "Screenshots and the remote control off Selenium");
     }
 
     @Override
@@ -382,11 +382,15 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
             final int desiredHeight) throws UnsupportedOperationException {
         final int MAX_RESIZE_ATTEMPTS = 5;
         try {
-            seleniumDriver().manage().window().setPosition(new Point(0, 0));
+            // Selenium only: a Playwright page has no window to move
+            if (getBackend() instanceof SeleniumBackend selenium) {
+                selenium.getDriver().manage().window()
+                        .setPosition(new Point(0, 0));
+            }
             // Start with the desired dimensions; the loop will adjust for
             // browser chrome (title bar, borders, etc.)
-            seleniumDriver().manage().window()
-                    .setSize(new Dimension(desiredWidth, desiredHeight));
+            getBackend()
+                    .setWindowSize(new Dimension(desiredWidth, desiredHeight));
 
             for (int attempt = 0; attempt < MAX_RESIZE_ATTEMPTS; attempt++) {
                 int actualWidth = detectViewportWidth();
@@ -399,14 +403,13 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
 
                 int diffW = desiredWidth - actualWidth;
                 int diffH = desiredHeight - actualHeight;
-                Dimension currentSize = seleniumDriver().manage().window()
-                        .getSize();
+                Dimension currentSize = getBackend().getWindowSize();
                 getLogger().debug(
                         "resizeViewPortTo: attempt {}, desired={}x{}, actual={}x{}, adjusting by {}x{}",
                         attempt + 1, desiredWidth, desiredHeight, actualWidth,
                         actualHeight, diffW, diffH);
-                seleniumDriver().manage().window()
-                        .setSize(new Dimension(currentSize.getWidth() + diffW,
+                getBackend().setWindowSize(
+                        new Dimension(currentSize.getWidth() + diffW,
                                 currentSize.getHeight() + diffH));
             }
 

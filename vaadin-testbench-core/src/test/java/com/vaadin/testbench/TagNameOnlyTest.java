@@ -22,6 +22,7 @@ import com.vaadin.testbench.backend.selenium.SeleniumElementBackend;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.spi.Backend;
 import com.vaadin.testbench.spi.ElementBackend;
+import com.vaadin.testbench.testutils.ScriptOnlyBackend;
 
 /**
  * {@code $(String)} takes a tag name: a CSS selector throws on any backend but
@@ -51,7 +52,7 @@ public class TagNameOnlyTest {
     }
 
     private static TestBenchElement elementOnOtherBackend() {
-        return elementOn(new Backend() {
+        return elementOn(new ScriptOnlyBackend() {
             @Override
             public Object executeScript(String script, Object... args) {
                 return answer(script);

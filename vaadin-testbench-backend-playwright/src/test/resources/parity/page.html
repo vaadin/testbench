@@ -15,6 +15,9 @@
         oncontextmenu="window.clicks = (window.clicks || []).concat(['contextmenu']); return false"
         onmouseover="window.clicks = (window.clicks || []).concat(['mouseover'])"
         style="width: 100px; height: 40px">button</button>
+<div id="drag" style="user-select:none; position:absolute; left:400px; top:20px; width:60px; height:30px; background:#ccc">drag</div>
+<div id="drop" style="user-select:none; position:absolute; left:600px; top:120px; width:80px; height:40px; background:#eee">drop</div>
+<div id="html5" draggable="true" style="position:absolute; left:400px; top:200px; width:60px; height:30px; background:#ddd">html5</div>
 <div id="reads">
 <p id="t-ws">  a   b
  c  </p>

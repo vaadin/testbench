@@ -19,11 +19,11 @@ import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.options.HarMode;
 import org.jspecify.annotations.Nullable;
-import org.openqa.selenium.WebDriver;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.backend.BrowserLauncher;
+import com.vaadin.testbench.spi.Backend;
 
 /**
  * Starts each test's browser as a fresh {@link BrowserContext}, its own cookies
@@ -71,7 +71,7 @@ public class PlaywrightLauncher implements BrowserLauncher {
     }
 
     @Override
-    public WebDriver launch() {
+    public Backend launch() {
         Browser.NewContextOptions options = new Browser.NewContextOptions();
         String viewport = System.getProperty(PREFIX + "viewport");
         if (viewport != null) {
@@ -85,7 +85,7 @@ public class PlaywrightLauncher implements BrowserLauncher {
                     .setRecordHarMode(HarMode.FULL);
         }
         BrowserContext context = browser().newContext(options);
-        return new PlaywrightDriver(context, context.newPage());
+        return new PlaywrightBackend(context.newPage());
     }
 
     private static Browser browser() {

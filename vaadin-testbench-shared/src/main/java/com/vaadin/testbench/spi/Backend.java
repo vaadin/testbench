@@ -8,7 +8,14 @@
  */
 package com.vaadin.testbench.spi;
 
+import java.util.List;
+import java.util.Set;
+
 import org.jspecify.annotations.Nullable;
+
+import com.vaadin.testbench.Dimension;
+import com.vaadin.testbench.NoSuchElementException;
+import com.vaadin.testbench.StaleElementReferenceException;
 
 /**
  * The browser TestBench drives, whatever library drives it. Element classes
@@ -75,4 +82,65 @@ public interface Backend {
      */
     @Nullable
     String getBrowserName();
+
+    /** Loads {@code url} in the current window and waits for it to load. */
+    void navigate(String url);
+
+    void back();
+
+    void forward();
+
+    void refresh();
+
+    String getCurrentUrl();
+
+    String getTitle();
+
+    /** The DOM as HTML, as it is now, not as the server sent it. */
+    String getPageSource();
+
+    /**
+     * The window's outer size; on a backend without windows, such as
+     * Playwright, the viewport's.
+     */
+    Dimension getWindowSize();
+
+    void setWindowSize(Dimension size);
+
+    /** @return a PNG of the viewport */
+    byte[] getScreenshot();
+
+    /** The current window's handle, opaque. */
+    String getWindowHandle();
+
+    /** Every open window's handle, in the order the windows opened. */
+    Set<String> getWindowHandles();
+
+    /**
+     * Makes {@code handle}'s window the current one: the one navigation,
+     * scripts and input go to.
+     *
+     * @throws NoSuchElementException
+     *             if no open window has that handle
+     */
+    void switchToWindow(String handle);
+
+    /**
+     * Closes the current window. Until another is switched to, the next call
+     * fails.
+     */
+    void close();
+
+    /** Closes every window; nothing works after it. */
+    void quit();
+
+    /**
+     * Performs the steps in order, as one WebDriver actions call. Keys and
+     * buttons left down stay down for the next call; the mouse stays where the
+     * steps left it.
+     *
+     * @throws StaleElementReferenceException
+     *             if a step's element is gone
+     */
+    void perform(List<Input> steps);
 }

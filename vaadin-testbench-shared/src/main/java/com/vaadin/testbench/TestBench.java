@@ -17,12 +17,12 @@ import org.openqa.selenium.WebElement;
 import com.vaadin.pro.licensechecker.Capabilities;
 import com.vaadin.pro.licensechecker.Capability;
 import com.vaadin.pro.licensechecker.LicenseChecker;
-import com.vaadin.testbench.backend.HasBackend;
 import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.backend.selenium.SeleniumElementBackend;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
+import com.vaadin.testbench.spi.Backend;
 import com.vaadin.testbench.spi.ElementBackend;
 
 /**
@@ -42,21 +42,26 @@ public class TestBench {
         // can set global properties there for all tests
     }
 
-    public static TestBenchDriverProxy createDriver(WebDriver driver) {
-        TestBenchCommandExecutor commandExecutor = new TestBenchCommandExecutor(
-                new ImageComparison(), new ReferenceNameGenerator());
-        return createDriver(driver, commandExecutor);
+    /** The driver of a test on Selenium, around the browser's own driver. */
+    public static BrowserDriver createDriver(WebDriver driver) {
+        return createDriver(new SeleniumBackend(driver));
     }
 
-    public static TestBenchDriverProxy createDriver(WebDriver driver,
+    public static BrowserDriver createDriver(WebDriver driver,
             TestBenchCommandExecutor commandExecutor) {
-        TestBenchDriverProxy proxy = new TestBenchDriverProxy(driver,
-                commandExecutor);
-        // The real driver: the proxy would wait for Vaadin before every script
-        commandExecutor.setBackend(driver instanceof HasBackend hasBackend
-                ? hasBackend.getBackend()
-                : new SeleniumBackend(driver));
-        return proxy;
+        return createDriver(new SeleniumBackend(driver), commandExecutor);
+    }
+
+    /** The driver of a test on any backend. */
+    public static BrowserDriver createDriver(Backend backend) {
+        return createDriver(backend, new TestBenchCommandExecutor(
+                new ImageComparison(), new ReferenceNameGenerator()));
+    }
+
+    public static BrowserDriver createDriver(Backend backend,
+            TestBenchCommandExecutor commandExecutor) {
+        commandExecutor.setBackend(backend);
+        return new TestBenchDriver(commandExecutor);
     }
 
     public static <T extends TestBenchElement> T wrap(TestBenchElement element,
@@ -84,9 +89,6 @@ public class TestBench {
             WebElement webElement, TestBenchCommandExecutor tbCommandExecutor) {
         if (webElement == null) {
             return null;
-        }
-        if (webElement instanceof WebElementAdapter adapter) {
-            return wrap(adapter.getElement(), clazz);
         }
         SeleniumBackend backend = tbCommandExecutor == null ? null
                 : (SeleniumBackend) tbCommandExecutor.getBackend();

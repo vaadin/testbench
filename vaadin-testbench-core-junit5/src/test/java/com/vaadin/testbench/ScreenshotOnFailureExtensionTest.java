@@ -110,14 +110,14 @@ public class ScreenshotOnFailureExtensionTest {
      * Simple test driver holder for testing purposes.
      */
     private static class TestDriverHolder implements HasDriver {
-        private final WebDriver driver;
+        private final BrowserDriver driver;
 
         TestDriverHolder(WebDriver driver) {
-            this.driver = driver;
+            this.driver = TestBench.createDriver(driver);
         }
 
         @Override
-        public WebDriver getDriver() {
+        public BrowserDriver getDriver() {
             return driver;
         }
     }

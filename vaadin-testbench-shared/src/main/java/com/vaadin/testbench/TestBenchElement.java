@@ -36,6 +36,7 @@ import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.elementsbase.Element;
 import com.vaadin.testbench.spi.ElementBackend;
+import com.vaadin.testbench.spi.Input;
 
 /**
  * One DOM node of the page, with Vaadin specific helper functionality.
@@ -50,7 +51,6 @@ public class TestBenchElement
 
     private ElementBackend elementBackend = null;
     private TestBenchCommandExecutor commandExecutor = null;
-    private WebElementAdapter webElementAdapter;
     private @Nullable Supplier<@Nullable ElementBackend> refind;
 
     protected TestBenchElement() {
@@ -190,14 +190,6 @@ public class TestBenchElement
             call.accept(node);
             return null;
         });
-    }
-
-    /** This element, where a Selenium signature demands a WebElement. */
-    WebElement asWebElement() {
-        if (webElementAdapter == null) {
-            webElementAdapter = new WebElementAdapter(this);
-        }
-        return webElementAdapter;
     }
 
     protected void waitForVaadin() {
@@ -555,9 +547,6 @@ public class TestBenchElement
         if (elementBackend == null) {
             return false;
         }
-        if (obj instanceof WebElementAdapter adapter) {
-            obj = adapter.getElement();
-        }
         if (obj instanceof TestBenchElement other) {
             return elementBackend.equals(other.elementBackend);
         }
@@ -577,14 +566,14 @@ public class TestBenchElement
     public boolean compareScreen(String referenceId) throws IOException {
         return ScreenshotComparator.compareScreen(referenceId,
                 getCommandExecutor().getReferenceNameGenerator(),
-                getCommandExecutor().getImageComparison(), asWebElement(),
+                getCommandExecutor().getImageComparison(), seleniumElement(),
                 seleniumCapabilities());
     }
 
     @Override
     public boolean compareScreen(File reference) throws IOException {
         return ScreenshotComparator.compareScreen(reference,
-                getCommandExecutor().getImageComparison(), asWebElement(),
+                getCommandExecutor().getImageComparison(), seleniumElement(),
                 seleniumCapabilities());
 
     }
@@ -593,11 +582,17 @@ public class TestBenchElement
     public boolean compareScreen(BufferedImage reference, String referenceName)
             throws IOException {
         return ScreenshotComparator.compareScreen(reference, referenceName,
-                getCommandExecutor().getImageComparison(), asWebElement(),
+                getCommandExecutor().getImageComparison(), seleniumElement(),
                 seleniumCapabilities());
     }
 
     // Screenshot comparison is Selenium-only until v2
+    private WebElement seleniumElement() {
+        seleniumCapabilities();
+        waitForVaadin();
+        return SeleniumBackend.webElementOf(elementBackend);
+    }
+
     private HasCapabilities seleniumCapabilities() {
         if (getCommandExecutor()
                 .getBackend() instanceof SeleniumBackend selenium) {
@@ -957,5 +952,52 @@ public class TestBenchElement
         ensureInteractable();
         waitForVaadin();
         doOnNode(ElementBackend::hover);
+    }
+
+    /**
+     * Drags this element onto {@code target} with the mouse: presses the left
+     * button in this element's centre, moves to the target's, releases.
+     *
+     * <pre>{@code
+     * spreadsheet.getColumnHeader(3).getResizeHandle()
+     *         .dragTo(spreadsheet.getColumnHeader(5));
+     * }</pre>
+     *
+     * The mouse events of a user's drag; from a {@code draggable} element,
+     * Chromium starts HTML drag and drop, on both backends.
+     */
+    public void dragTo(TestBenchElement target) {
+        ensureInteractable();
+        waitForVaadin();
+        Refind.onStale(() -> {
+            getCommandExecutor().getBackend()
+                    .perform(List.of(
+                            new Input.MoveToElement(elementBackend, 0, 0),
+                            new Input.MouseDown(Input.Button.LEFT),
+                            new Input.MoveToElement(target.getElementBackend(),
+                                    0, 0),
+                            new Input.MouseUp(Input.Button.LEFT)));
+            return null;
+        }, this, target);
+    }
+
+    /**
+     * Drags this element by an offset with the mouse: presses the left button
+     * in its centre, moves by {@code (x, y)} CSS pixels, releases.
+     *
+     * <pre>{@code
+     * splitLayout.getSplitter().dragBy(150, 0);
+     * }</pre>
+     *
+     * The mouse events, as {@link #dragTo(TestBenchElement)}.
+     */
+    public void dragBy(int x, int y) {
+        ensureInteractable();
+        waitForVaadin();
+        doOnNode(node -> getCommandExecutor().getBackend()
+                .perform(List.of(new Input.MoveToElement(node, 0, 0),
+                        new Input.MouseDown(Input.Button.LEFT),
+                        new Input.MoveBy(x, y),
+                        new Input.MouseUp(Input.Button.LEFT))));
     }
 }

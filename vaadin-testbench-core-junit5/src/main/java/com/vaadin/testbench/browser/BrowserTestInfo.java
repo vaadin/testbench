@@ -9,8 +9,8 @@
 package com.vaadin.testbench.browser;
 
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.WebDriver;
 
+import com.vaadin.testbench.BrowserDriver;
 import com.vaadin.testbench.parallel.Browser;
 
 /**
@@ -18,7 +18,7 @@ import com.vaadin.testbench.parallel.Browser;
  * most important information on currently run test.
  *
  * @param driver
- *            reference to {@link WebDriver}
+ *            the test's browser
  * @param capabilities
  *            immutable list of capabilities
  * @param hubHostname
@@ -29,7 +29,7 @@ import com.vaadin.testbench.parallel.Browser;
  *            version of {@link Browser} used for local execution
  * @since 9.0
  */
-public record BrowserTestInfo(WebDriver driver, Capabilities capabilities,
+public record BrowserTestInfo(BrowserDriver driver, Capabilities capabilities,
         String hubHostname, Browser runLocallyBrowser,
         String runLocallyBrowserVersion) {
 

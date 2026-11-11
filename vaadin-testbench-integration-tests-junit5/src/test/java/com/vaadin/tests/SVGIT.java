@@ -9,11 +9,11 @@
 package com.vaadin.tests;
 
 import org.junit.jupiter.api.Assertions;
-import org.openqa.selenium.By;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.SVGView;
 import com.vaadin.testbench.BrowserTest;
+import com.vaadin.testbench.By;
 import com.vaadin.testbench.parallel.BrowserUtil;
 
 public class SVGIT extends AbstractBrowserTB9Test {

@@ -24,6 +24,7 @@ import org.mockito.Mockito;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.spi.Backend;
 import com.vaadin.testbench.spi.ElementBackend;
+import com.vaadin.testbench.testutils.ScriptOnlyBackend;
 
 /**
  * {@code D_element_resolution}: a stale element is found again by its query.
@@ -34,7 +35,7 @@ public class RefindTest {
     private final Set<ElementBackend> gone = new HashSet<>();
     private final List<Object> scriptTargets = new ArrayList<>();
 
-    private final Backend backend = new Backend() {
+    private final Backend backend = new ScriptOnlyBackend() {
         @Override
         public Object executeScript(String script, Object... args) {
             if (script.contains("isActive()")) {

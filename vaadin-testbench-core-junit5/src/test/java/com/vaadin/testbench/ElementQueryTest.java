@@ -40,7 +40,7 @@ class ElementQueryTest {
     private static final String SINGLE_RESULT_QUERY_SUFFIX = ";return result";
     private static final String FIRST_RESULT_QUERY_SUFFIX = ";return result[0]";
 
-    private TestBenchDriverProxy mockDriver;
+    private BrowserDriver mockDriver;
     private TestBenchElement exampleElement;
     private ExampleElement mockElement;
 

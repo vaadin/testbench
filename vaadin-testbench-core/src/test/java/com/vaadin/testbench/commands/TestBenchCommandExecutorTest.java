@@ -34,6 +34,7 @@ import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 import com.vaadin.testbench.spi.Backend;
 import com.vaadin.testbench.spi.ElementBackend;
 import com.vaadin.testbench.testutils.ImageLoader;
+import com.vaadin.testbench.testutils.ScriptOnlyBackend;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -54,7 +55,7 @@ public class TestBenchCommandExecutorTest {
         List<Object[]> scriptArgs = new ArrayList<>();
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(null,
                 null);
-        tbce.setBackend(new Backend() {
+        tbce.setBackend(new ScriptOnlyBackend() {
             @Override
             public Object executeScript(String script, Object... args) {
                 scriptArgs.add(args);

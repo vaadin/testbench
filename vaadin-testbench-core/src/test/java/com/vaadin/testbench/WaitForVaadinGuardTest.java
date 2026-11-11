@@ -24,21 +24,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Answers;
 import org.mockito.Mockito;
-import org.openqa.selenium.HasCapabilities;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.interactions.Interactive;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.spi.Backend;
 import com.vaadin.testbench.spi.ElementBackend;
 
 /**
- * Fails when a public element or driver method reaches the browser without
- * waiting for Vaadin first: with the proxies gone, each method calls
- * {@code waitForVaadin()} itself, and this is what notices a forgotten one.
+ * Fails when a public element, driver, keyboard or {@code Actions} method
+ * reaches the browser without waiting for Vaadin first: with the proxies gone,
+ * each method calls {@code waitForVaadin()} itself, and this is what notices a
+ * forgotten one.
  * <p>
  * It calls every method against a fake browser that records each call, and
  * checks that a wait comes before the method's last browser call, the one doing
@@ -57,11 +52,7 @@ public class WaitForVaadinGuardTest {
     /** As the javassist proxy's list had it. */
     private static final Set<String> DRIVER_METHODS_NOT_WAITING = Set.of(
             "close", "get", "manage", "navigate", "quit", "switchTo",
-            "getWrappedDriver", "getCommandExecutor");
-
-    public interface FullDriver extends WebDriver, JavascriptExecutor,
-            TakesScreenshot, HasCapabilities, Interactive {
-    }
+            "getCommandExecutor", "getKeyboard");
 
     public static class AllMixinsElement extends TestBenchElement
             implements HasLabel, HasPlaceholder, HasHelper, HasValidation,
@@ -70,54 +61,45 @@ public class WaitForVaadinGuardTest {
 
     private final List<String> calls = new ArrayList<>();
     private TestBenchCommandExecutor executor;
-    private TestBenchDriverProxy driverProxy;
+    private BrowserDriver driver;
+    private TestBenchElement sampleElement;
 
     @Before
     public void setUp() {
-        Backend backend = new Backend() {
-            @Override
-            public Object executeScript(String script, Object... args) {
-                if (script.contains("isActive()")) {
+        Backend backend = Mockito.mock(Backend.class, invocation -> {
+            String name = invocation.getMethod().getName();
+            if (name.equals("getBrowserName")) {
+                // known without asking the browser, so not a browser call
+                return "chrome";
+            }
+            if (name.equals("executeScript")) {
+                if (invocation.<String> getArgument(0).contains("isActive()")) {
                     calls.add("wait");
                     return true;
                 }
                 calls.add("script");
                 return null;
             }
-
-            @Override
-            public Object executeAsyncScript(String script, Object... args) {
-                calls.add("asyncScript");
-                return null;
-            }
-
-            @Override
-            public String getBrowserName() {
-                // known without asking the browser, so not a browser call
-                return "chrome";
-            }
-        };
-        executor = new TestBenchCommandExecutor(null, null) {
-            @Override
-            public Backend getBackend() {
-                return backend;
-            }
-        };
-        FullDriver driver = Mockito.mock(FullDriver.class, invocation -> {
-            calls.add("driver:" + invocation.getMethod().getName());
+            calls.add("backend:" + name);
             return Answers.RETURNS_DEFAULTS.answer(invocation);
         });
-        driverProxy = TestBench.createDriver(driver, executor);
+        executor = new TestBenchCommandExecutor(null, null);
+        driver = TestBench.createDriver(backend, executor);
+        sampleElement = TestBench.createElement(TestBenchElement.class, node(),
+                executor);
+    }
+
+    private ElementBackend node() {
+        return Mockito.mock(ElementBackend.class, invocation -> {
+            calls.add("node:" + invocation.getMethod().getName());
+            return Answers.RETURNS_DEFAULTS.answer(invocation);
+        });
     }
 
     @Test
     public void everyElementMethodWaitsBeforeItsBrowserCall() {
-        ElementBackend node = Mockito.mock(ElementBackend.class, invocation -> {
-            calls.add("node:" + invocation.getMethod().getName());
-            return Answers.RETURNS_DEFAULTS.answer(invocation);
-        });
         AllMixinsElement element = TestBench
-                .createElement(AllMixinsElement.class, node, executor);
+                .createElement(AllMixinsElement.class, node(), executor);
 
         Set<String> notWaiting = new TreeSet<>();
         for (Method method : AllMixinsElement.class.getMethods()) {
@@ -131,42 +113,44 @@ public class WaitForVaadinGuardTest {
                 + "waiting for Vaadin", Set.of(), notWaiting);
     }
 
-    /** Off Selenium: scripts and finds go through the backend. */
     @Test
     public void everyDriverMethodWaitsBeforeItsBrowserCall() {
-        assertDriverWaits(driverProxy);
-    }
-
-    /** On Selenium: scripts and finds go to the driver itself. */
-    @Test
-    public void everyDriverMethodWaitsBeforeItsBrowserCallOnSelenium() {
-        FullDriver driver = Mockito.mock(FullDriver.class, invocation -> {
-            if (invocation.getMethod().getName().equals("executeScript")
-                    && String.valueOf(invocation.getArgument(0))
-                            .contains("isActive()")) {
-                calls.add("wait");
-                return true;
-            }
-            calls.add("driver:" + invocation.getMethod().getName());
-            return Answers.RETURNS_DEFAULTS.answer(invocation);
-        });
-        TestBenchCommandExecutor selenium = new TestBenchCommandExecutor(null,
-                null);
-        assertDriverWaits(TestBench.createDriver(driver, selenium));
-    }
-
-    private void assertDriverWaits(TestBenchDriverProxy driver) {
         Set<String> notWaiting = new TreeSet<>();
-        for (Method method : TestBenchDriverProxy.class.getMethods()) {
-            if (method.getDeclaringClass() != Object.class
-                    && !Modifier.isStatic(method.getModifiers())
-                    && !DRIVER_METHODS_NOT_WAITING.contains(method.getName())
+        for (Method method : BrowserDriver.class.getMethods()) {
+            if (!DRIVER_METHODS_NOT_WAITING.contains(method.getName())
                     && !waitsBeforeLastBrowserCall(driver, method)) {
                 notWaiting.add(describe(method));
             }
         }
+        Assert.assertTrue("activeElement() waits", waitsBeforeLastBrowserCall(
+                driver.switchTo(),
+                method(BrowserDriver.TargetLocator.class, "activeElement")));
+        for (Method method : Keyboard.class.getMethods()) {
+            if (method.getDeclaringClass() == Keyboard.class
+                    && !waitsBeforeLastBrowserCall(driver.getKeyboard(),
+                            method)) {
+                notWaiting.add("Keyboard." + describe(method));
+            }
+        }
         Assert.assertEquals("Driver methods reaching the browser without "
                 + "waiting for Vaadin", Set.of(), notWaiting);
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    public void actionsWaitBeforeTheyPerform() {
+        Actions actions = new Actions(driver).click(sampleElement)
+                .sendKeys("x");
+        Assert.assertTrue(waitsBeforeLastBrowserCall(actions,
+                method(Actions.class, "perform")));
+    }
+
+    private static Method method(Class<?> type, String name) {
+        try {
+            return type.getMethod(name);
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     private static boolean isTestBenchApi(Method method) {
@@ -194,12 +178,12 @@ public class WaitForVaadinGuardTest {
         return lastCall < 0 || calls.subList(0, lastCall).contains("wait");
     }
 
-    private static Object[] arguments(Method method) {
-        return Arrays.stream(method.getParameterTypes())
-                .map(WaitForVaadinGuardTest::argument).toArray();
+    private Object[] arguments(Method method) {
+        return Arrays.stream(method.getParameterTypes()).map(this::argument)
+                .toArray();
     }
 
-    private static Object argument(Class<?> type) {
+    private Object argument(Class<?> type) {
         if (type == String.class || type == CharSequence.class
                 || type == Object.class) {
             return "x";
@@ -217,8 +201,10 @@ public class WaitForVaadinGuardTest {
             return new CharSequence[] { "x" };
         } else if (type == Keys[].class) {
             return new Keys[0];
-        } else if (type == org.openqa.selenium.Keys[].class) {
-            return new org.openqa.selenium.Keys[0];
+        } else if (type == Keys.class) {
+            return Keys.SHIFT;
+        } else if (type == TestBenchElement.class) {
+            return sampleElement;
         } else if (type == Object[].class) {
             return new Object[0];
         } else if (type == Map.class) {
@@ -227,14 +213,10 @@ public class WaitForVaadinGuardTest {
             return TestBenchElement.class;
         } else if (type == By.class) {
             return By.id("x");
-        } else if (type == org.openqa.selenium.By.class) {
-            return org.openqa.selenium.By.id("x");
-        } else if (type == OutputType.class) {
-            return OutputType.BYTES;
         } else if (type == File.class) {
             return new File("x");
         }
-        // Collection<Sequence>, BufferedImage, Predicate and the like
+        // BufferedImage, Predicate and the like
         return null;
     }
 

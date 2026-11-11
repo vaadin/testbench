@@ -66,8 +66,8 @@ public class ElementApiSignatureTest {
     @Test
     public void theApiReachesTheCoreTypes() throws Exception {
         Set<Class<?>> api = elementApi();
-        for (Class<?> core : List.of(TestBenchElement.class,
-                ElementQuery.class, HasLabel.class, HasElementQuery.class,
+        for (Class<?> core : List.of(TestBenchElement.class, ElementQuery.class,
+                HasLabel.class, HasElementQuery.class,
                 com.vaadin.testbench.commands.TestBenchCommandExecutor.class,
                 com.vaadin.testbench.spi.Backend.class,
                 com.vaadin.testbench.spi.ElementBackend.class, Keys.class,
@@ -79,7 +79,8 @@ public class ElementApiSignatureTest {
     @Test
     public void theCheckSeesALeak() {
         Set<String> leaks = new TreeSet<>();
-        check(WebElementAdapter.class, leaks);
+        check(com.vaadin.testbench.backend.selenium.SeleniumBackend.class,
+                leaks);
         Assert.assertFalse(leaks.isEmpty());
     }
 

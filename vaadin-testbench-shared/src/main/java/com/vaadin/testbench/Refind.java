@@ -56,8 +56,6 @@ final class Refind {
     private static void collect(Object value, List<TestBenchElement> into) {
         if (value instanceof TestBenchElement element) {
             into.add(element);
-        } else if (value instanceof WebElementAdapter adapter) {
-            into.add(adapter.getElement());
         } else if (value instanceof Object[] array) {
             for (Object item : array) {
                 collect(item, into);

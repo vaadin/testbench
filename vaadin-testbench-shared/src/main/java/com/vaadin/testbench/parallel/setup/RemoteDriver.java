@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 
 public class RemoteDriver {
@@ -49,7 +48,7 @@ public class RemoteDriver {
                         .baseUrl(new URL(hubURL));
                 CommandExecutor executor = new HttpCommandExecutor(config);
                 WebDriver driver = new RemoteWebDriver(executor, capabilities);
-                return TestBench.createDriver(driver);
+                return driver;
             } catch (Exception e) {
                 if (i == BROWSER_INIT_ATTEMPTS) {
                     getLogger().error(

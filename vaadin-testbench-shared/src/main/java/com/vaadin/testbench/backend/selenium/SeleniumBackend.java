@@ -13,19 +13,28 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchWindowException;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.WheelInput;
 
+import com.vaadin.testbench.Dimension;
 import com.vaadin.testbench.NoSuchElementException;
 import com.vaadin.testbench.StaleElementReferenceException;
 import com.vaadin.testbench.TimeoutException;
 import com.vaadin.testbench.spi.Backend;
 import com.vaadin.testbench.spi.ElementBackend;
+import com.vaadin.testbench.spi.Input;
 
 /**
  * The {@link Backend} on a Selenium {@link WebDriver}.
@@ -96,6 +105,134 @@ public class SeleniumBackend implements Backend {
             return hasCapabilities.getCapabilities().getBrowserName();
         }
         return null;
+    }
+
+    @Override
+    public void navigate(String url) {
+        driver.get(url);
+    }
+
+    @Override
+    public void back() {
+        driver.navigate().back();
+    }
+
+    @Override
+    public void forward() {
+        driver.navigate().forward();
+    }
+
+    @Override
+    public void refresh() {
+        driver.navigate().refresh();
+    }
+
+    @Override
+    public String getCurrentUrl() {
+        return driver.getCurrentUrl();
+    }
+
+    @Override
+    public String getTitle() {
+        return driver.getTitle();
+    }
+
+    @Override
+    public String getPageSource() {
+        return driver.getPageSource();
+    }
+
+    @Override
+    public Dimension getWindowSize() {
+        org.openqa.selenium.Dimension size = driver.manage().window().getSize();
+        return new Dimension(size.getWidth(), size.getHeight());
+    }
+
+    @Override
+    public void setWindowSize(Dimension size) {
+        driver.manage().window().setSize(new org.openqa.selenium.Dimension(
+                size.getWidth(), size.getHeight()));
+    }
+
+    @Override
+    public byte[] getScreenshot() {
+        return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+    }
+
+    @Override
+    public String getWindowHandle() {
+        return driver.getWindowHandle();
+    }
+
+    @Override
+    public Set<String> getWindowHandles() {
+        return driver.getWindowHandles();
+    }
+
+    @Override
+    public void switchToWindow(String handle) {
+        try {
+            driver.switchTo().window(handle);
+        } catch (NoSuchWindowException e) {
+            throw new NoSuchElementException(e.getRawMessage(), e);
+        }
+    }
+
+    @Override
+    public void close() {
+        driver.close();
+    }
+
+    @Override
+    public void quit() {
+        driver.quit();
+    }
+
+    /**
+     * Each step as Selenium's {@code Actions} sends it, with its durations: 100
+     * ms to move to an element, 200 ms to move by an offset, 250 ms to a point.
+     */
+    @Override
+    public void perform(List<Input> steps) {
+        Actions actions = new Actions(driver);
+        for (Input step : steps) {
+            switch (step) {
+            case Input.KeyDown down -> actions.keyDown(key(down.codePoint()));
+            case Input.KeyUp up -> actions.keyUp(key(up.codePoint()));
+            case Input.MoveToElement move ->
+                actions.moveToElement(webElementOf(move.element()),
+                        move.xOffset(), move.yOffset());
+            case Input.MoveBy move ->
+                actions.moveByOffset(move.xOffset(), move.yOffset());
+            case Input.MoveTo move ->
+                actions.moveToLocation(move.x(), move.y());
+            case Input.MouseDown down -> actions.tick(actions.getActivePointer()
+                    .createPointerDown(button(down.button()).asArg()));
+            case Input.MouseUp up -> actions.tick(actions.getActivePointer()
+                    .createPointerUp(button(up.button()).asArg()));
+            case Input.Wheel wheel -> actions.scrollFromOrigin(
+                    WheelInput.ScrollOrigin.fromViewport(wheel.x(), wheel.y()),
+                    wheel.deltaX(), wheel.deltaY());
+            case Input.Pause pause -> actions.pause(pause.duration());
+            }
+        }
+        try {
+            actions.perform();
+        } catch (WebDriverException e) {
+            throw translate(e);
+        }
+    }
+
+    private static String key(int codePoint) {
+        return new String(Character.toChars(codePoint));
+    }
+
+    private static PointerInput.MouseButton button(Input.Button button) {
+        return switch (button) {
+        case LEFT -> PointerInput.MouseButton.LEFT;
+        case MIDDLE -> PointerInput.MouseButton.MIDDLE;
+        case RIGHT -> PointerInput.MouseButton.RIGHT;
+        };
     }
 
     /**

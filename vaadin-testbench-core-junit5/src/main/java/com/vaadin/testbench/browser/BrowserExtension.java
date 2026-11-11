@@ -23,18 +23,19 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.testbench.BrowserDriver;
 import com.vaadin.testbench.DriverSupplier;
 import com.vaadin.testbench.HasDriver;
 import com.vaadin.testbench.ParameterizedBrowserTest;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBench;
-import com.vaadin.testbench.TestBenchDriverProxy;
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
 import com.vaadin.testbench.backend.BackendChoice;
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 import com.vaadin.testbench.parallel.setup.SetupDriver;
+import com.vaadin.testbench.spi.Backend;
 
 /**
  * <p>
@@ -63,7 +64,7 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
 
     private final DesiredCapabilities desiredCapabilities;
 
-    protected WebDriver driver;
+    protected BrowserDriver driver;
 
     public BrowserExtension(Capabilities capabilities) {
         desiredCapabilities = new DesiredCapabilities(capabilities);
@@ -78,26 +79,12 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
         this(new DesiredCapabilities());
     }
 
-    /**
-     * Sets the active {@link WebDriver} that is used by this test case
-     *
-     * @param driver
-     *            The WebDriver instance to set.
-     */
-    public void setDriver(WebDriver driver) {
-        if (driver != null && !(driver instanceof TestBenchDriverProxy)) {
-            driver = TestBench.createDriver(driver);
-        }
+    public void setDriver(BrowserDriver driver) {
         this.driver = driver;
     }
 
-    /**
-     * Returns active {@link WebDriver} that used by this test case.
-     *
-     * @return currently used {@link WebDriver}
-     */
     @Override
-    public WebDriver getDriver() {
+    public BrowserDriver getDriver() {
         return driver;
     }
 
@@ -213,17 +200,23 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
         setDriver(createDriver(context, driverConfiguration));
     }
 
-    private WebDriver createDriver(ExtensionContext context,
+    private BrowserDriver createDriver(ExtensionContext context,
             SetupDriver driverConfig) throws Exception {
 
         Object testInstance = context.getRequiredTestInstance();
 
-        WebDriver webDriver = BackendChoice.launchBrowser(
+        Backend launched = BackendChoice.launchBrowser(
                 testInstance instanceof DriverSupplier ? testInstance : null);
-        if (webDriver != null) {
-            return webDriver;
+        if (launched != null) {
+            return TestBench.createDriver(launched);
         }
+        return TestBench.createDriver(
+                createSeleniumDriver(context, testInstance, driverConfig));
+    }
 
+    private WebDriver createSeleniumDriver(ExtensionContext context,
+            Object testInstance, SetupDriver driverConfig) throws Exception {
+        WebDriver webDriver;
         // use WebDriver provided by test instance
         if (testInstance instanceof DriverSupplier supplier) {
             webDriver = supplier.createDriver();
@@ -329,7 +322,7 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
                 SauceLabsIntegration.CapabilityType.NAME,
                 context.getDisplayName());
 
-        WebDriver webDriver;
+        BrowserDriver webDriver;
         try {
             SetupDriver driverConfig = new SetupDriver();
             driverConfig.setDesiredCapabilities(capabilities);

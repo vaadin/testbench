@@ -19,30 +19,22 @@ import org.openqa.selenium.WebDriver;
 public abstract class AbstractBrowserDriverTestBase
         extends AbstractBrowserTestBase {
 
-    private WebDriver driver;
+    private BrowserDriver driver;
 
-    /**
-     * Returns the {@link WebDriver} instance or (if the previously provided
-     * WebDriver instance was not already a {@link TestBenchDriverProxy}
-     * instance) a {@link TestBenchDriverProxy} that wraps that driver.
-     *
-     * @return the active WebDriver instance
-     */
     @Override
-    public WebDriver getDriver() {
+    public BrowserDriver getDriver() {
         return driver;
     }
 
+    public void setDriver(BrowserDriver driver) {
+        this.driver = driver;
+    }
+
     /**
-     * Sets the active {@link WebDriver} that is used by this test case
-     *
-     * @param driver
-     *            The WebDriver instance to set.
+     * Sets a Selenium driver this test has set up itself, as TestBench's
+     * {@link BrowserDriver}: the test then runs on Selenium.
      */
     public void setDriver(WebDriver driver) {
-        if (driver != null && !(driver instanceof TestBenchDriverProxy)) {
-            driver = TestBench.createDriver(driver);
-        }
-        this.driver = driver;
+        setDriver(driver == null ? null : TestBench.createDriver(driver));
     }
 }

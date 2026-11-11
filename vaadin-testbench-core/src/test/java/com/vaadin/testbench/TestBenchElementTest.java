@@ -8,10 +8,8 @@
  */
 package com.vaadin.testbench;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -20,10 +18,7 @@ import org.mockito.Mockito;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
 
-import com.vaadin.testbench.backend.selenium.SeleniumElementBackend;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
-import com.vaadin.testbench.screenshot.ImageComparison;
-import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -61,7 +56,6 @@ public class TestBenchElementTest {
 
         assertTrue(webElement.equals(webElement));
         assertTrue(element.equals(element));
-        assertTrue(webElement.equals(element.asWebElement()));
         assertTrue(element.equals(webElement));
 
         assertTrue(element.equals(element2));
@@ -131,94 +125,6 @@ public class TestBenchElementTest {
     @Test
     public void wrapNullElement() {
         Assert.assertNull(TestBench.createElement(null, null));
-    }
-
-    @Test
-    public void wrapElementOrElementsEmptyList() {
-        List<Object> execJsResult = new ArrayList<>();
-        TestBenchCommandExecutor tbCommandExecutor = Mockito
-                .mock(TestBenchCommandExecutor.class);
-        PublicTestBenchCommandExecutor.wrapElementOrElements(execJsResult,
-                tbCommandExecutor);
-    }
-
-    @Test
-    public void wrapElementOrElementsNull() {
-        Object execJsResult = null;
-
-        TestBenchCommandExecutor tbCommandExecutor = Mockito
-                .mock(TestBenchCommandExecutor.class);
-        Assert.assertNull(PublicTestBenchCommandExecutor
-                .wrapElementOrElements(execJsResult, tbCommandExecutor));
-    }
-
-    public static class PublicTestBenchCommandExecutor
-            extends TestBenchCommandExecutor {
-
-        public PublicTestBenchCommandExecutor(ImageComparison imageComparison,
-                ReferenceNameGenerator referenceNameGenerator) {
-            super(imageComparison, referenceNameGenerator);
-        }
-
-        public static Object wrapElementOrElements(
-                Object elementElementsOrValues,
-                TestBenchCommandExecutor tbCommandExecutor) {
-            return TestBenchDriverProxy.wrapElementOrElements(
-                    elementElementsOrValues, tbCommandExecutor);
-        }
-
-    }
-
-    @Test
-    public void wrapElementOrElementsMixed() {
-        WebElement element1 = Mockito.mock(WebElement.class);
-        WebElement element2 = Mockito.mock(WebElement.class);
-        WebElement element3 = Mockito.mock(WebElement.class);
-        WebElement element4 = Mockito.mock(WebElement.class);
-        WebElement element5 = Mockito.mock(WebElement.class);
-
-        List<Object> execJsResult = new ArrayList<>();
-        execJsResult.add(element1);
-        execJsResult.add(element2);
-        execJsResult.add(12L);
-        execJsResult.add("asdjkfasdfjko");
-        ArrayList<Object> sublist = new ArrayList<>();
-        sublist.add(element4);
-        sublist.add(15L);
-        sublist.add(element5);
-        execJsResult.add(sublist);
-        execJsResult.add(element3);
-
-        TestBenchCommandExecutor tbCommandExecutor = Mockito
-                .mock(TestBenchCommandExecutor.class);
-        List<Object> wrappedResult = (List<Object>) PublicTestBenchCommandExecutor
-                .wrapElementOrElements(execJsResult, tbCommandExecutor);
-
-        assertWrappedList(execJsResult, wrappedResult);
-    }
-
-    private void assertWrappedList(List<Object> unwrapped,
-            List<Object> wrapped) {
-        Assert.assertEquals(unwrapped.size(), wrapped.size());
-
-        for (int i = 0; i < unwrapped.size(); i++) {
-            Object unwrappedObject = unwrapped.get(i);
-            Object wrappedObject = wrapped.get(i);
-
-            if (unwrappedObject instanceof WebElement) {
-                WebElement webelement = (WebElement) unwrappedObject;
-                TestBenchElement tbelement = (TestBenchElement) wrappedObject;
-                Assert.assertSame(webelement,
-                        ((SeleniumElementBackend) tbelement.getElementBackend())
-                                .getWebElement());
-            } else if (unwrappedObject instanceof List) {
-                assertWrappedList((List<Object>) unwrappedObject,
-                        (List<Object>) wrappedObject);
-            } else {
-                Assert.assertSame(unwrappedObject, wrappedObject);
-            }
-        }
-
     }
 
     public class DebugTestBenchElement extends TestBenchElement {

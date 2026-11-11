@@ -14,22 +14,29 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.ElementHandle;
 import com.microsoft.playwright.JSHandle;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.PlaywrightException;
+import com.microsoft.playwright.options.ViewportSize;
 import org.jspecify.annotations.Nullable;
 
+import com.vaadin.testbench.Dimension;
+import com.vaadin.testbench.NoSuchElementException;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.StaleElementReferenceException;
 import com.vaadin.testbench.TimeoutException;
 import com.vaadin.testbench.spi.Backend;
 import com.vaadin.testbench.spi.ElementBackend;
+import com.vaadin.testbench.spi.Input;
 
 /**
  * The {@link Backend} on a Playwright {@link Page}. Scripts keep Selenium's
@@ -44,8 +51,12 @@ public class PlaywrightBackend implements Backend {
     // Selenium's default script timeout
     private static final Duration ASYNC_SCRIPT_TIMEOUT = Duration.ofSeconds(30);
 
-    private final Page page;
+    // The current window, which switchToWindow changes
+    private Page page;
     private final Duration actionTimeout;
+    private final PageInput input = new PageInput();
+    private final Map<Page, String> handles = new IdentityHashMap<>();
+    private int nextHandle;
 
     public PlaywrightBackend(Page page) {
         this(page, Parameters.getActionTimeout());
@@ -56,7 +67,7 @@ public class PlaywrightBackend implements Backend {
         this.actionTimeout = actionTimeout;
     }
 
-    /** The page this backend drives; the escape hatch to Playwright. */
+    /** The current window's page; the escape hatch to Playwright. */
     public Page getPage() {
         return page;
     }
@@ -100,6 +111,123 @@ public class PlaywrightBackend implements Backend {
         }
         String name = browser.browserType().name();
         return "chromium".equals(name) ? "chrome" : name;
+    }
+
+    @Override
+    public void navigate(String url) {
+        try {
+            page.navigate(url);
+        } catch (PlaywrightException e) {
+            throw translate(e);
+        }
+    }
+
+    @Override
+    public void back() {
+        page.goBack();
+    }
+
+    @Override
+    public void forward() {
+        page.goForward();
+    }
+
+    @Override
+    public void refresh() {
+        page.reload();
+    }
+
+    @Override
+    public String getCurrentUrl() {
+        return page.url();
+    }
+
+    @Override
+    public String getTitle() {
+        return page.title();
+    }
+
+    @Override
+    public String getPageSource() {
+        return page.content();
+    }
+
+    /** The viewport's: a Playwright page has no window around it. */
+    @Override
+    public Dimension getWindowSize() {
+        ViewportSize size = page.viewportSize();
+        return new Dimension(size.width, size.height);
+    }
+
+    @Override
+    public void setWindowSize(Dimension size) {
+        page.setViewportSize(size.getWidth(), size.getHeight());
+    }
+
+    @Override
+    public byte[] getScreenshot() {
+        return page.screenshot();
+    }
+
+    /** A handle of TestBench's own: Playwright's pages have none. */
+    @Override
+    public String getWindowHandle() {
+        return handleOf(page);
+    }
+
+    @Override
+    public Set<String> getWindowHandles() {
+        Set<String> open = new LinkedHashSet<>();
+        for (Page each : openPages()) {
+            open.add(handleOf(each));
+        }
+        return open;
+    }
+
+    @Override
+    public void switchToWindow(String handle) {
+        for (Page each : openPages()) {
+            if (handleOf(each).equals(handle)) {
+                page = each;
+                // As chromedriver waits for a pending navigation
+                page.waitForLoadState();
+                return;
+            }
+        }
+        throw new NoSuchElementException(
+                "No open window has the handle " + handle);
+    }
+
+    // Playwright for Java takes in its events, a window the page opened
+    // among them, only during a call to the browser: pages() is a local list
+    private List<Page> openPages() {
+        page.context().cookies();
+        return page.context().pages();
+    }
+
+    private String handleOf(Page window) {
+        return handles.computeIfAbsent(window,
+                p -> "playwright-" + ++nextHandle);
+    }
+
+    @Override
+    public void close() {
+        page.close();
+    }
+
+    /** Closes the browser context, which also writes a HAR being recorded. */
+    @Override
+    public void quit() {
+        page.context().close();
+    }
+
+    @Override
+    public void perform(List<Input> steps) {
+        try {
+            input.perform(page, steps);
+        } catch (PlaywrightException e) {
+            throw translate(e);
+        }
     }
 
     private static final String SCRIPT_TIMEOUT = "__tbScriptTimeout";

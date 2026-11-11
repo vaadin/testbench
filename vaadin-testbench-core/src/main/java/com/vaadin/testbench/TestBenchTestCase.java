@@ -10,17 +10,10 @@ package com.vaadin.testbench;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.function.Function;
 
 import org.junit.Rule;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NotFoundException;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +23,8 @@ import com.vaadin.testbench.commands.TestBenchCommands;
 /**
  * A superclass with some helpers to aid TestBench developers.
  */
-public abstract class TestBenchTestCase implements HasDriver,
-        HasTestBenchCommandExecutor, HasElementQuery, HasSearchContext {
+public abstract class TestBenchTestCase
+        implements HasDriver, HasTestBenchCommandExecutor, HasElementQuery {
 
     static {
         TestBench.ensureLoaded();
@@ -47,20 +40,18 @@ public abstract class TestBenchTestCase implements HasDriver,
     @Rule
     public RetryRule maxAttempts = new RetryRule(Parameters.getMaxAttempts());
 
-    protected WebDriver driver;
+    protected BrowserDriver driver;
 
     private static Logger getLogger() {
         return LoggerFactory.getLogger(TestBenchTestCase.class);
     }
 
     /**
-     * Convenience method the return {@link TestBenchCommands} for the default
-     * {@link WebDriver} instance.
-     *
-     * @return The driver cast to a TestBenchCommands instance.
+     * Convenience method the return {@link TestBenchCommands} for the current
+     * browser.
      */
     public TestBenchCommands testBench() {
-        return ((TestBenchDriverProxy) getDriver()).getCommandExecutor();
+        return getDriver().getCommandExecutor();
     }
 
     /**
@@ -81,36 +72,22 @@ public abstract class TestBenchTestCase implements HasDriver,
         return baseUrl + uri;
     }
 
-    /**
-     * Returns the {@link WebDriver} instance previously specified by
-     * {@link #setDriver(org.openqa.selenium.WebDriver)}, or (if the previously
-     * provided WebDriver instance was not already a
-     * {@link TestBenchDriverProxy} instance) a {@link TestBenchDriverProxy}
-     * that wraps that driver.
-     *
-     * @return the active WebDriver instance
-     */
+    /** @return {@code null} before {@link #setDriver} */
     @Override
-    public WebDriver getDriver() {
+    public BrowserDriver getDriver() {
         return driver;
     }
 
-    /**
-     * Sets the active {@link WebDriver} that is used by this this case
-     *
-     * @param driver
-     *            The WebDriver instance to set.
-     */
-    public void setDriver(WebDriver driver) {
-        if (driver != null && !(driver instanceof TestBenchDriverProxy)) {
-            driver = TestBench.createDriver(driver);
-        }
+    public void setDriver(BrowserDriver driver) {
         this.driver = driver;
     }
 
-    @Override
-    public SearchContext getContext() {
-        return getDriver();
+    /**
+     * Sets a Selenium driver this test has set up itself, as TestBench's
+     * {@link BrowserDriver}: the test then runs on Selenium.
+     */
+    public void setDriver(WebDriver driver) {
+        setDriver(driver == null ? null : TestBench.createDriver(driver));
     }
 
     /** Searches the page. */
@@ -128,21 +105,25 @@ public abstract class TestBenchTestCase implements HasDriver,
 
     @Override
     public TestBenchCommandExecutor getCommandExecutor() {
-        return ((HasTestBenchCommandExecutor) getDriver()).getCommandExecutor();
+        return getDriver().getCommandExecutor();
     }
 
-    public WebElement findElement(org.openqa.selenium.By by) {
-        return getContext().findElement(by);
+    /** As {@link BrowserDriver#findElement(By)}. */
+    @SuppressWarnings("deprecation")
+    public TestBenchElement findElement(By by) {
+        return getDriver().findElement(by);
     }
 
-    public List<WebElement> findElements(org.openqa.selenium.By by) {
-        return getContext().findElements(by);
+    /** As {@link BrowserDriver#findElements(By)}. */
+    @SuppressWarnings("deprecation")
+    public List<TestBenchElement> findElements(By by) {
+        return getDriver().findElements(by);
     }
 
     /**
      * Decorates the element with the specified Element type, making it possible
-     * to use component-specific API on elements found using standard Selenium
-     * API.
+     * to use component-specific API on an element found as a plain
+     * {@link TestBenchElement}.
      *
      * @param <T>
      *            the type of the {@link TestBenchElement} to return
@@ -153,9 +134,8 @@ public abstract class TestBenchTestCase implements HasDriver,
      * @return The element wrapped in an instance of the specified element type.
      */
     public <T extends TestBenchElement> T wrap(Class<T> elementType,
-            WebElement element) {
-        return TestBench.createElement(elementType, element,
-                getCommandExecutor());
+            TestBenchElement element) {
+        return TestBench.wrap(element, elementType);
     }
 
     /**
@@ -163,86 +143,41 @@ public abstract class TestBenchTestCase implements HasDriver,
      * frame or window. The script fragment provided will be executed as the
      * body of an anonymous function.
      * <p>
-     * This method wraps any returned {@link WebElement} as
-     * {@link TestBenchElement}.
+     * A DOM node comes back as a {@link TestBenchElement}.
      *
      * @param script
      *            the script to execute
      * @param args
      *            the arguments, available in the script as
      *            {@code arguments[0]...arguments[N]}
-     * @return whatever
-     *         {@link org.openqa.selenium.JavascriptExecutor#executeScript(String, Object...)}
-     *         returns
-     * @throws UnsupportedOperationException
-     *             if the underlying driver does not support JavaScript
-     *             execution
-     * @see JavascriptExecutor#executeScript(String, Object...)
+     * @see BrowserDriver#executeScript(String, Object...)
      */
     protected Object executeScript(String script, Object... args) {
         return getCommandExecutor().executeScript(script, args);
     }
 
     /**
-     * Waits the given number of seconds for the given condition to become
-     * neither null nor false. {@link NotFoundException}s are ignored by
-     * default.
-     * <p>
-     * Use e.g. as
-     * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by), 10);</code>
+     * Waits until {@code condition} returns neither {@code null} nor
+     * {@code false}, asking it every 500 ms; a {@link NoSuchElementException}
+     * it throws counts as not yet.
      *
-     * @param <T>
-     *            The return type of the {@link ExpectedCondition} and this
-     *            method
-     * @param condition
-     *            Models a condition that might reasonably be expected to
-     *            eventually evaluate to something that is neither null nor
-     *            false.
-     * @param timeoutInSeconds
-     *            The timeout in seconds for the wait.
-     * @return The condition's return value if it returned something different
-     *         from null or false before the timeout expired.
+     * <pre>{@code
+     * waitUntil(driver -> $(SideNavElement.class).exists(), 1);
+     * }</pre>
      *
+     * @return what {@code condition} returned last
      * @throws TimeoutException
-     *             If the timeout expires.
-     *
-     * @see FluentWait#until
-     * @see ExpectedCondition
+     *             if the time is up
      */
-    protected <T> T waitUntil(ExpectedCondition<T> condition,
+    protected <T> T waitUntil(Function<BrowserDriver, T> condition,
             long timeoutInSeconds) {
-        // $ throws TestBench's NoSuchElementException, not Selenium's
-        // NotFoundException, and a condition using $ must keep polling
-        return new WebDriverWait(getDriver(),
-                Duration.ofSeconds(timeoutInSeconds))
-                .ignoring(com.vaadin.testbench.NoSuchElementException.class)
-                .until(condition);
+        BrowserDriver browser = getDriver();
+        return Wait.until(() -> condition.apply(browser),
+                Duration.ofSeconds(timeoutInSeconds));
     }
 
-    /**
-     * Waits up to 10 seconds for the given condition to become neither null nor
-     * false. {@link NotFoundException}s are ignored by default.
-     * <p>
-     * Use e.g. as
-     * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by));</code>
-     *
-     * @param <T>
-     *            The return type of the {@link ExpectedCondition} and this
-     *            method
-     * @param condition
-     *            Models a condition that might reasonably be expected to
-     *            eventually evaluate to something that is neither null nor
-     *            false.
-     * @return The condition's return value if it returned something different
-     *         from null or false before the timeout expired.
-     *
-     * @throws TimeoutException
-     *             If 10 seconds passed.
-     *
-     * @see FluentWait#until
-     * @see ExpectedCondition
-     */
-    protected <T> T waitUntil(ExpectedCondition<T> condition) {
+    /** As {@link #waitUntil(Function, long)}, for up to 10 seconds. */
+    protected <T> T waitUntil(Function<BrowserDriver, T> condition) {
         return waitUntil(condition, 10);
     }
 

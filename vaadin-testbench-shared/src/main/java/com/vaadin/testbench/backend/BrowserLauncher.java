@@ -8,14 +8,12 @@
  */
 package com.vaadin.testbench.backend;
 
-import org.openqa.selenium.WebDriver;
+import com.vaadin.testbench.spi.Backend;
 
 /**
  * Starts a browser on a backend other than Selenium, for the JUnit integration,
- * which finds it with {@link java.util.ServiceLoader}. Browser setup is still
- * Selenium-typed, so the browser comes back as a {@link WebDriver} that also
- * implements {@link HasBackend}; temporary, until setup no longer names
- * Selenium.
+ * which finds it with {@link java.util.ServiceLoader} and hands the browser to
+ * {@code TestBench.createDriver(Backend)}.
  */
 public interface BrowserLauncher {
 
@@ -23,5 +21,5 @@ public interface BrowserLauncher {
     String getBackendName();
 
     /** A new browser, isolated from any other this launcher started. */
-    WebDriver launch();
+    Backend launch();
 }

@@ -20,6 +20,7 @@ import org.mockito.Mockito;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.spi.Backend;
 import com.vaadin.testbench.spi.ElementBackend;
+import com.vaadin.testbench.testutils.ScriptOnlyBackend;
 
 /**
  * What {@link Mode#MODERN} changes, and that {@link Mode#COMPAT} keeps today's
@@ -46,7 +47,7 @@ public class ModeTest {
      * Vaadin is never busy; the innerText script answers {@link #innerText}.
      */
     private TestBenchElement element() {
-        Backend backend = new Backend() {
+        Backend backend = new ScriptOnlyBackend() {
             @Override
             public Object executeScript(String script, Object... args) {
                 scripts.add(script);

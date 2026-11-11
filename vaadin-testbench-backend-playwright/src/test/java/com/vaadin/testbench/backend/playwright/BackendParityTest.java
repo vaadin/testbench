@@ -21,7 +21,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.microsoft.playwright.Browser;
@@ -38,9 +40,14 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import com.vaadin.testbench.Actions;
+import com.vaadin.testbench.BrowserDriver;
+import com.vaadin.testbench.Dimension;
 import com.vaadin.testbench.ElementQuery;
+import com.vaadin.testbench.Keyboard;
 import com.vaadin.testbench.Keys;
 import com.vaadin.testbench.StaleElementReferenceException;
+import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
@@ -151,6 +158,9 @@ class BackendParityTest {
         try {
             return describe(call.apply(backend));
         } catch (RuntimeException e) {
+            if (System.getProperty("parity.trace") != null) {
+                e.printStackTrace();
+            }
             // TestBench's own exceptions must match; past them each backend
             // throws its library's own (a script error, an invalid selector)
             return e.getClass().getName().startsWith("com.vaadin.testbench")
@@ -416,6 +426,225 @@ class BackendParityTest {
                     "return window.clicks.filter(c => c !== 'mouseover').join(';')"
                             + " + (window.clicks.includes('mouseover') ? ' +over' : '')");
         }));
+        assertNoMismatches();
+    }
+
+    private static BrowserDriver driverOn(Backend backend) {
+        return TestBench.createDriver(backend);
+    }
+
+    private static TestBenchElement element(BrowserDriver driver, String id) {
+        return (TestBenchElement) driver.executeScript(
+                "return document.getElementById(arguments[0])", id);
+    }
+
+    private static boolean isPng(byte[] png) {
+        return png.length > 8 && png[1] == 'P' && png[2] == 'N'
+                && png[3] == 'G';
+    }
+
+    @Test
+    void page() {
+        same("title", Backend::getTitle);
+        same("url", Backend::getCurrentUrl);
+        same("source has the title",
+                b -> b.getPageSource().contains("<title>parity</title>"));
+        same("navigate, back, forward, refresh", b -> {
+            b.navigate(url + "?second");
+            String second = b.getCurrentUrl();
+            b.back();
+            String back = b.getCurrentUrl();
+            b.forward();
+            String forward = b.getCurrentUrl();
+            b.executeScript("window.marker = 1");
+            b.refresh();
+            return List.of(second, back, forward, b.getCurrentUrl(),
+                    b.executeScript("return window.marker === undefined"));
+        });
+        same("window size", b -> {
+            Dimension before = b.getWindowSize();
+            b.setWindowSize(new Dimension(1000, 700));
+            Dimension after = b.getWindowSize();
+            // The viewport differs: Selenium sizes the window around it
+            Object innerWidth = b.executeScript("return window.innerWidth");
+            b.setWindowSize(before);
+            return List.of(before.toString(), after.toString(), innerWidth);
+        });
+        same("page screenshot", b -> isPng(b.getScreenshot()));
+        assertNoMismatches();
+    }
+
+    @Test
+    void windows() {
+        same("a window opened by the page", b -> {
+            String first = b.getWindowHandle();
+            b.executeScript("window.open(arguments[0] + '?popup', '_blank')",
+                    url);
+            Set<String> handles = b.getWindowHandles();
+            for (int i = 0; i < 50 && handles.size() < 2; i++) {
+                sleep(100);
+                handles = b.getWindowHandles();
+            }
+            String other = handles.stream().filter(h -> !h.equals(first))
+                    .findFirst().orElseThrow();
+            b.switchToWindow(other);
+            String popup = b.getCurrentUrl();
+            Object popupScript = b.executeScript("return location.search");
+            b.close();
+            b.switchToWindow(first);
+            return List.of(handles.size(),
+                    handles.iterator().next().equals(first), popup, popupScript,
+                    b.getCurrentUrl(), b.getWindowHandles().size());
+        });
+        same("switch to no window", b -> {
+            b.switchToWindow("no-such-window");
+            return null;
+        });
+        assertNoMismatches();
+    }
+
+    private static void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static final String FOCUS_KEYS = "var k = document.getElementById('keys');"
+            + " k.value = 'pre'; window.keyLog = []; k.focus();";
+
+    private static final String KEYS_RESULT = "return [document.getElementById('keys').value,"
+            + " JSON.stringify(window.keyLog.map(e => e.key + '/' + e.mods)),"
+            + " document.activeElement.id]";
+
+    @Test
+    void keyboard() {
+        List<CharSequence[]> sequences = List.of(new CharSequence[] { "abc" },
+                new CharSequence[] { Keys.SHIFT, "ab" },
+                new CharSequence[] { "a", Keys.SHIFT, "b", Keys.NULL, "c" },
+                new CharSequence[] { "ab", Keys.BACK_SPACE, "c" },
+                new CharSequence[] { "x", Keys.ARROW_LEFT, "y", Keys.END, "z" },
+                new CharSequence[] { "a1", Keys.SHIFT, "2" },
+                new CharSequence[] { Keys.NUMPAD1, Keys.ADD, Keys.DECIMAL },
+                new CharSequence[] { "hello", Keys.chord(Keys.CONTROL, "a"),
+                        "bye" },
+                new CharSequence[] { "tab", Keys.TAB });
+        for (CharSequence[] keys : sequences) {
+            String what = Arrays.toString(keys).replaceAll("[\\uE000-\\uE05D]",
+                    "<key>");
+            same("keyboard " + what, b -> {
+                b.executeScript(FOCUS_KEYS);
+                driverOn(b).getKeyboard().sendKeys(keys);
+                return b.executeScript(KEYS_RESULT);
+            });
+        }
+        same("keyboard holds a key across calls", b -> {
+            b.executeScript(FOCUS_KEYS);
+            Keyboard keyboard = driverOn(b).getKeyboard();
+            keyboard.keyDown(Keys.SHIFT);
+            keyboard.sendKeys("a");
+            keyboard.sendKeys("b");
+            keyboard.keyUp(Keys.SHIFT);
+            keyboard.sendKeys("c");
+            return b.executeScript(KEYS_RESULT);
+        });
+        same("keyboard non-ASCII", b -> {
+            b.executeScript(FOCUS_KEYS);
+            driverOn(b).getKeyboard().sendKeys("é漢😀");
+            return b.executeScript(
+                    "return document.getElementById('keys').value");
+        });
+        assertNoMismatches();
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    void actionsKeys() {
+        Map<String, Consumer<BrowserDriver>> cases = new LinkedHashMap<>();
+        cases.put("sendKeys",
+                d -> new Actions(d).sendKeys("ab", Keys.ENTER).perform());
+        cases.put("sendKeys with SHIFT presses and releases it",
+                d -> new Actions(d).sendKeys(Keys.SHIFT, "ab").perform());
+        cases.put("keyDown, sendKeys, keyUp",
+                d -> new Actions(d).keyDown(Keys.SHIFT).sendKeys("ab")
+                        .keyUp(Keys.SHIFT).sendKeys("c").perform());
+        cases.put("a key held across perform()s", d -> {
+            new Actions(d).keyDown(Keys.SHIFT).perform();
+            new Actions(d).sendKeys("a").perform();
+            new Actions(d).keyUp(Keys.SHIFT).perform();
+            new Actions(d).sendKeys("b").perform();
+        });
+        cases.put("select all and replace",
+                d -> new Actions(d).keyDown(Keys.CONTROL).sendKeys("a")
+                        .keyUp(Keys.CONTROL).sendKeys("x").perform());
+        cases.put("sendKeys to an element", d -> new Actions(d)
+                .sendKeys(element(d, "area"), "!").perform());
+        // chromedriver also fires a keydown "Unidentified" for NULL,
+        // Playwright none; it releases nothing on either
+        same("Actions NULL", b -> {
+            b.executeScript(FOCUS_KEYS);
+            BrowserDriver d = driverOn(b);
+            new Actions(d).keyDown(Keys.SHIFT).perform();
+            new Actions(d).sendKeys(Keys.NULL, "a").perform();
+            new Actions(d).keyUp(Keys.SHIFT).perform();
+            return b.executeScript(
+                    "return document.getElementById('keys').value");
+        });
+        cases.forEach((name, action) -> same("Actions " + name, b -> {
+            b.executeScript(FOCUS_KEYS);
+            action.accept(driverOn(b));
+            return List.of(b.executeScript(KEYS_RESULT), b.executeScript(
+                    "return document.getElementById('area').value"));
+        }));
+        assertNoMismatches();
+    }
+
+    @Test
+    @SuppressWarnings("deprecation")
+    void drags() {
+        Map<String, Consumer<BrowserDriver>> cases = new LinkedHashMap<>();
+        cases.put("dragTo", d -> element(d, "drag").dragTo(element(d, "drop")));
+        cases.put("dragBy", d -> element(d, "drag").dragBy(40, 10));
+        cases.put("Actions dragAndDrop", d -> new Actions(d)
+                .dragAndDrop(element(d, "drag"), element(d, "drop")).perform());
+        cases.put("Actions dragAndDropBy", d -> new Actions(d)
+                .dragAndDropBy(element(d, "drag"), 40, 10).perform());
+        cases.put("Actions clickAndHold, moveByOffset, release",
+                d -> new Actions(d).clickAndHold(element(d, "drag"))
+                        .moveByOffset(20, 0).moveByOffset(20, 10).release()
+                        .perform());
+        cases.put("Actions doubleClick",
+                d -> new Actions(d).doubleClick(element(d, "drag")).perform());
+        cases.put("Actions contextClick",
+                d -> new Actions(d).contextClick(element(d, "drag")).perform());
+        cases.put("Actions Shift-click", d -> new Actions(d).keyDown(Keys.SHIFT)
+                .click(element(d, "drag")).keyUp(Keys.SHIFT).perform());
+        cases.put("Actions moveToElement with offset, click",
+                d -> new Actions(d).moveToElement(element(d, "drag"), 10, 5)
+                        .click().perform());
+        cases.put("Actions moveToLocation, click",
+                d -> new Actions(d).moveToLocation(430, 35).click().perform());
+        cases.forEach((name, action) -> same(name, b -> {
+            b.executeScript("window.scrollTo(0, 0); window.mouseLog = [];"
+                    + " window.moves = 0; getSelection().removeAllRanges();");
+            action.accept(driverOn(b));
+            return b.executeScript(
+                    "return [window.mouseLog.join('; '), window.moves > 0]");
+        }));
+        assertNoMismatches();
+    }
+
+    /** A mouse drag of a draggable element is an HTML drag on both. */
+    @Test
+    void html5DragAndDrop() {
+        same("drag a draggable", b -> {
+            b.executeScript("window.scrollTo(0, 0); window.mouseLog = [];");
+            BrowserDriver d = driverOn(b);
+            element(d, "html5").dragTo(element(d, "drop"));
+            return b.executeScript("return window.mouseLog.join('; ')");
+        });
         assertNoMismatches();
     }
 

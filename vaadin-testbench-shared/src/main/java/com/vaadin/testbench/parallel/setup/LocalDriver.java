@@ -21,7 +21,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
 
 import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.parallel.BrowserUtil;
 
 public class LocalDriver {
@@ -94,6 +93,6 @@ public class LocalDriver {
                             + desiredCapabilities.getBrowserName());
         }
 
-        return TestBench.createDriver(driver);
+        return driver;
     }
 }

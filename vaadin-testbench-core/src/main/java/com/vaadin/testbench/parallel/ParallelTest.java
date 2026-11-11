@@ -21,12 +21,14 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.ScreenshotOnFailureRule;
+import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
 import com.vaadin.testbench.backend.BackendChoice;
 import com.vaadin.testbench.parallel.setup.SetupDriver;
+import com.vaadin.testbench.spi.Backend;
 
 /**
  * Unit tests should extend {@link ParallelTest} if they are to be run in
@@ -129,9 +131,9 @@ public class ParallelTest extends TestBenchTestCase {
      */
     @Before
     public void setup() throws Exception {
-        WebDriver launched = BackendChoice.launchBrowser(null);
+        Backend launched = BackendChoice.launchBrowser(null);
         if (launched != null) {
-            setDriver(launched);
+            setDriver(TestBench.createDriver(launched));
             return;
         }
         // Always give priority to @RunLocally annotation

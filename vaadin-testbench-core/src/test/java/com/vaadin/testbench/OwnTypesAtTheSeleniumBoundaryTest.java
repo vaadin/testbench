@@ -17,13 +17,12 @@ import org.mockito.Mockito;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.WrapsElement;
 
 import com.vaadin.testbench.spi.ElementBackend;
 
 /**
- * An element speaks TestBench's own types; the {@link WebElementAdapter} that
- * hands it to Selenium code speaks Selenium's.
+ * An element speaks TestBench's own types; the Selenium backend turns them into
+ * Selenium's.
  */
 @SuppressWarnings("deprecation")
 public class OwnTypesAtTheSeleniumBoundaryTest {
@@ -67,42 +66,27 @@ public class OwnTypesAtTheSeleniumBoundaryTest {
                     scriptArgs.add((Object[]) args[1]);
                     return null;
                 });
-        TestBenchDriverProxy proxy = TestBench.createDriver(driver);
+        BrowserDriver browser = TestBench.createDriver(driver);
         WebElement raw = Mockito.mock(WebElement.class);
         TestBenchElement element = TestBench.createElement(raw,
-                proxy.getCommandExecutor());
+                browser.getCommandExecutor());
 
-        proxy.executeScript("script", element,
+        browser.executeScript("script", element,
                 new TestBenchElement[] { element }, List.of(element));
 
         Object[] args = scriptArgs.get(0);
-        Assert.assertSame(raw, ((WrapsElement) args[0]).getWrappedElement());
-        Assert.assertSame(raw, ((WrapsElement) ((List<?>) args[1]).get(0))
-                .getWrappedElement());
-        Assert.assertSame(raw, ((WrapsElement) ((List<?>) args[2]).get(0))
-                .getWrappedElement());
-    }
-
-    @Test(expected = org.openqa.selenium.StaleElementReferenceException.class)
-    public void adapterThrowsSeleniumsStaleElement() {
-        Mockito.when(node.getTagName())
-                .thenThrow(new StaleElementReferenceException("gone"));
-        WebElement adapter = element.asWebElement();
-        adapter.getTagName();
+        Assert.assertSame(raw, args[0]);
+        Assert.assertSame(raw, ((List<?>) args[1]).get(0));
+        Assert.assertSame(raw, ((List<?>) args[2]).get(0));
     }
 
     @Test
-    public void adapterReturnsSeleniumsGeometry() {
+    public void geometryIsTestBenchs() {
         Mockito.when(node.getRect())
                 .thenReturn(new ElementBackend.Rect(1, 2, 30, 40));
-        WebElement adapter = element.asWebElement();
 
-        Assert.assertEquals(new org.openqa.selenium.Rectangle(1, 2, 40, 30),
-                adapter.getRect());
-        Assert.assertEquals(new org.openqa.selenium.Dimension(30, 40),
-                adapter.getSize());
-        Assert.assertEquals(new org.openqa.selenium.Point(1, 2),
-                adapter.getLocation());
         Assert.assertEquals(new Rectangle(1, 2, 40, 30), element.getRect());
+        Assert.assertEquals(new Dimension(30, 40), element.getSize());
+        Assert.assertEquals(new Point(1, 2), element.getLocation());
     }
 }

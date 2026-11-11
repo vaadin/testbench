@@ -8,115 +8,95 @@
  */
 package com.vaadin.testbench;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Navigation;
 import org.openqa.selenium.WebDriver.Options;
 import org.openqa.selenium.WebDriver.TargetLocator;
+import org.openqa.selenium.WebDriver.Window;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.WrapsDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.ArgumentMatchers.isA;
+import com.vaadin.testbench.backend.selenium.SeleniumElementBackend;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.contains;
+
+/** The test-level driver, on a Selenium driver. */
 public class TestBenchDriverTest {
 
-    @Test
-    public void testTestBenchDriverIsAWebDriver() {
-        WebDriver driver = TestBench
-                .createDriver(Mockito.mock(WebDriver.class));
-        assertTrue(driver instanceof WebDriver);
+    private final FirefoxDriver selenium = Mockito.mock(FirefoxDriver.class);
+    private final BrowserDriver driver = TestBench.createDriver(selenium);
+
+    {
+        Mockito.when(selenium.executeScript(contains("isActive()")))
+                .thenReturn(true);
     }
 
     @Test
-    public void testTestBenchDriverActsAsProxy() {
-        FirefoxDriver mockDriver = Mockito.mock(FirefoxDriver.class);
-        mockDriver.close();
-        WebElement mockElement = Mockito.mock(WebElement.class);
-        Mockito.when(mockDriver.findElement(isA(By.class)))
-                .thenReturn(mockElement);
-        List<WebElement> elements = Arrays.asList(mockElement);
-        Mockito.when(mockDriver.findElements(isA(By.class)))
-                .thenReturn(elements);
-        mockDriver.get("foo");
+    public void pageCallsGoToTheSeleniumDriver() {
+        Mockito.when(selenium.getCurrentUrl()).thenReturn("foo");
+        Mockito.when(selenium.getPageSource()).thenReturn("<html></html>");
+        Mockito.when(selenium.getTitle()).thenReturn("bar");
+        Mockito.when(selenium.getWindowHandle()).thenReturn("baz");
+        Mockito.when(selenium.getWindowHandles()).thenReturn(Set.of("baz"));
+        Navigation navigation = Mockito.mock(Navigation.class);
+        Mockito.when(selenium.navigate()).thenReturn(navigation);
+        Options options = Mockito.mock(Options.class);
+        Window window = Mockito.mock(Window.class);
+        Mockito.when(selenium.manage()).thenReturn(options);
+        Mockito.when(options.window()).thenReturn(window);
+        TargetLocator targetLocator = Mockito.mock(TargetLocator.class);
+        Mockito.when(selenium.switchTo()).thenReturn(targetLocator);
 
-        Mockito.when(mockDriver.getCurrentUrl()).thenReturn("foo");
-        Mockito.when(mockDriver.getPageSource()).thenReturn("<html></html>");
-        Mockito.when(mockDriver.getTitle()).thenReturn("bar");
-        Mockito.when(mockDriver.getWindowHandle()).thenReturn("baz");
-        Set<String> handles = new HashSet<>();
-        Mockito.when(mockDriver.getWindowHandles()).thenReturn(handles);
-        Options mockOptions = Mockito.mock(Options.class);
-        Mockito.when(mockDriver.manage()).thenReturn(mockOptions);
-        Navigation mockNavigation = Mockito.mock(Navigation.class);
-        Mockito.when(mockDriver.navigate()).thenReturn(mockNavigation);
-        mockDriver.quit();
-
-        Mockito.when(((JavascriptExecutor) mockDriver)
-                .executeScript(Mockito.anyString())).thenReturn(true);
-        TargetLocator mockTargetLocator = Mockito.mock(TargetLocator.class);
-        Mockito.when(mockDriver.switchTo()).thenReturn(mockTargetLocator);
-
-        // TestBenchDriverProxy driver = new TestBenchDriverProxy(mockDriver);
-        WebDriver driver = TestBench.createDriver(mockDriver);
-        driver.close();
-        By mockBy = Mockito.mock(By.class);
-        assertTrue(driver.findElement(mockBy) instanceof WebElementAdapter);
-        assertTrue(driver.findElements(mockBy)
-                .get(0) instanceof WebElementAdapter);
         driver.get("foo");
+        Mockito.verify(selenium).get("foo");
         assertEquals("foo", driver.getCurrentUrl());
         assertEquals("<html></html>", driver.getPageSource());
         assertEquals("bar", driver.getTitle());
         assertEquals("baz", driver.getWindowHandle());
-        assertEquals(handles, driver.getWindowHandles());
-        assertEquals(mockOptions, driver.manage());
-        assertEquals(mockNavigation, driver.navigate());
+        assertEquals(Set.of("baz"), driver.getWindowHandles());
+        driver.navigate().refresh();
+        Mockito.verify(navigation).refresh();
+        driver.manage().window().setSize(new Dimension(800, 600));
+        Mockito.verify(window)
+                .setSize(new org.openqa.selenium.Dimension(800, 600));
+        assertSame(driver, driver.switchTo().window("baz"));
+        Mockito.verify(targetLocator).window("baz");
+        driver.close();
+        Mockito.verify(selenium).close();
         driver.quit();
-        assertEquals(mockTargetLocator, driver.switchTo());
+        Mockito.verify(selenium).quit();
     }
 
     @Test
-    public void getWrappedDriver_returnsParent() {
-        WebDriver driverMock = Mockito.mock(WebDriver.class);
-        WebDriver driver = TestBench.createDriver(driverMock);
-        WebDriver wrappedDriver = ((WrapsDriver) driver).getWrappedDriver();
-        assertEquals(driverMock, wrappedDriver);
+    @SuppressWarnings("deprecation")
+    public void findElementGivesATestBenchElement() {
+        WebElement found = Mockito.mock(WebElement.class);
+        Mockito.when(selenium.executeScript(contains("querySelectorAll"),
+                any(Object[].class))).thenReturn(List.of(found));
+
+        TestBenchElement element = driver.findElement(By.id("foo"));
+        assertEquals(found,
+                ((SeleniumElementBackend) element.getElementBackend())
+                        .getWebElement());
+        assertEquals(1, driver.findElements(By.id("foo")).size());
     }
 
     @Test
-    public void testDisableWaitForVaadin() {
-        Capabilities mockCapabilities = Mockito.mock(Capabilities.class);
-        Mockito.when(mockCapabilities.getBrowserName()).thenReturn("firefox");
+    public void noWaitForVaadinWhenDisabled() {
+        driver.getCommandExecutor().disableWaitForVaadin();
+        driver.getTitle();
+        Mockito.verify(selenium, Mockito.never())
+                .executeScript(contains("isActive()"));
 
-        FirefoxDriver mockFF = Mockito.mock(FirefoxDriver.class);
-        Mockito.when(mockFF.getCapabilities()).thenReturn(mockCapabilities);
-        Mockito.when(
-                mockFF.executeScript(contains("clients[client].isActive()")))
-                .thenReturn(true);
-        WebElement mockElement = Mockito.mock(WebElement.class);
-        Mockito.when(mockFF.findElement(isA(By.class))).thenReturn(mockElement);
-
-        TestBenchDriverProxy tb = (TestBenchDriverProxy) TestBench
-                .createDriver(mockFF);
-        tb.getCommandExecutor().disableWaitForVaadin();
-        tb.findElement(By.id("foo"));
-
-        tb.getCommandExecutor().enableWaitForVaadin();
-        tb.findElement(By.id("foo"));
-
+        driver.getCommandExecutor().enableWaitForVaadin();
+        driver.getTitle();
+        Mockito.verify(selenium).executeScript(contains("isActive()"));
     }
-
 }

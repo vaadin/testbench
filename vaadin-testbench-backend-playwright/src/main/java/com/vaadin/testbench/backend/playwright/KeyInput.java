@@ -28,10 +28,10 @@ import org.jspecify.annotations.Nullable;
  */
 final class KeyInput {
 
-    private static final char NULL = '';
+    static final char NULL = '';
 
-    private static final Map<Character, String> MODIFIERS = Map.of('', "Shift",
-            '', "Control", '', "Alt", '', "Meta");
+    static final Map<Character, String> MODIFIERS = Map.of('', "Shift", '',
+            "Control", '', "Alt", '', "Meta");
 
     // CANCEL, HELP, CLEAR and ZENKAKU_HANKAKU have no Playwright key
     private static final Set<Character> UNSUPPORTED = Set.of('', '', '',
@@ -127,7 +127,7 @@ final class KeyInput {
         held.clear();
     }
 
-    private static String keyName(char code) {
+    static String keyName(char code) {
         if (UNSUPPORTED.contains(code)) {
             throw new UnsupportedOperationException(String.format(
                     "Key U+%04X has no Playwright equivalent", (int) code));
@@ -140,7 +140,7 @@ final class KeyInput {
         return name;
     }
 
-    private static String keyOf(char c) {
+    static String keyOf(char c) {
         if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') {
             return "Key" + Character.toUpperCase(c);
         }

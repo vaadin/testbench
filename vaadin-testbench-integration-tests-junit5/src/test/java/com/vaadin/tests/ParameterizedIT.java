@@ -12,15 +12,15 @@ import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Platform;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ParameterizedView;
 import com.vaadin.testbench.BrowserTest;
+import com.vaadin.testbench.By;
 import com.vaadin.testbench.ParameterizedBrowserTest;
+import com.vaadin.testbench.TestBenchElement;
 
 public class ParameterizedIT extends AbstractBrowserTB9Test {
 
@@ -52,7 +52,7 @@ public class ParameterizedIT extends AbstractBrowserTB9Test {
         String url = getTestUrl() + "/" + parameter;
         getDriver().get(url);
 
-        WebElement paramHolder = waitUntil(
+        TestBenchElement paramHolder = waitUntil(
                 d -> d.findElement(By.id("parameter-holder")));
 
         Assertions.assertEquals("PARAMETER: " + parameter,
