@@ -910,7 +910,8 @@ public class ElementQueryTest {
                 .of(List.of(mockElement, Mockito.mock(ExampleElement.class))));
         var exception = assertThrows(NoSuchElementException.class,
                 () -> query.waitForSingle(1));
-        assertTrue(exception.getMessage().contains("Multiple elements (2)"));
+        assertTrue(exception.getMessage().contains(
+                "Multiple elements (2) matching <" + ExampleElement.TAG + ">"));
         assertTrue(exception.getMessage().contains("Timed out after 1s."));
     }
 

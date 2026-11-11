@@ -1518,14 +1518,13 @@ public class ElementQuery<T extends TestBenchElement> {
      *         found
      */
     private List<T> executeSearch(Integer index) {
-        // Wrapping the selector in :is() makes the attribute filters apply to
-        // every selector of a selector list, not only to the last one. As
-        // :is() silently ignores an invalid selector, the selector is parsed
-        // on its own first so that a typo still throws.
+        // Wrapping the selector makes the attribute filters apply to every
+        // selector of a selector list, not only to the last one. :not(:not())
+        // is used instead of :is() because :is() silently ignores an invalid
+        // selector, so a typo would match nothing instead of throwing.
         StringBuilder script = new StringBuilder("var selector = arguments[1];" //
                 + "if (arguments[2]) {" //
-                + "  document.createDocumentFragment().querySelector(selector);" //
-                + "  selector = ':is(' + selector + ')' + arguments[2];" //
+                + "  selector = ':not(:not(' + selector + '))' + arguments[2];" //
                 + "}");
         TestBenchElement elementContext;
         JavascriptExecutor executor;

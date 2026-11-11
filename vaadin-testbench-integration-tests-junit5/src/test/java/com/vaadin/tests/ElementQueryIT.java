@@ -118,6 +118,11 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
                 .all();
         Assertions.assertEquals(1, elements.size());
         Assertions.assertEquals("Shadow Button 2", elements.get(0).getText());
+
+        List<TestBenchElement> onPage = $("div, button")
+                .withId("light-button-1").all();
+        Assertions.assertEquals(1, onPage.size());
+        Assertions.assertEquals("Button 1", onPage.get(0).getText());
     }
 
     @BrowserTest
