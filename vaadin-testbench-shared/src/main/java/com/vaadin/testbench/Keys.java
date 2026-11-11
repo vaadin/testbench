@@ -23,7 +23,10 @@ import org.jspecify.annotations.Nullable;
  * The constants and their characters are Selenium's {@code Keys}' (selenium-api
  * 4.52.0), so a test ports by changing its import. Each is one character, a W3C
  * WebDriver key code from U+E000 to U+E05D; aliases such as {@link #ARROW_LEFT}
- * share their key's character.
+ * share their key's character. Selenium's right-hand modifiers
+ * ({@code RIGHT_SHIFT}, {@code RIGHT_CONTROL}, {@code RIGHT_ALT},
+ * {@code RIGHT_COMMAND}) and {@code FN} are left out: Chrome receives them as
+ * the left-hand keys, so {@link #SHIFT} and the like replace them.
  */
 public enum Keys implements CharSequence {
     NULL(''),
@@ -93,19 +96,7 @@ public enum Keys implements CharSequence {
     META(''),
     COMMAND(''),
 
-    RIGHT_SHIFT(''),
-    RIGHT_CONTROL(''),
-    RIGHT_ALT(''),
-    RIGHT_COMMAND(''),
-
     OPTION(''),
-
-    /**
-     * @deprecated Not a W3C WebDriver key: it types {@link #RIGHT_CONTROL}, as
-     *             Selenium's does.
-     */
-    @Deprecated
-    FN(''),
 
     ZENKAKU_HANKAKU('');
 

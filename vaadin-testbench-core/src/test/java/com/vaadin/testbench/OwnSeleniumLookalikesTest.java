@@ -11,6 +11,7 @@ package com.vaadin.testbench;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -23,11 +24,17 @@ import org.junit.Test;
 @SuppressWarnings("deprecation")
 public class OwnSeleniumLookalikesTest {
 
+    /** Left out on purpose: Chrome receives them as the left-hand keys. */
+    private static final Set<String> LEFT_OUT = Set.of("RIGHT_SHIFT",
+            "RIGHT_CONTROL", "RIGHT_ALT", "RIGHT_COMMAND", "FN");
+
     @Test
     public void keysMatchSeleniumNameForNameAndCodeForCode() {
         Map<String, Integer> selenium = new LinkedHashMap<>();
         for (org.openqa.selenium.Keys key : org.openqa.selenium.Keys.values()) {
-            selenium.put(key.name(), key.getCodePoint());
+            if (!LEFT_OUT.contains(key.name())) {
+                selenium.put(key.name(), key.getCodePoint());
+            }
         }
         Map<String, Integer> ours = new LinkedHashMap<>();
         for (Keys key : Keys.values()) {
