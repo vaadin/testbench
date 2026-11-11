@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
-import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.BrowserBackend;
 import com.vaadin.testbench.spi.ElementBackend;
 import com.vaadin.testbench.testutils.ScriptOnlyBackend;
 
@@ -47,7 +47,7 @@ public class ModeTest {
      * Vaadin is never busy; the innerText script answers {@link #innerText}.
      */
     private TestBenchElement element() {
-        Backend backend = new ScriptOnlyBackend() {
+        BrowserBackend backend = new ScriptOnlyBackend() {
             @Override
             public Object executeScript(String script, Object... args) {
                 scripts.add(script);
@@ -70,7 +70,7 @@ public class ModeTest {
         TestBenchCommandExecutor executor = new TestBenchCommandExecutor(null,
                 null) {
             @Override
-            public Backend getBackend() {
+            public BrowserBackend getBackend() {
                 return backend;
             }
         };

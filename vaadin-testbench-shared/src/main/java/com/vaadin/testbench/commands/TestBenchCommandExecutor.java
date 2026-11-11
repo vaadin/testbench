@@ -36,7 +36,7 @@ import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
-import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.BrowserBackend;
 import com.vaadin.testbench.spi.ElementBackend;
 
 /**
@@ -48,7 +48,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
         return LoggerFactory.getLogger(TestBenchCommandExecutor.class);
     }
 
-    private Backend backend;
+    private BrowserBackend backend;
     private final ImageComparison imageComparison;
     private final ReferenceNameGenerator referenceNameGenerator;
 
@@ -88,7 +88,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
      *            the browser to drive, as {@code TestBench.createDriver} sets
      *            it for a Selenium driver
      */
-    public void setBackend(Backend backend) {
+    public void setBackend(BrowserBackend backend) {
         this.backend = backend;
     }
 
@@ -102,7 +102,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
      *         .getDriver();
      * }</pre>
      */
-    public Backend getBackend() {
+    public BrowserBackend getBackend() {
         return backend;
     }
 

@@ -34,19 +34,20 @@ import com.vaadin.testbench.NoSuchElementException;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.StaleElementReferenceException;
 import com.vaadin.testbench.TimeoutException;
-import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.BrowserBackend;
 import com.vaadin.testbench.spi.ElementBackend;
 import com.vaadin.testbench.spi.Input;
 
 /**
- * The {@link Backend} on a Playwright {@link Page}. Scripts keep Selenium's
- * {@code arguments[n]} convention and its types: a whole number comes back as a
- * {@code Long}, {@code Infinity} and {@code NaN} as {@code null}, a
- * {@code null} argument arrives as {@code null}. A script given a node that is
- * no longer in the document throws {@link StaleElementReferenceException}, as
- * on Selenium; a Playwright handle would read the detached node on.
+ * The {@link BrowserBackend} on a Playwright {@link Page}. Scripts keep
+ * Selenium's {@code arguments[n]} convention and its types: a whole number
+ * comes back as a {@code Long}, {@code Infinity} and {@code NaN} as
+ * {@code null}, a {@code null} argument arrives as {@code null}. A script given
+ * a node that is no longer in the document throws
+ * {@link StaleElementReferenceException}, as on Selenium; a Playwright handle
+ * would read the detached node on.
  */
-public class PlaywrightBackend implements Backend {
+public class PlaywrightBackend implements BrowserBackend {
 
     // Selenium's default script timeout
     private static final Duration ASYNC_SCRIPT_TIMEOUT = Duration.ofSeconds(30);

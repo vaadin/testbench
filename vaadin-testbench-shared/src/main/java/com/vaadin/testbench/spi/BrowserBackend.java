@@ -37,7 +37,7 @@ import com.vaadin.testbench.StaleElementReferenceException;
  * {@code NoSuchElementException}, a driver timeout its
  * {@code TimeoutException}; never the library's own.
  */
-public interface Backend {
+public interface BrowserBackend {
 
     /**
      * Runs {@code script} in the page as the body of a function, Selenium

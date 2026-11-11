@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.backend.BrowserLauncher;
-import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.BrowserBackend;
 
 /**
  * Starts each test's browser as a fresh {@link BrowserContext}, its own cookies
@@ -71,7 +71,7 @@ public class PlaywrightLauncher implements BrowserLauncher {
     }
 
     @Override
-    public Backend launch() {
+    public BrowserBackend launch() {
         Browser.NewContextOptions options = new Browser.NewContextOptions();
         String viewport = System.getProperty(PREFIX + "viewport");
         if (viewport != null) {

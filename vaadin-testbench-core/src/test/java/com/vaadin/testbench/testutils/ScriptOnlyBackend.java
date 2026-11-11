@@ -12,14 +12,14 @@ import java.util.List;
 import java.util.Set;
 
 import com.vaadin.testbench.Dimension;
-import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.BrowserBackend;
 import com.vaadin.testbench.spi.Input;
 
 /**
- * A fake {@link Backend} for tests that only run scripts: a subclass answers
- * {@code executeScript}, and every page-level call throws.
+ * A fake {@link BrowserBackend} for tests that only run scripts: a subclass
+ * answers {@code executeScript}, and every page-level call throws.
  */
-public abstract class ScriptOnlyBackend implements Backend {
+public abstract class ScriptOnlyBackend implements BrowserBackend {
 
     private static UnsupportedOperationException notFaked() {
         return new UnsupportedOperationException("Not in this fake backend");

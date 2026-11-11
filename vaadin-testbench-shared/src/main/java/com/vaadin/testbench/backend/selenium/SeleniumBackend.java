@@ -32,14 +32,14 @@ import com.vaadin.testbench.Dimension;
 import com.vaadin.testbench.NoSuchElementException;
 import com.vaadin.testbench.StaleElementReferenceException;
 import com.vaadin.testbench.TimeoutException;
-import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.BrowserBackend;
 import com.vaadin.testbench.spi.ElementBackend;
 import com.vaadin.testbench.spi.Input;
 
 /**
- * The {@link Backend} on a Selenium {@link WebDriver}.
+ * The {@link BrowserBackend} on a Selenium {@link WebDriver}.
  */
-public class SeleniumBackend implements Backend {
+public class SeleniumBackend implements BrowserBackend {
 
     private final WebDriver driver;
 

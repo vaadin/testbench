@@ -20,7 +20,7 @@ import org.openqa.selenium.WebElement;
 import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.backend.selenium.SeleniumElementBackend;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
-import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.BrowserBackend;
 import com.vaadin.testbench.spi.ElementBackend;
 import com.vaadin.testbench.testutils.ScriptOnlyBackend;
 
@@ -39,12 +39,12 @@ public class TagNameOnlyTest {
         return script.contains("isActive()") ? Boolean.TRUE : List.of();
     }
 
-    private static TestBenchElement elementOn(Backend backend,
+    private static TestBenchElement elementOn(BrowserBackend backend,
             ElementBackend node) {
         TestBenchCommandExecutor executor = new TestBenchCommandExecutor(null,
                 null) {
             @Override
-            public Backend getBackend() {
+            public BrowserBackend getBackend() {
                 return backend;
             }
         };

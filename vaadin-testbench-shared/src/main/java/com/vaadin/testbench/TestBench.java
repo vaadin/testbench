@@ -22,7 +22,7 @@ import com.vaadin.testbench.backend.selenium.SeleniumElementBackend;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
-import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.BrowserBackend;
 import com.vaadin.testbench.spi.ElementBackend;
 
 /**
@@ -53,12 +53,12 @@ public class TestBench {
     }
 
     /** The driver of a test on any backend. */
-    public static BrowserDriver createDriver(Backend backend) {
+    public static BrowserDriver createDriver(BrowserBackend backend) {
         return createDriver(backend, new TestBenchCommandExecutor(
                 new ImageComparison(), new ReferenceNameGenerator()));
     }
 
-    public static BrowserDriver createDriver(Backend backend,
+    public static BrowserDriver createDriver(BrowserBackend backend,
             TestBenchCommandExecutor commandExecutor) {
         commandExecutor.setBackend(backend);
         return new TestBenchDriver(commandExecutor);

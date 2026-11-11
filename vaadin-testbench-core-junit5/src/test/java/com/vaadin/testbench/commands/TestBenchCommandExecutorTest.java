@@ -28,7 +28,7 @@ import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ImageComparisonTest;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
-import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.BrowserBackend;
 import com.vaadin.testbench.testutils.ImageLoader;
 
 public class TestBenchCommandExecutorTest {
@@ -45,7 +45,7 @@ public class TestBenchCommandExecutorTest {
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(
                 Mockito.mock(ImageComparison.class),
                 Mockito.mock(ReferenceNameGenerator.class));
-        tbce.setBackend(Mockito.mock(Backend.class));
+        tbce.setBackend(Mockito.mock(BrowserBackend.class));
         Assertions.assertTrue(tbce instanceof TestBenchCommands);
     }
 

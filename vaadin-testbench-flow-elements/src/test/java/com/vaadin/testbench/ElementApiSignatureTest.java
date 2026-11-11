@@ -69,7 +69,7 @@ public class ElementApiSignatureTest {
         for (Class<?> core : List.of(TestBenchElement.class, ElementQuery.class,
                 HasLabel.class, HasElementQuery.class,
                 com.vaadin.testbench.commands.TestBenchCommandExecutor.class,
-                com.vaadin.testbench.spi.Backend.class,
+                com.vaadin.testbench.spi.BrowserBackend.class,
                 com.vaadin.testbench.spi.ElementBackend.class, Keys.class,
                 Point.class, NoSuchElementException.class)) {
             Assert.assertTrue(core.getName(), api.contains(core));

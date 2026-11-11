@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
-import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.BrowserBackend;
 import com.vaadin.testbench.spi.ElementBackend;
 import com.vaadin.testbench.testutils.ScriptOnlyBackend;
 
@@ -35,7 +35,7 @@ public class RefindTest {
     private final Set<ElementBackend> gone = new HashSet<>();
     private final List<Object> scriptTargets = new ArrayList<>();
 
-    private final Backend backend = new ScriptOnlyBackend() {
+    private final BrowserBackend backend = new ScriptOnlyBackend() {
         @Override
         public Object executeScript(String script, Object... args) {
             if (script.contains("isActive()")) {
@@ -64,7 +64,7 @@ public class RefindTest {
     private final TestBenchCommandExecutor executor = new TestBenchCommandExecutor(
             null, null) {
         @Override
-        public Backend getBackend() {
+        public BrowserBackend getBackend() {
             return backend;
         }
     };

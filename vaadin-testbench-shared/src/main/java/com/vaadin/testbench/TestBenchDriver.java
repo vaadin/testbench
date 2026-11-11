@@ -15,11 +15,12 @@ import java.util.Set;
 import org.jspecify.annotations.Nullable;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
-import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.BrowserBackend;
 
 /**
  * The {@link BrowserDriver} on every backend: each call waits for Vaadin where
- * the driver's contract says so, then goes to the executor's {@link Backend}.
+ * the driver's contract says so, then goes to the executor's
+ * {@link BrowserBackend}.
  */
 final class TestBenchDriver implements BrowserDriver {
 
@@ -31,7 +32,7 @@ final class TestBenchDriver implements BrowserDriver {
         this.keyboard = new Keyboard(commandExecutor);
     }
 
-    private Backend backend() {
+    private BrowserBackend backend() {
         return commandExecutor.getBackend();
     }
 

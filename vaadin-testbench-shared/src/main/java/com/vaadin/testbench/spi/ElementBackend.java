@@ -13,10 +13,10 @@ import java.util.List;
 import org.jspecify.annotations.Nullable;
 
 /**
- * One DOM node a {@link Backend} has found: the input and the reads a
+ * One DOM node a {@link BrowserBackend} has found: the input and the reads a
  * {@code TestBenchElement} cannot do through
- * {@link Backend#executeScript(String, Object...)}. A {@code TestBenchElement}
- * holds one and forwards to it:
+ * {@link BrowserBackend#executeScript(String, Object...)}. A
+ * {@code TestBenchElement} holds one and forwards to it:
  *
  * <pre>{@code
  * public String getText() {

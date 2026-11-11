@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.screenshot.ImageFileUtil;
-import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.BrowserBackend;
 
 /**
  * This JUnit extension grabs a screenshot when a test fails. Usage:
@@ -106,7 +106,7 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
             return;
         }
 
-        Backend backend = driverHolder.getDriver().getCommandExecutor()
+        BrowserBackend backend = driverHolder.getDriver().getCommandExecutor()
                 .getBackend();
         if (backend instanceof SeleniumBackend selenium
                 && selenium.getDriver() instanceof RemoteWebDriver remote

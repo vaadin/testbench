@@ -12,7 +12,7 @@ import java.time.Duration;
 
 /**
  * One step of the page's keyboard or mouse, for
- * {@link Backend#perform(java.util.List)}. A Shift-drag:
+ * {@link BrowserBackend#perform(java.util.List)}. A Shift-drag:
  *
  * <pre>{@code
  * backend.perform(List.of(new Input.KeyDown(0xE008),

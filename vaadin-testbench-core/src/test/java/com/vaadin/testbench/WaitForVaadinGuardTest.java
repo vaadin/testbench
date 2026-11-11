@@ -26,7 +26,7 @@ import org.mockito.Answers;
 import org.mockito.Mockito;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
-import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.BrowserBackend;
 import com.vaadin.testbench.spi.ElementBackend;
 
 /**
@@ -66,23 +66,26 @@ public class WaitForVaadinGuardTest {
 
     @Before
     public void setUp() {
-        Backend backend = Mockito.mock(Backend.class, invocation -> {
-            String name = invocation.getMethod().getName();
-            if (name.equals("getBrowserName")) {
-                // known without asking the browser, so not a browser call
-                return "chrome";
-            }
-            if (name.equals("executeScript")) {
-                if (invocation.<String> getArgument(0).contains("isActive()")) {
-                    calls.add("wait");
-                    return true;
-                }
-                calls.add("script");
-                return null;
-            }
-            calls.add("backend:" + name);
-            return Answers.RETURNS_DEFAULTS.answer(invocation);
-        });
+        BrowserBackend backend = Mockito.mock(BrowserBackend.class,
+                invocation -> {
+                    String name = invocation.getMethod().getName();
+                    if (name.equals("getBrowserName")) {
+                        // known without asking the browser, so not a browser
+                        // call
+                        return "chrome";
+                    }
+                    if (name.equals("executeScript")) {
+                        if (invocation.<String> getArgument(0)
+                                .contains("isActive()")) {
+                            calls.add("wait");
+                            return true;
+                        }
+                        calls.add("script");
+                        return null;
+                    }
+                    calls.add("backend:" + name);
+                    return Answers.RETURNS_DEFAULTS.answer(invocation);
+                });
         executor = new TestBenchCommandExecutor(null, null);
         driver = TestBench.createDriver(backend, executor);
         sampleElement = TestBench.createElement(TestBenchElement.class, node(),

@@ -51,7 +51,7 @@ import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
-import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.BrowserBackend;
 import com.vaadin.testbench.spi.ElementBackend;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,8 +74,8 @@ class BackendParityTest {
     private static WebDriver driver;
     private static Playwright playwright;
     private static Page page;
-    private static Backend selenium;
-    private static Backend pw;
+    private static BrowserBackend selenium;
+    private static BrowserBackend pw;
 
     @BeforeAll
     static void start() throws IOException {
@@ -137,7 +137,7 @@ class BackendParityTest {
         page.navigate(url);
     }
 
-    private static ElementBackend byId(Backend backend, String id) {
+    private static ElementBackend byId(BrowserBackend backend, String id) {
         return (ElementBackend) backend.executeScript(
                 "return document.getElementById(arguments[0])", id);
     }
@@ -145,7 +145,7 @@ class BackendParityTest {
     private final List<String> mismatches = new ArrayList<>();
 
     /** Records where the two backends answer differently. */
-    private void same(String what, Function<Backend, Object> call) {
+    private void same(String what, Function<BrowserBackend, Object> call) {
         String se = outcome(selenium, call);
         String p = outcome(pw, call);
         if (!se.equals(p)) {
@@ -153,8 +153,8 @@ class BackendParityTest {
         }
     }
 
-    private static String outcome(Backend backend,
-            Function<Backend, Object> call) {
+    private static String outcome(BrowserBackend backend,
+            Function<BrowserBackend, Object> call) {
         try {
             return describe(call.apply(backend));
         } catch (RuntimeException e) {
@@ -429,7 +429,7 @@ class BackendParityTest {
         assertNoMismatches();
     }
 
-    private static BrowserDriver driverOn(Backend backend) {
+    private static BrowserDriver driverOn(BrowserBackend backend) {
         return TestBench.createDriver(backend);
     }
 
@@ -445,8 +445,8 @@ class BackendParityTest {
 
     @Test
     void page() {
-        same("title", Backend::getTitle);
-        same("url", Backend::getCurrentUrl);
+        same("title", BrowserBackend::getTitle);
+        same("url", BrowserBackend::getCurrentUrl);
         same("source has the title",
                 b -> b.getPageSource().contains("<title>parity</title>"));
         same("navigate, back, forward, refresh", b -> {
@@ -650,7 +650,7 @@ class BackendParityTest {
 
     @Test
     void stale() {
-        for (Backend b : List.of(selenium, pw)) {
+        for (BrowserBackend b : List.of(selenium, pw)) {
             ElementBackend gone = byId(b, "gone");
             b.executeScript("document.getElementById('gone').remove()");
             assertThrows(StaleElementReferenceException.class, gone::getText,
@@ -674,7 +674,7 @@ class BackendParityTest {
     /** D_element_resolution, through TestBench's own element and query. */
     @Test
     void aReplacedNodeIsFoundAgain() {
-        for (Backend b : List.of(selenium, pw)) {
+        for (BrowserBackend b : List.of(selenium, pw)) {
             TestBenchCommandExecutor executor = new TestBenchCommandExecutor(
                     null, null);
             executor.setBackend(b);
@@ -705,7 +705,7 @@ class BackendParityTest {
 
     @Test
     void equality() {
-        for (Backend b : List.of(selenium, pw)) {
+        for (BrowserBackend b : List.of(selenium, pw)) {
             ElementBackend first = byId(b, "keys");
             ElementBackend again = (ElementBackend) b
                     .executeScript("return document.querySelector('#keys')");

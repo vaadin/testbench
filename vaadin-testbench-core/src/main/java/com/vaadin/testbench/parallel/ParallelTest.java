@@ -28,7 +28,7 @@ import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
 import com.vaadin.testbench.backend.BackendChoice;
 import com.vaadin.testbench.parallel.setup.SetupDriver;
-import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.BrowserBackend;
 
 /**
  * Unit tests should extend {@link ParallelTest} if they are to be run in
@@ -131,7 +131,7 @@ public class ParallelTest extends TestBenchTestCase {
      */
     @Before
     public void setup() throws Exception {
-        Backend launched = BackendChoice.launchBrowser(null);
+        BrowserBackend launched = BackendChoice.launchBrowser(null);
         if (launched != null) {
             setDriver(TestBench.createDriver(launched));
             return;

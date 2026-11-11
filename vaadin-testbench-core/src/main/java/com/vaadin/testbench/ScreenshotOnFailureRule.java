@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.screenshot.ImageFileUtil;
-import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.BrowserBackend;
 
 /**
  * This JUnit {@link org.junit.Rule} grabs a screenshot when a test fails.
@@ -103,7 +103,7 @@ public class ScreenshotOnFailureRule extends TestWatcher {
             return;
         }
 
-        Backend backend = driverHolder.getDriver().getCommandExecutor()
+        BrowserBackend backend = driverHolder.getDriver().getCommandExecutor()
                 .getBackend();
         if (backend instanceof SeleniumBackend selenium
                 && selenium.getDriver() instanceof RemoteWebDriver remote

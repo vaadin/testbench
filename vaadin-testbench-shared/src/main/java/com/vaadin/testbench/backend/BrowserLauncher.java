@@ -8,12 +8,12 @@
  */
 package com.vaadin.testbench.backend;
 
-import com.vaadin.testbench.spi.Backend;
+import com.vaadin.testbench.spi.BrowserBackend;
 
 /**
  * Starts a browser on a backend other than Selenium, for the JUnit integration,
  * which finds it with {@link java.util.ServiceLoader} and hands the browser to
- * {@code TestBench.createDriver(Backend)}.
+ * {@code TestBench.createDriver(BrowserBackend)}.
  */
 public interface BrowserLauncher {
 
@@ -21,5 +21,5 @@ public interface BrowserLauncher {
     String getBackendName();
 
     /** A new browser, isolated from any other this launcher started. */
-    Backend launch();
+    BrowserBackend launch();
 }
