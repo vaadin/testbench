@@ -29,8 +29,9 @@ import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.safari.SafariDriver;
 
 import com.vaadin.testbench.TestBenchElement;
+import com.vaadin.testbench.backend.selenium.SeleniumBackend;
+import com.vaadin.testbench.backend.selenium.SeleniumElementBackend;
 import com.vaadin.testbench.elementsbase.Element;
-import com.vaadin.testbench.parallel.BrowserUtil;
 
 /**
  * A TestBench element representing a <code>&lt;vaadin-upload&gt;</code>
@@ -68,17 +69,17 @@ public class UploadElement extends TestBenchElement {
             removeFile(0);
         }
         TestBenchElement uploadElement;
-        if (isLocalDriver(getDriver())) {
-            uploadElement = getUploadElement();
-        } else {
+        if (isRemoteSelenium()) {
             uploadElement = setLocalFileDetector();
+        } else {
+            uploadElement = getUploadElement();
         }
 
         // Element must be focusable for Edge and Firefox
         Boolean hidden = uploadElement.getPropertyBoolean("hidden");
         uploadElement.setProperty("hidden", false);
 
-        if (!BrowserUtil.isEdge(getCapabilities())) {
+        if (!isEdge()) {
             // Firefox uploads the previous file again without this
             // Edge throws "InvalidElementStateException: The element is not
             // editable"
@@ -177,7 +178,8 @@ public class UploadElement extends TestBenchElement {
     private TestBenchElement setLocalFileDetector() {
         TestBenchElement uploadElement = getUploadElement();
 
-        WebElement realUploadElement = uploadElement.getWrappedElement();
+        WebElement realUploadElement = ((SeleniumElementBackend) uploadElement
+                .getElementBackend()).getWebElement();
         while (realUploadElement instanceof WrapsElement) {
             realUploadElement = ((WrapsElement) realUploadElement)
                     .getWrappedElement();
@@ -207,13 +209,28 @@ public class UploadElement extends TestBenchElement {
                 this);
     }
 
-    private static boolean isLocalDriver(WebDriver driver) {
+    // A remote Selenium browser needs the file sent to it first; other
+    // backends read it locally
+    private boolean isRemoteSelenium() {
+        if (!(getCommandExecutor()
+                .getBackend() instanceof SeleniumBackend selenium)) {
+            return false;
+        }
+        WebDriver driver = selenium.getDriver();
         while (driver instanceof WrapsDriver) {
             driver = ((WrapsDriver) driver).getWrappedDriver();
         }
-        return driver instanceof ChromiumDriver
+        return !(driver instanceof ChromiumDriver
                 || driver instanceof FirefoxDriver
-                || driver instanceof SafariDriver;
+                || driver instanceof SafariDriver);
+    }
+
+    // The names Selenium's Browser.EDGE matches
+    private boolean isEdge() {
+        String browserName = getCommandExecutor().getBackend()
+                .getBrowserName();
+        return "MicrosoftEdge".equals(browserName)
+                || "msedge".equals(browserName);
     }
 
 }

@@ -71,8 +71,12 @@ public class SeleniumBackend implements Backend {
     @Override
     public @Nullable Object executeScript(String script,
             @Nullable Object... args) {
-        return fromSelenium(((JavascriptExecutor) driver).executeScript(script,
-                toSelenium(args)));
+        try {
+            return fromSelenium(((JavascriptExecutor) driver)
+                    .executeScript(script, toSelenium(args)));
+        } catch (WebDriverException e) {
+            throw translate(e);
+        }
     }
 
     @Override

@@ -18,8 +18,8 @@ package com.vaadin.flow.component.datepicker.testbench;
 import java.time.LocalDate;
 import java.util.List;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
+import com.vaadin.testbench.By;
+import com.vaadin.testbench.Keys;
 
 import com.vaadin.flow.component.button.testbench.ButtonElement;
 import com.vaadin.testbench.HasClearButton;

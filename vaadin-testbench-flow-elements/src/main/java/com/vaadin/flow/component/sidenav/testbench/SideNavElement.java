@@ -18,10 +18,8 @@ package com.vaadin.flow.component.sidenav.testbench;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
-
+import com.vaadin.testbench.By;
+import com.vaadin.testbench.NoSuchElementException;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.Element;
 
@@ -42,10 +40,9 @@ public class SideNavElement extends TestBenchElement {
     }
 
     public void toggle() {
-        final WebElement element;
+        final TestBenchElement element;
         try {
-            element = getWrappedElement()
-                    .findElement(By.cssSelector("[slot=label]"));
+            element = findElement(By.cssSelector("[slot=label]"));
         } catch (NoSuchElementException e) {
             throw new NoSuchElementException(
                     "Nav does not contain a toggle button", e);
@@ -79,9 +76,9 @@ public class SideNavElement extends TestBenchElement {
     }
 
     private Stream<SideNavItemElement> getItemsStream(boolean includeChildren) {
-        String xpathExp = includeChildren ? ".//vaadin-side-nav-item"
-                : "vaadin-side-nav-item";
-        return findElements(By.xpath(xpathExp)).stream()
+        String selector = includeChildren ? "vaadin-side-nav-item"
+                : ":scope > vaadin-side-nav-item";
+        return findElements(By.cssSelector(selector)).stream()
                 .map(testBenchElement -> testBenchElement
                         .wrap(SideNavItemElement.class));
     }

@@ -11,7 +11,7 @@ package com.vaadin.flow.component.crud.testbench;
 import java.util.List;
 import java.util.Optional;
 
-import org.openqa.selenium.By;
+import com.vaadin.testbench.By;
 
 import com.vaadin.flow.component.button.testbench.ButtonElement;
 import com.vaadin.flow.component.confirmdialog.testbench.ConfirmDialogElement;

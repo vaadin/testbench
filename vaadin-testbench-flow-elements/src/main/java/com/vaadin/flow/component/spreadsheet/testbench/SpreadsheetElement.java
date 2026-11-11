@@ -12,13 +12,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
-
+import com.vaadin.testbench.By;
+import com.vaadin.testbench.Dimension;
+import com.vaadin.testbench.NoSuchElementException;
+import com.vaadin.testbench.Point;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.Element;
 
@@ -68,7 +65,7 @@ public class SpreadsheetElement extends TestBenchElement {
         // Single async JS call to find the cell, preferring merged cell
         // when multiple matches exist. Polls to handle cases where the
         // cell hasn't been rendered yet (e.g. after scrolling).
-        TestBenchElement cell = (TestBenchElement) getCommandExecutor().getDriver()
+        TestBenchElement cell = (TestBenchElement) getCommandExecutor()
                 .executeAsyncScript(
                         """
                                 const root = arguments[0].shadowRoot
@@ -285,21 +282,37 @@ public class SpreadsheetElement extends TestBenchElement {
      */
     public ContextMenuElement getContextMenu() {
         try {
-            WebElement cm = getDriver()
-                    .findElement(By.className("v-contextmenu"));
-            return wrapElement(cm, getCommandExecutor())
+            return $("*").withClassName("v-contextmenu").onPage().get(0)
                     .wrap(ContextMenuElement.class);
-        } catch (WebDriverException e) {
+        } catch (NoSuchElementException e) {
             throw new NoSuchElementException("Context menu not found", e);
         }
     }
 
     public static class ContextMenuElement extends TestBenchElement {
 
+        /**
+         * @throws NoSuchElementException
+         *             if no item's text contains {@code text}
+         */
         public TestBenchElement getItem(String text) {
-            return findElement(
-                    By.xpath(".//table//tr[*]//td//div[contains(text(), \""
-                            + text + "\")]"));
+            // The XPath .//table//tr[*]//td//div[contains(text(), "...")]:
+            // contains() sees only the div's first text node
+            TestBenchElement item = (TestBenchElement) executeScript("""
+                    for (const div of arguments[0].querySelectorAll('table tr td div')) {
+                      const textNode = Array.from(div.childNodes)
+                          .find(node => node.nodeType === Node.TEXT_NODE);
+                      if ((textNode ? textNode.nodeValue : '').includes(arguments[1])) {
+                        return div;
+                      }
+                    }
+                    return null;
+                    """, this, text);
+            if (item == null) {
+                throw new NoSuchElementException(
+                        "No context menu item contains " + text);
+            }
+            return item;
         }
 
     }
@@ -384,9 +397,8 @@ public class SpreadsheetElement extends TestBenchElement {
      * Determine if the pop-up of PopupuButton is currently visible
      */
     public boolean isPopupButtonPopupVisible() {
-        List<WebElement> elements = getDriver().findElements(
-                By.className("v-spreadsheet-popupbutton-overlay"));
-        return !elements.isEmpty();
+        return $("*").withClassName("v-spreadsheet-popupbutton-overlay")
+                .onPage().exists();
     }
 
     private TestBenchElement getBottomRightPane() {

@@ -19,8 +19,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import com.vaadin.testbench.By;
 
 import com.vaadin.testbench.HasHelper;
 import com.vaadin.testbench.HasLabel;
@@ -28,7 +27,6 @@ import com.vaadin.testbench.HasPlaceholder;
 import com.vaadin.testbench.HasSelectByText;
 import com.vaadin.testbench.HasValidation;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.elementsbase.Element;
 
 /**
@@ -42,11 +40,6 @@ public class SelectElement extends TestBenchElement implements HasSelectByText,
     public static class ItemElement extends TestBenchElement {
         public ItemElement() {
             // needed for creating instances inside TB
-        }
-
-        // used to convert in streams
-        ItemElement(WebElement item, TestBenchCommandExecutor commandExecutor) {
-            super(item, commandExecutor);
         }
     }
 

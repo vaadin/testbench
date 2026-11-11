@@ -20,8 +20,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import com.vaadin.testbench.By;
 
 import com.vaadin.testbench.HasSelectByText;
 import com.vaadin.testbench.TestBenchElement;

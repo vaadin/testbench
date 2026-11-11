@@ -15,8 +15,8 @@
  */
 package com.vaadin.flow.component.login.testbench;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.StaleElementReferenceException;
+import com.vaadin.testbench.By;
+import com.vaadin.testbench.StaleElementReferenceException;
 
 import com.vaadin.flow.component.button.testbench.ButtonElement;
 import com.vaadin.flow.component.textfield.testbench.PasswordFieldElement;

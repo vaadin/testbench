@@ -12,7 +12,7 @@ import java.util.Collections;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.openqa.selenium.TimeoutException;
+import com.vaadin.testbench.TimeoutException;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ElementQueryView;

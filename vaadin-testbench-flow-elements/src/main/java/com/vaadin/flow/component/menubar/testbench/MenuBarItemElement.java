@@ -17,9 +17,8 @@ package com.vaadin.flow.component.menubar.testbench;
 
 import java.util.List;
 
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import com.vaadin.testbench.NoSuchElementException;
+import com.vaadin.testbench.TimeoutException;
 
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.Element;
@@ -100,8 +99,7 @@ public class MenuBarItemElement extends TestBenchElement {
 
     private void waitForSubMenu() {
         try {
-            waitUntil(ExpectedConditions.attributeToBe(getWrappedElement(), "aria-expanded",
-                    "true"));
+            waitUntil(driver -> "true".equals(getAttribute("aria-expanded")));
         } catch (TimeoutException e) {
             throw new NoSuchElementException(
                     "No submenu opened for this menu item.");

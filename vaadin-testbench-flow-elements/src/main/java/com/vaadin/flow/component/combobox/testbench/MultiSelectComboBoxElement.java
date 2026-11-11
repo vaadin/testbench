@@ -17,7 +17,7 @@ package com.vaadin.flow.component.combobox.testbench;
 
 import java.util.List;
 
-import org.openqa.selenium.By;
+import com.vaadin.testbench.By;
 
 import com.vaadin.testbench.HasClearButton;
 import com.vaadin.testbench.HasHelper;

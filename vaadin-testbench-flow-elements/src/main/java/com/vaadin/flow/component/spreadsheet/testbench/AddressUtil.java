@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openqa.selenium.Point;
+import com.vaadin.testbench.Point;
 
 /**
  * An utility class that converts Excel cell addresses to integer coordinates.

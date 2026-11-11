@@ -198,8 +198,12 @@ public abstract class TestBenchTestCase
      */
     protected <T> T waitUntil(ExpectedCondition<T> condition,
             long timeoutInSeconds) {
+        // $ throws TestBench's NoSuchElementException, not Selenium's
+        // NotFoundException, and a condition using $ must keep polling
         return new WebDriverWait(getDriver(),
-                Duration.ofSeconds(timeoutInSeconds)).until(condition);
+                Duration.ofSeconds(timeoutInSeconds))
+                .ignoring(com.vaadin.testbench.NoSuchElementException.class)
+                .until(condition);
     }
 
     /**

@@ -18,10 +18,10 @@ package com.vaadin.flow.component.contextmenu.testbench;
 import java.util.List;
 import java.util.Optional;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TimeoutException;
+import com.vaadin.testbench.By;
+import com.vaadin.testbench.NoSuchElementException;
+import com.vaadin.testbench.StaleElementReferenceException;
+import com.vaadin.testbench.TimeoutException;
 
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.Element;
@@ -49,11 +49,8 @@ public class ContextMenuElement extends TestBenchElement {
      */
     public static ContextMenuElement openByRightClick(TestBenchElement target) {
         target.contextClick();
-        TestBenchElement body = wrapElement(
-                target.getDriver().findElement(By.tagName("body")),
-                target.getCommandExecutor());
-        return body.$(ContextMenuElement.class).withAttribute("opened")
-                .waitForFirst();
+        return target.$(ContextMenuElement.class).onPage()
+                .withAttribute("opened").waitForFirst();
     }
 
     /**

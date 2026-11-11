@@ -13,35 +13,27 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.jspecify.annotations.Nullable;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.Dimension;
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.Rectangle;
 import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WrapsElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.backend.selenium.SeleniumElementBackend;
@@ -50,7 +42,6 @@ import com.vaadin.testbench.commands.ScreenshotComparator;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.elementsbase.Element;
-import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.spi.ElementBackend;
 
 /**
@@ -117,7 +108,7 @@ public class TestBenchElement implements WrapsElement, HasDriver,
      *         <code>false</code> otherwise
      */
     protected boolean isChrome() {
-        return BrowserUtil.isChrome(getCapabilities());
+        return isBrowser("chrome", "chrome-headless-shell");
     }
 
     /**
@@ -127,7 +118,14 @@ public class TestBenchElement implements WrapsElement, HasDriver,
      *         <code>false</code> otherwise
      */
     protected boolean isFirefox() {
-        return BrowserUtil.isFirefox(getCapabilities());
+        return isBrowser("firefox");
+    }
+
+    // The names Selenium's Browser.CHROME and Browser.FIREFOX match
+    private boolean isBrowser(String... names) {
+        String browserName = getCommandExecutor() == null ? null
+                : getCommandExecutor().getBackend().getBrowserName();
+        return Arrays.asList(names).contains(browserName);
     }
 
     /**
@@ -336,14 +334,47 @@ public class TestBenchElement implements WrapsElement, HasDriver,
         return elementBackend.getText();
     }
 
-    public List<TestBenchElement> findElements(By by) {
+    public List<TestBenchElement> findElements(org.openqa.selenium.By by) {
         return TestBenchElement.wrapElements(
                 getWrappedElement().findElements(by), getCommandExecutor());
     }
 
-    public TestBenchElement findElement(By by) {
+    public TestBenchElement findElement(org.openqa.selenium.By by) {
         waitForVaadin();
         return wrapElement(getWrappedElement().findElement(by),
+                getCommandExecutor());
+    }
+
+    /**
+     * The descendants {@code by} matches, in the light DOM only: unlike
+     * {@code $}, this never looks inside a shadow root.
+     */
+    @SuppressWarnings("deprecation")
+    public List<TestBenchElement> findElements(By by) {
+        waitForVaadin();
+        return getElementBackend().findElements(by.toCssSelector()).stream()
+                .map(found -> TestBench.createElement(TestBenchElement.class,
+                        found, getCommandExecutor()))
+                .toList();
+    }
+
+    /**
+     * The first descendant {@code by} matches, in the light DOM only: unlike
+     * {@code $}, this never looks inside a shadow root.
+     *
+     * @throws NoSuchElementException
+     *             if nothing matches
+     */
+    @SuppressWarnings("deprecation")
+    public TestBenchElement findElement(By by) {
+        waitForVaadin();
+        List<ElementBackend> found = getElementBackend()
+                .findElements(by.toCssSelector());
+        if (found.isEmpty()) {
+            throw new NoSuchElementException(
+                    "Unable to locate an element with " + by);
+        }
+        return TestBench.createElement(TestBenchElement.class, found.get(0),
                 getCommandExecutor());
     }
 
@@ -369,6 +400,9 @@ public class TestBenchElement implements WrapsElement, HasDriver,
         return elementBackend.getCssValue(propertyName);
     }
 
+    /**
+     * Clicks at an offset from the element's centre, holding the modifiers.
+     */
     public void click(int x, int y, Keys... modifiers) {
         ensureInteractable();
         waitForVaadin();
@@ -448,8 +482,7 @@ public class TestBenchElement implements WrapsElement, HasDriver,
     public Rectangle getRect() {
         waitForVaadin();
         ElementBackend.Rect rect = elementBackend.getRect();
-        return new Rectangle(new Point(rect.x(), rect.y()),
-                new Dimension(rect.width(), rect.height()));
+        return new Rectangle(rect.x(), rect.y(), rect.height(), rect.width());
     }
 
     /**
@@ -641,61 +674,37 @@ public class TestBenchElement implements WrapsElement, HasDriver,
     }
 
     /**
-     * Waits the given number of seconds for the given condition to become
-     * neither null nor false. {@link NotFoundException}s are ignored by
-     * default.
-     * <p>
-     * Use e.g. as
-     * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by), 10);</code>
+     * Waits up to {@code timeoutInSeconds} for the condition to return neither
+     * {@code null} nor {@code false}, polling as {@link Wait} does:
      *
-     * @param <T>
-     *            The return type of the {@link ExpectedCondition} and this
-     *            method
-     * @param condition
-     *            Models a condition that might reasonably be expected to
-     *            eventually evaluate to something that is neither null nor
-     *            false.
-     * @param timeoutInSeconds
-     *            The timeout in seconds for the wait.
-     * @return The condition's return value if it returned something different
-     *         from null or false before the timeout expired.
+     * <pre>{@code
+     * waitUntil(driver -> !getPropertyBoolean("loading"), 30);
+     * }</pre>
      *
+     * @return the condition's first value that is neither {@code null} nor
+     *         {@code false}
      * @throws TimeoutException
-     *             If the timeout expires.
-     *
-     * @see FluentWait#until
-     * @see ExpectedCondition
+     *             if the time runs out
      */
-    protected <T> T waitUntil(ExpectedCondition<T> condition,
+    protected <T> T waitUntil(WaitCondition<T> condition,
             long timeoutInSeconds) {
-        return new WebDriverWait(getDriver(),
-                Duration.ofSeconds(timeoutInSeconds)).until(condition);
+        return Wait.until(new Supplier<>() {
+            @Override
+            public T get() {
+                return condition.apply(getCommandExecutor());
+            }
+
+            @Override
+            public String toString() {
+                return condition.toString();
+            }
+        }, Duration.ofSeconds(timeoutInSeconds));
     }
 
     /**
-     * Waits up to 10 seconds for the given condition to become neither null nor
-     * false. {@link NotFoundException}s are ignored by default.
-     * <p>
-     * Use e.g. as
-     * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by));</code>
-     *
-     * @param <T>
-     *            The return type of the {@link ExpectedCondition} and this
-     *            method
-     * @param condition
-     *            Models a condition that might reasonably be expected to
-     *            eventually evaluate to something that is neither null nor
-     *            false.
-     * @return The condition's return value if it returned something different
-     *         from null or false before the timeout expired.
-     *
-     * @throws TimeoutException
-     *             If 10 seconds passed.
-     *
-     * @see FluentWait#until
-     * @see ExpectedCondition
+     * Waits up to 10 seconds, as {@link #waitUntil(WaitCondition, long)}.
      */
-    protected <T> T waitUntil(ExpectedCondition<T> condition) {
+    protected <T> T waitUntil(WaitCondition<T> condition) {
         return waitUntil(condition, 10);
     }
 

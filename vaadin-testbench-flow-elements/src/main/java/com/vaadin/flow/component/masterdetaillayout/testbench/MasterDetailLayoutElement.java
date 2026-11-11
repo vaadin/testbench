@@ -15,8 +15,7 @@
  */
 package com.vaadin.flow.component.masterdetaillayout.testbench;
 
-import org.openqa.selenium.By;
-
+import com.vaadin.testbench.By;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.Element;
 
@@ -32,7 +31,7 @@ public class MasterDetailLayoutElement extends TestBenchElement {
      * @return the element in the master area, or {@code null} if not set
      */
     public TestBenchElement getMaster() {
-        return (TestBenchElement) findElements(By.xpath("./*[ @slot='' ]"))
+        return (TestBenchElement) findElements(By.cssSelector(":scope > [slot='']"))
                 .stream().findFirst().orElse(null);
     }
 
@@ -43,7 +42,7 @@ public class MasterDetailLayoutElement extends TestBenchElement {
      */
     public TestBenchElement getDetail() {
         return (TestBenchElement) findElements(
-                By.xpath("./*[ @slot='detail' ]")).stream().findFirst()
+                By.cssSelector(":scope > [slot='detail']")).stream().findFirst()
                 .orElse(null);
     }
 }

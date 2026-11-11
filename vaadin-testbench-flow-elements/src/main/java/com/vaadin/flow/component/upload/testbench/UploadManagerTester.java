@@ -28,9 +28,11 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.LocalFileDetector;
 import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.safari.SafariDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.vaadin.testbench.TestBenchElement;
+import com.vaadin.testbench.Wait;
+import com.vaadin.testbench.backend.selenium.SeleniumBackend;
+import com.vaadin.testbench.backend.selenium.SeleniumElementBackend;
 
 /**
  * A test helper class for interacting with the client-side UploadManager. This
@@ -125,9 +127,9 @@ public class UploadManagerTester {
      *            the maximum number of seconds to wait
      */
     public void waitForUploads(int maxSeconds) {
-        new WebDriverWait(element.getDriver(), Duration.ofSeconds(maxSeconds))
-                .until(driver -> (boolean) executeScript(
-                        "return arguments[0].manager.files.every(f => !f.uploading)"));
+        Wait.until(() -> (boolean) executeScript(
+                "return arguments[0].manager.files.every(f => !f.uploading)"),
+                Duration.ofSeconds(maxSeconds));
     }
 
     /**
@@ -166,7 +168,7 @@ public class UploadManagerTester {
                         + "return input;");
 
         // Set up local file detector for remote drivers
-        if (!isLocalDriver(element.getDriver())) {
+        if (isRemoteSelenium()) {
             setLocalFileDetector(fileInput);
         }
 
@@ -204,7 +206,8 @@ public class UploadManagerTester {
     }
 
     private void setLocalFileDetector(TestBenchElement fileInput) {
-        WebElement realElement = fileInput.getWrappedElement();
+        WebElement realElement = ((SeleniumElementBackend) fileInput
+                .getElementBackend()).getWebElement();
         while (realElement instanceof WrapsElement wrapsElement) {
             realElement = wrapsElement.getWrappedElement();
         }
@@ -213,13 +216,20 @@ public class UploadManagerTester {
         }
     }
 
-    private static boolean isLocalDriver(WebDriver driver) {
+    // A remote Selenium browser needs the file sent to it first; other
+    // backends read it locally
+    private boolean isRemoteSelenium() {
+        if (!(element.getCommandExecutor()
+                .getBackend() instanceof SeleniumBackend selenium)) {
+            return false;
+        }
+        WebDriver driver = selenium.getDriver();
         while (driver instanceof WrapsDriver wrapsDriver) {
             driver = wrapsDriver.getWrappedDriver();
         }
-        return driver instanceof ChromiumDriver
+        return !(driver instanceof ChromiumDriver
                 || driver instanceof FirefoxDriver
-                || driver instanceof SafariDriver;
+                || driver instanceof SafariDriver);
     }
 
     private Object executeScript(String script, Object... args) {

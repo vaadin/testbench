@@ -10,6 +10,7 @@ package com.vaadin.testbench.backend.selenium;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.By;
@@ -52,116 +53,130 @@ public class SeleniumElementBackend implements ElementBackend {
 
     @Override
     public void click() {
-        element.click();
+        run(element::click);
     }
 
     @Override
     public void click(int xOffsetFromCenter, int yOffsetFromCenter,
             CharSequence... modifiers) {
-        Actions actions = actions().moveToElement(element, xOffsetFromCenter,
-                yOffsetFromCenter);
-        for (CharSequence modifier : modifiers) {
-            actions.keyDown(modifier);
-        }
-        actions.click();
-        for (CharSequence modifier : modifiers) {
-            actions.keyUp(modifier);
-        }
-        actions.build().perform();
+        run(() -> {
+            Actions actions = actions().moveToElement(element,
+                    xOffsetFromCenter, yOffsetFromCenter);
+            for (CharSequence modifier : modifiers) {
+                actions.keyDown(modifier);
+            }
+            actions.click();
+            for (CharSequence modifier : modifiers) {
+                actions.keyUp(modifier);
+            }
+            actions.build().perform();
+        });
     }
 
     @Override
     public void doubleClick() {
-        actions().doubleClick(element).build().perform();
+        run(() -> actions().doubleClick(element).build().perform());
     }
 
     @Override
     public void contextClick() {
-        actions().contextClick(element).build().perform();
+        run(() -> actions().contextClick(element).build().perform());
     }
 
     @Override
     public void hover() {
-        actions().moveToElement(element).perform();
+        run(() -> actions().moveToElement(element).perform());
     }
 
     @Override
     public void sendKeys(CharSequence... keys) {
-        element.sendKeys(keys);
+        run(() -> element.sendKeys(keys));
     }
 
     @Override
     public void clear() {
-        element.clear();
+        run(element::clear);
     }
 
     @Override
     public List<ElementBackend> findElements(String cssSelector) {
-        try {
-            return element.findElements(By.cssSelector(cssSelector)).stream()
-                    .<ElementBackend> map(
-                            found -> new SeleniumElementBackend(backend, found))
-                    .toList();
-        } catch (WebDriverException e) {
-            throw SeleniumBackend.translate(e);
-        }
+        return call(() -> element.findElements(By.cssSelector(cssSelector))
+                .stream()
+                .<ElementBackend> map(
+                        found -> new SeleniumElementBackend(backend, found))
+                .toList());
     }
 
     @Override
     public String getTagName() {
-        return element.getTagName();
+        return call(element::getTagName);
     }
 
     @Override
     public @Nullable String getAttribute(String name) {
-        return element.getAttribute(name);
+        return call(() -> element.getAttribute(name));
     }
 
     @Override
     public @Nullable String getDomAttribute(String name) {
-        return element.getDomAttribute(name);
+        return call(() -> element.getDomAttribute(name));
     }
 
     @Override
     public @Nullable String getDomProperty(String name) {
-        return element.getDomProperty(name);
+        return call(() -> element.getDomProperty(name));
     }
 
     @Override
     public String getText() {
-        return element.getText();
+        return call(element::getText);
     }
 
     @Override
     public String getCssValue(String propertyName) {
-        return element.getCssValue(propertyName);
+        return call(() -> element.getCssValue(propertyName));
     }
 
     @Override
     public boolean isDisplayed() {
-        return element.isDisplayed();
+        return call(element::isDisplayed);
     }
 
     @Override
     public boolean isEnabled() {
-        return element.isEnabled();
+        return call(element::isEnabled);
     }
 
     @Override
     public boolean isSelected() {
-        return element.isSelected();
+        return call(element::isSelected);
     }
 
     @Override
     public Rect getRect() {
-        Rectangle rect = element.getRect();
+        Rectangle rect = call(element::getRect);
         return new Rect(rect.getX(), rect.getY(), rect.getWidth(),
                 rect.getHeight());
     }
 
     @Override
     public byte[] getScreenshot() {
-        return element.getScreenshotAs(OutputType.BYTES);
+        return call(() -> element.getScreenshotAs(OutputType.BYTES));
+    }
+
+    private static <T> T call(Supplier<T> seleniumCall) {
+        try {
+            return seleniumCall.get();
+        } catch (WebDriverException e) {
+            throw SeleniumBackend.translate(e);
+        }
+    }
+
+    private static void run(Runnable seleniumCall) {
+        call(() -> {
+            seleniumCall.run();
+            return null;
+        });
     }
 
     /**

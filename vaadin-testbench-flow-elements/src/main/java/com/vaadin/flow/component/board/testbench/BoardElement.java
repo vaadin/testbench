@@ -11,9 +11,8 @@ package com.vaadin.flow.component.board.testbench;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
+import com.vaadin.testbench.By;
+import com.vaadin.testbench.NoSuchElementException;
 
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.Element;
@@ -50,7 +49,7 @@ public class BoardElement extends TestBenchElement {
      */
     public List<RowElement> getRows() {
         List<TestBenchElement> elements = findElements(
-                By.xpath("./vaadin-board-row"));
+                By.cssSelector(":scope > vaadin-board-row"));
         List<RowElement> rElements = new ArrayList<RowElement>();
         for (TestBenchElement elem : elements) {
             rElements.add(elem.wrap(RowElement.class));

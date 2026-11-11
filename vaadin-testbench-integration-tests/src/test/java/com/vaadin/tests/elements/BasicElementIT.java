@@ -13,7 +13,7 @@ import java.util.Collections;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.TimeoutException;
+import com.vaadin.testbench.TimeoutException;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ElementQueryView;

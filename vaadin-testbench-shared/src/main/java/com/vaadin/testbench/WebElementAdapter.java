@@ -9,6 +9,7 @@
 package com.vaadin.testbench;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -25,6 +26,10 @@ import org.openqa.selenium.WrapsElement;
  * Selenium signature demands one: the driver's {@code findElement},
  * {@link TestBenchElement#getContext()}, an element screenshot. Every call goes
  * to the element, so it waits for Vaadin as the element does.
+ * <p>
+ * It answers as a Selenium element would: TestBench's own exceptions and
+ * geometry come back as Selenium's, so that Selenium code catching them, such
+ * as {@code ExpectedConditions.stalenessOf}, keeps working.
  * <p>
  * {@link ElementQuery#context(SearchContext)} and
  * {@link TestBench#createElement(Class, WebElement, com.vaadin.testbench.commands.TestBenchCommandExecutor)}
@@ -44,110 +49,135 @@ final class WebElementAdapter implements WebElement, WrapsElement {
 
     @Override
     public WebElement getWrappedElement() {
-        return element.getWrappedElement();
+        return selenium(element::getWrappedElement);
     }
 
     @Override
     public void click() {
-        element.click();
+        seleniumRun(element::click);
     }
 
     @Override
     public void submit() {
-        element.submit();
+        seleniumRun(element::submit);
     }
 
     @Override
     public void sendKeys(CharSequence... keysToSend) {
-        element.sendKeys(keysToSend);
+        seleniumRun(() -> element.sendKeys(keysToSend));
     }
 
     @Override
     public void clear() {
-        element.clear();
+        seleniumRun(element::clear);
     }
 
     @Override
     public String getTagName() {
-        return element.getTagName();
+        return selenium(element::getTagName);
     }
 
     @Override
     public String getDomProperty(String name) {
-        return element.getDomProperty(name);
+        return selenium(() -> element.getDomProperty(name));
     }
 
     @Override
     public String getDomAttribute(String name) {
-        return element.getDomAttribute(name);
+        return selenium(() -> element.getDomAttribute(name));
     }
 
     @Override
     public String getAttribute(String name) {
-        return element.getAttribute(name);
+        return selenium(() -> element.getAttribute(name));
     }
 
     @Override
     public boolean isSelected() {
-        return element.isSelected();
+        return selenium(element::isSelected);
     }
 
     @Override
     public boolean isEnabled() {
-        return element.isEnabled();
+        return selenium(element::isEnabled);
     }
 
     @Override
     public String getText() {
-        return element.getText();
+        return selenium(element::getText);
     }
 
     @Override
     public List<WebElement> findElements(By by) {
-        return element.findElements(by).stream()
-                .map(TestBenchElement::asWebElement).toList();
+        return selenium(() -> element.findElements(by).stream()
+                .map(TestBenchElement::asWebElement).toList());
     }
 
     @Override
     public WebElement findElement(By by) {
-        return element.findElement(by).asWebElement();
+        return selenium(() -> element.findElement(by).asWebElement());
     }
 
     @Override
     @SuppressWarnings("deprecation")
     public SearchContext getShadowRoot() {
-        return element.getShadowRoot();
+        return selenium(element::getShadowRoot);
     }
 
     @Override
     public boolean isDisplayed() {
-        return element.isDisplayed();
+        return selenium(element::isDisplayed);
     }
 
     @Override
     public Point getLocation() {
-        return element.getLocation();
+        com.vaadin.testbench.Point location = selenium(element::getLocation);
+        return new Point(location.getX(), location.getY());
     }
 
     @Override
     public Dimension getSize() {
-        return element.getSize();
+        com.vaadin.testbench.Dimension size = selenium(element::getSize);
+        return new Dimension(size.getWidth(), size.getHeight());
     }
 
     @Override
     public Rectangle getRect() {
-        return element.getRect();
+        com.vaadin.testbench.Rectangle rect = selenium(element::getRect);
+        return new Rectangle(rect.getX(), rect.getY(), rect.getHeight(),
+                rect.getWidth());
     }
 
     @Override
     public String getCssValue(String propertyName) {
-        return element.getCssValue(propertyName);
+        return selenium(() -> element.getCssValue(propertyName));
     }
 
     @Override
     public <X> X getScreenshotAs(OutputType<X> target)
             throws WebDriverException {
-        return element.getScreenshotAs(target);
+        return selenium(() -> element.getScreenshotAs(target));
+    }
+
+    private static <T> T selenium(Supplier<T> call) {
+        try {
+            return call.get();
+        } catch (StaleElementReferenceException e) {
+            throw new org.openqa.selenium.StaleElementReferenceException(
+                    e.getMessage(), e);
+        } catch (NoSuchElementException e) {
+            throw new org.openqa.selenium.NoSuchElementException(
+                    e.getMessage(), e);
+        } catch (TimeoutException e) {
+            throw new org.openqa.selenium.TimeoutException(e.getMessage(), e);
+        }
+    }
+
+    private static void seleniumRun(Runnable call) {
+        selenium(() -> {
+            call.run();
+            return null;
+        });
     }
 
     @Override

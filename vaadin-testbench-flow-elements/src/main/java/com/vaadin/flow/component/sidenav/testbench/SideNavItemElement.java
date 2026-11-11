@@ -18,10 +18,8 @@ package com.vaadin.flow.component.sidenav.testbench;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
-
+import com.vaadin.testbench.By;
+import com.vaadin.testbench.NoSuchElementException;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.Element;
 
@@ -41,8 +39,8 @@ public class SideNavItemElement extends TestBenchElement {
     }
 
     public String getLabel() {
-        final WebElement unnamedSlot = getWrappedElement().getShadowRoot()
-                .findElement(By.cssSelector("slot:not([name])"));
+        final TestBenchElement unnamedSlot = findInShadowRoot(
+                "slot:not([name])");
         return (String) executeScript(
                 "return arguments[0].assignedNodes().map(node => {"
                         + "  return (node.nodeType === Node.TEXT_NODE) ? node.textContent.trim() : ''"
@@ -68,10 +66,9 @@ public class SideNavItemElement extends TestBenchElement {
     }
 
     public void navigate() {
-        WebElement anchorElement;
+        TestBenchElement anchorElement;
         try {
-            anchorElement = getWrappedElement().getShadowRoot()
-                    .findElement((By.cssSelector("a")));
+            anchorElement = findInShadowRoot("a");
         } catch (NoSuchElementException e) {
             throw new NoSuchElementException("Item does not contain an anchor",
                     e);
@@ -81,11 +78,10 @@ public class SideNavItemElement extends TestBenchElement {
     }
 
     public void toggle() {
-        WebElement toggleButtonElement;
+        TestBenchElement toggleButtonElement;
         try {
-            toggleButtonElement = getWrappedElement().getShadowRoot()
-                    .findElement(
-                            By.cssSelector("button[part='toggle-button']"));
+            toggleButtonElement = findInShadowRoot(
+                    "button[part='toggle-button']");
         } catch (NoSuchElementException e) {
             throw new NoSuchElementException(
                     "Item does not contain a toggle button", e);
@@ -95,10 +91,22 @@ public class SideNavItemElement extends TestBenchElement {
     }
 
     private Stream<SideNavItemElement> getItemsStream(boolean includeChildren) {
-        String xpathExp = includeChildren ? ".//vaadin-side-nav-item"
-                : "vaadin-side-nav-item";
-        return findElements(By.xpath(xpathExp)).stream()
+        String selector = includeChildren ? "vaadin-side-nav-item"
+                : ":scope > vaadin-side-nav-item";
+        return findElements(By.cssSelector(selector)).stream()
                 .map(testBenchElement -> testBenchElement
                         .wrap(SideNavItemElement.class));
+    }
+
+    // What Selenium's getShadowRoot().findElement(By.cssSelector(...)) found
+    private TestBenchElement findInShadowRoot(String cssSelector) {
+        TestBenchElement found = (TestBenchElement) executeScript(
+                "return arguments[0].shadowRoot.querySelector(arguments[1])",
+                this, cssSelector);
+        if (found == null) {
+            throw new NoSuchElementException(
+                    "No element matches " + cssSelector + " in the shadow root");
+        }
+        return found;
     }
 }

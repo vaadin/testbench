@@ -8,7 +8,7 @@
  */
 package com.vaadin.flow.component.spreadsheet.testbench;
 
-import org.openqa.selenium.By;
+import com.vaadin.testbench.By;
 
 import com.vaadin.testbench.TestBenchElement;
 

@@ -95,6 +95,21 @@ public class SeleniumBackendTest {
     }
 
     @Test(expected = StaleElementReferenceException.class)
+    public void executeScriptThrowsTestBenchsStaleElement() {
+        Mockito.when(driver.executeScript("script")).thenThrow(
+                new org.openqa.selenium.StaleElementReferenceException("gone"));
+        backend.executeScript("script");
+    }
+
+    @Test(expected = StaleElementReferenceException.class)
+    public void everyElementMethodThrowsTestBenchsStaleElement() {
+        WebElement gone = Mockito.mock(WebElement.class);
+        Mockito.when(gone.getText()).thenThrow(
+                new org.openqa.selenium.StaleElementReferenceException("gone"));
+        new SeleniumElementBackend(backend, gone).getText();
+    }
+
+    @Test(expected = StaleElementReferenceException.class)
     public void findElementsInAGoneElementThrowsTestBenchsStaleElement() {
         WebElement parent = Mockito.mock(WebElement.class);
         Mockito.when(parent.findElements(Mockito.any())).thenThrow(

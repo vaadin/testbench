@@ -37,7 +37,9 @@ public interface HasElementQuery extends HasSearchContext {
      * is the driver.
      *
      * @param tagName
-     *            the tag name of the element to find
+     *            the tag name of the element to find, such as
+     *            {@code "vaadin-button"}, or {@code "*"} for any; not a CSS
+     *            selector, which throws on any backend but Selenium
      * @return an appropriate {@link ElementQuery} instance
      */
     public default ElementQuery<TestBenchElement> $(String tagName) {

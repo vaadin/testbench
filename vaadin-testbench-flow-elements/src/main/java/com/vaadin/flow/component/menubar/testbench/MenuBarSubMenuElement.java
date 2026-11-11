@@ -18,9 +18,9 @@ package com.vaadin.flow.component.menubar.testbench;
 import java.util.List;
 import java.util.Optional;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TimeoutException;
+import com.vaadin.testbench.By;
+import com.vaadin.testbench.StaleElementReferenceException;
+import com.vaadin.testbench.TimeoutException;
 
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.Element;

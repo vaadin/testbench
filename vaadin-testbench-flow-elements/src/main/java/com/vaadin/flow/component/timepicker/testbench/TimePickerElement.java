@@ -17,7 +17,7 @@ package com.vaadin.flow.component.timepicker.testbench;
 
 import java.util.Objects;
 
-import org.openqa.selenium.Keys;
+import com.vaadin.testbench.Keys;
 
 import com.vaadin.testbench.HasClearButton;
 import com.vaadin.testbench.HasHelper;

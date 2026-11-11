@@ -15,11 +15,8 @@
  */
 package com.vaadin.flow.component.breadcrumbs.testbench;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
-
 import com.vaadin.testbench.ElementQuery;
+import com.vaadin.testbench.NoSuchElementException;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.Element;
 
@@ -88,13 +85,13 @@ public class BreadcrumbsItemElement extends TestBenchElement {
      *             if this item has no link, such as the current item
      */
     public void navigate() {
-        WebElement anchor;
-        try {
-            anchor = getWrappedElement().getShadowRoot()
-                    .findElement(By.cssSelector("a"));
-        } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Item does not contain an anchor",
-                    e);
+        // What Selenium's getShadowRoot().findElement(By.cssSelector("a"))
+        // found
+        TestBenchElement anchor = (TestBenchElement) executeScript(
+                "return arguments[0].shadowRoot.querySelector('a')", this);
+        if (anchor == null) {
+            throw new NoSuchElementException(
+                    "Item does not contain an anchor");
         }
         // click() on elements in shadow DOM does not work with Chrome driver.
         // Using executeScript also navigates items that are collapsed into the

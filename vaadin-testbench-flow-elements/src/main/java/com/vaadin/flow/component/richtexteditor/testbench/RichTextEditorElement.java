@@ -24,8 +24,11 @@ public class RichTextEditorElement extends TestBenchElement {
     public List getTitles() {
         TestBenchElement toolbar = $("div")
                 .withAttributeContainingWord("part", "toolbar").first();
-        List<TestBenchElement> buttonTooltips = toolbar
-                .$("button + vaadin-tooltip").all();
+        // A sibling combinator has no $ form; the toolbar has no shadow root,
+        // so its light DOM is all $ searched
+        List<TestBenchElement> buttonTooltips = (List<TestBenchElement>) executeScript(
+                "return Array.from(arguments[0].querySelectorAll('button + vaadin-tooltip'))",
+                toolbar);
         return buttonTooltips.stream()
                 .map(tooltip -> tooltip.getProperty("text")).toList();
     }

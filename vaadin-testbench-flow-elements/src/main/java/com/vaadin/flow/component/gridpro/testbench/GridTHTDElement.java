@@ -8,7 +8,7 @@
  */
 package com.vaadin.flow.component.gridpro.testbench;
 
-import org.openqa.selenium.NoSuchElementException;
+import com.vaadin.testbench.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
 
 import com.vaadin.testbench.TestBenchElement;
@@ -77,8 +77,8 @@ public class GridTHTDElement extends TestBenchElement {
 
     @Override
     public SearchContext getContext() {
-        return (SearchContext) executeScript(
+        return ((TestBenchElement) executeScript(
                 "return arguments[0].querySelector('slot').assignedNodes()[0];",
-                this);
+                this)).getContext();
     }
 }

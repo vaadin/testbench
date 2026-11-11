@@ -15,7 +15,7 @@
  */
 package com.vaadin.flow.component.dialog.testbench;
 
-import org.openqa.selenium.StaleElementReferenceException;
+import com.vaadin.testbench.StaleElementReferenceException;
 
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.Element;

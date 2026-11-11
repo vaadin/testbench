@@ -11,8 +11,7 @@ package com.vaadin.flow.component.spreadsheet.testbench;
 import java.util.List;
 import java.util.Optional;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
+import com.vaadin.testbench.By;
 
 import com.vaadin.testbench.TestBenchElement;
 
@@ -41,7 +40,7 @@ public class SheetCellElement extends TestBenchElement {
         if (isNormalCell()) {
             // Single async JS call that selects the cell, activates the
             // inline editor, sets the value, and commits with Tab.
-            Boolean result = (Boolean) getCommandExecutor().getDriver()
+            Boolean result = (Boolean) getCommandExecutor()
                     .executeAsyncScript(
                             """
                                     const cell = arguments[0];
@@ -118,7 +117,7 @@ public class SheetCellElement extends TestBenchElement {
                             this, parent, newValue);
 
             if (Boolean.FALSE.equals(result)) {
-                throw new org.openqa.selenium.TimeoutException(
+                throw new com.vaadin.testbench.TimeoutException(
                         "setValue timed out for cell "
                                 + getDomAttribute("class") + " with value '"
                                 + newValue + "'");

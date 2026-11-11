@@ -17,19 +17,20 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.annotations.Attribute;
+import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.elementsbase.Element;
 import com.vaadin.testbench.internal.SharedUtil;
@@ -346,7 +347,9 @@ public class ElementQuery<T extends TestBenchElement> {
      * @param elementClass
      *            the type of element to return
      * @param tagName
-     *            the tag name of the element to find
+     *            the tag name of the element to find, such as
+     *            {@code "vaadin-button"}, or {@code "*"} for any; not a CSS
+     *            selector, which throws on any backend but Selenium
      */
     public ElementQuery(Class<T> elementClass, String tagName) {
         this.elementClass = elementClass;
@@ -1309,16 +1312,15 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     public T waitForSingle(long timeoutInSeconds) {
         try {
-            return new WebDriverWait(getDriver(),
-                    Duration.ofSeconds(timeoutInSeconds))
-                    .until(driver -> single());
+            return Wait.until(this::single,
+                    Duration.ofSeconds(timeoutInSeconds));
         } catch (TimeoutException timeout) {
             // The NoSuchElementException thrown by single() is ignored while
             // waiting and reported as the cause of the timeout. Rethrow it as
             // a NoSuchElementException so that both the exception type and the
             // reason for the failure match single().
             if (timeout.getCause() instanceof NoSuchElementException cause) {
-                throw new NoSuchElementException(cause.getRawMessage()
+                throw new NoSuchElementException(cause.getMessage()
                         + " Timed out after " + timeoutInSeconds + "s.", cause);
             }
             throw timeout;
@@ -1404,14 +1406,13 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     @Deprecated(since = "10.0", forRemoval = true)
     public T waitForFirst(long timeOutInSeconds) {
-        T result = new WebDriverWait(getDriver(),
-                Duration.ofSeconds(timeOutInSeconds)).until(driver -> {
-                    try {
-                        return first();
-                    } catch (NoSuchElementException e) {
-                        return null;
-                    }
-                });
+        T result = Wait.until(() -> {
+            try {
+                return first();
+            } catch (NoSuchElementException e) {
+                return null;
+            }
+        }, Duration.ofSeconds(timeOutInSeconds));
         if (result == null) {
             throw new NoSuchElementException(getNoSuchElementMessage(null));
         } else {
@@ -1556,6 +1557,7 @@ public class ElementQuery<T extends TestBenchElement> {
             }
         }
 
+        checkTagName(executor);
         if (index != null) {
             script.append("[").append(index).append("]");
         }
@@ -1563,6 +1565,37 @@ public class ElementQuery<T extends TestBenchElement> {
         return executeSearchScript(script.toString(), elementContext, tagName,
                 getAttributePairs(), executor).stream()
                 .filter(this::satisfiesAllConditions).toList();
+    }
+
+    // A tag, as HTML, custom elements and SVG (foreignObject) name them. No
+    // ".": in a selector, div.x is a tag and a class
+    private static final Pattern TAG_NAME = Pattern
+            .compile("\\*|[A-Za-z][A-Za-z0-9_-]*");
+    private static final Set<String> WARNED_TAG_NAMES = ConcurrentHashMap
+            .newKeySet();
+
+    /**
+     * The search script pastes the tag name before the attribute filters, so
+     * a CSS selector happens to work, and a filter then applies to its last
+     * part only (vaadin/testbench#2394). The Selenium backend keeps allowing
+     * it, with a warning, until that issue is decided.
+     */
+    private void checkTagName(TestBenchCommandExecutor executor) {
+        if (TAG_NAME.matcher(tagName).matches()) {
+            return;
+        }
+        String message = "'" + tagName + "' is not a tag name. Use a tag "
+                + "name or \"*\", and filters such as withClassName() or "
+                + "withAttribute() for the rest";
+        // Temporary: remove when vaadin/testbench#2394 is decided
+        if (executor.getBackend() instanceof SeleniumBackend) {
+            if (WARNED_TAG_NAMES.add(tagName)) {
+                LoggerFactory.getLogger(ElementQuery.class).warn(message
+                        + "; it works on the Selenium backend only");
+            }
+            return;
+        }
+        throw new IllegalArgumentException(message);
     }
 
     private boolean satisfiesAllConditions(T element) {

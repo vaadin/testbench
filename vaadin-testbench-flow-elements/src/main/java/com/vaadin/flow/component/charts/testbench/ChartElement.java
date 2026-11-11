@@ -17,11 +17,12 @@ import com.vaadin.testbench.elementsbase.Element;
 public class ChartElement extends TestBenchElement {
 
     public List<TestBenchElement> getPoints() {
-        return $(".highcharts-point").all();
+        return $("*").withClassName("highcharts-point").all();
     }
 
     public List<TestBenchElement> getVisiblePoints() {
-        return $(":not([visibility=hidden]).highcharts-point").all();
+        return $("*").withClassName("highcharts-point")
+                .withoutAttribute("visibility", "hidden").all();
     }
 
 }

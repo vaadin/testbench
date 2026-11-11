@@ -17,7 +17,7 @@ package com.vaadin.flow.component.grid.testbench;
 
 import java.util.Arrays;
 
-import org.openqa.selenium.NoSuchElementException;
+import com.vaadin.testbench.NoSuchElementException;
 
 import com.vaadin.testbench.TestBenchElement;
 
@@ -134,7 +134,7 @@ public class TreeGridElement extends GridElement {
      */
     public int scrollToRowByPath(int... path) {
         waitUntilLoadingFinished();
-        return (int) (long) getCommandExecutor().getDriver()
+        return (int) (long) getCommandExecutor()
                 .executeAsyncScript("""
                         const [element, path, callback] = arguments;
                         const flatIndex = await element.scrollToIndex(...path);

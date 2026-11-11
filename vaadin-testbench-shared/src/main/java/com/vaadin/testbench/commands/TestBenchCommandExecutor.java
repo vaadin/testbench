@@ -285,11 +285,33 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
      */
     public Object executeScript(String script, Object... args) {
         waitForVaadin();
+        return fromBackend(getBackend().executeScript(script, toBackendArgs(args)));
+    }
+
+    /**
+     * Waits for Vaadin, then runs {@code script} until it calls back, Selenium
+     * style:
+     *
+     * <pre>{@code
+     * executeAsyncScript("var done = arguments[arguments.length - 1];"
+     *         + "setTimeout(() => done(arguments[0].value), 100);", field);
+     * }</pre>
+     *
+     * @return what the callback is called with, converted as
+     *         {@link #executeScript(String, Object...)} converts a result
+     */
+    public Object executeAsyncScript(String script, Object... args) {
+        waitForVaadin();
+        return fromBackend(
+                getBackend().executeAsyncScript(script, toBackendArgs(args)));
+    }
+
+    private static Object[] toBackendArgs(Object[] args) {
         Object[] backendArgs = new Object[args.length];
         for (int i = 0; i < args.length; i++) {
             backendArgs[i] = toBackend(args[i]);
         }
-        return fromBackend(getBackend().executeScript(script, backendArgs));
+        return backendArgs;
     }
 
     private static Object toBackend(Object value) {
@@ -324,10 +346,6 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
             return converted;
         }
         return value;
-    }
-
-    protected Object executeAsyncScript(String script, Object... args) {
-        return getDriver().executeAsyncScript(script, args);
     }
 
     /**

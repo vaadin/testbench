@@ -26,9 +26,9 @@ import org.jspecify.annotations.Nullable;
  * <p>
  * The Selenium backend is the reference: what a method does on Selenium today
  * is its contract, quirks included. A gone node throws TestBench's own
- * {@code StaleElementReferenceException}, and a search finding nothing its
- * {@code NoSuchElementException}; until the element classes catch those instead
- * of Selenium's, the older methods still throw Selenium's.
+ * {@code StaleElementReferenceException}, a search finding nothing its
+ * {@code NoSuchElementException}, a driver timeout its
+ * {@code TimeoutException}; never the library's own.
  */
 public interface Backend {
 

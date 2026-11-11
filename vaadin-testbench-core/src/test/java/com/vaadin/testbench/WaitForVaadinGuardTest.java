@@ -24,10 +24,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Answers;
 import org.mockito.Mockito;
-import org.openqa.selenium.By;
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -196,6 +194,8 @@ public class WaitForVaadinGuardTest {
             return new CharSequence[] { "x" };
         } else if (type == Keys[].class) {
             return new Keys[0];
+        } else if (type == org.openqa.selenium.Keys[].class) {
+            return new org.openqa.selenium.Keys[0];
         } else if (type == Object[].class) {
             return new Object[0];
         } else if (type == Map.class) {
@@ -204,6 +204,8 @@ public class WaitForVaadinGuardTest {
             return TestBenchElement.class;
         } else if (type == By.class) {
             return By.id("x");
+        } else if (type == org.openqa.selenium.By.class) {
+            return org.openqa.selenium.By.id("x");
         } else if (type == OutputType.class) {
             return OutputType.BYTES;
         } else if (type == File.class) {

@@ -18,9 +18,8 @@ package com.vaadin.flow.component.grid.testbench;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebElement;
+import com.vaadin.testbench.By;
+import com.vaadin.testbench.NoSuchElementException;
 
 import com.vaadin.flow.component.checkbox.testbench.CheckboxElement;
 import com.vaadin.testbench.TestBenchElement;
@@ -482,7 +481,7 @@ public class GridElement extends TestBenchElement {
             CheckboxElement checkbox = cell.getFirstChildElement()
                     .wrap(CheckboxElement.class);
             if (!checkbox.isChecked()) {
-                checkbox.getWrappedElement().click();
+                checkbox.getElementBackend().click();
             }
         } else if (!row.isSelected()) {
             activateRow(row);
@@ -512,7 +511,7 @@ public class GridElement extends TestBenchElement {
             CheckboxElement checkbox = cell.getFirstChildElement()
                     .wrap(CheckboxElement.class);
             if (checkbox.isChecked()) {
-                checkbox.getWrappedElement().click();
+                checkbox.getElementBackend().click();
             }
         } else if (row.isSelected()) {
             activateRow(row);

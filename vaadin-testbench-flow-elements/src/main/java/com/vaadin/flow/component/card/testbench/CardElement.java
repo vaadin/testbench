@@ -17,7 +17,7 @@ package com.vaadin.flow.component.card.testbench;
 
 import java.util.List;
 
-import org.openqa.selenium.By;
+import com.vaadin.testbench.By;
 
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.Element;

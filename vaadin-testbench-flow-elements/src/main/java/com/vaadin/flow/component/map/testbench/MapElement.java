@@ -10,8 +10,7 @@ package com.vaadin.flow.component.map.testbench;
 
 import java.util.List;
 
-import org.openqa.selenium.Rectangle;
-import org.openqa.selenium.interactions.Actions;
+import com.vaadin.testbench.Rectangle;
 
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.elementsbase.Element;
@@ -41,9 +40,7 @@ public class MapElement extends TestBenchElement {
     public void clickAtCoordinates(double x, double y) {
         PixelCoordinate pixelCoordinates = getPixelCoordinates(x, y, true);
 
-        new Actions(getDriver())
-                .moveToElement(getWrappedElement(), pixelCoordinates.x, pixelCoordinates.y)
-                .click().build().perform();
+        click(pixelCoordinates.x, pixelCoordinates.y);
     }
 
     /**
