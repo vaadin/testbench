@@ -284,12 +284,14 @@ public class PlaywrightBackend implements BrowserBackend {
 
     private static final String SCRIPT_TIMEOUT = "__tbScriptTimeout";
 
-    // Turns the arguments back from what Playwright can send, refuses a
-    // detached node, and defines finish(), which replaces each node in the
+    // Refuses a page still loading before the script runs, turns the arguments
+    // back from what Playwright can send, refuses a detached node, and
+    // defines finish(), which replaces each node in the
     // result by a marker with a stable id: the nodes themselves come back only
     // through a handle, fetched in a second call when there are any.
     private static final String PRELUDE = """
             input => {
+            if (document.readyState !== 'complete') return {loading: true};
             let stale = false;
             const decode = v => {
               if (v instanceof Node) { if (!v.isConnected) stale = true; return v; }
@@ -384,9 +386,23 @@ public class PlaywrightBackend implements BrowserBackend {
         return false;
     }
 
+    // As many waits as a page reloading itself in a loop may take; each is
+    // Playwright's own timeout
+    private static final int MAX_LOAD_WAITS = 10;
+
     private @Nullable Object runOnce(String source, @Nullable Object[] args) {
         Map<?, ?> result = (Map<?, ?>) page.evaluate(source,
                 toPlaywright(args));
+        // A navigation committed but not loaded: chromedriver waits for it
+        // before any command, and the script has not run yet
+        for (int i = 0; Boolean.TRUE.equals(result.get("loading"))
+                && i < MAX_LOAD_WAITS; i++) {
+            page.waitForLoadState();
+            result = (Map<?, ?>) page.evaluate(source, toPlaywright(args));
+        }
+        if (Boolean.TRUE.equals(result.get("loading"))) {
+            throw new TimeoutException("the page kept loading");
+        }
         if (Boolean.TRUE.equals(result.get("stale"))) {
             throw new StaleElementReferenceException(
                     "The element is no longer attached to the DOM");

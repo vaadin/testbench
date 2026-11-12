@@ -75,6 +75,13 @@
             <scope>test</scope>
             <optional>true</optional>
         </dependency>
+        <!-- LoadTestItHelper routes a Selenium ChromeDriver through the proxy -->
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-testbench-backend-selenium</artifactId>
+            <version>${testbench.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>flow-html-components-testbench</artifactId>
