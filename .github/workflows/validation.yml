@@ -210,9 +210,10 @@ jobs:
           echo "version=$(sed -n 's:.*<playwright.version>\(.*\)</playwright.version>.*:\1:p' \
             vaadin-testbench-backend-playwright/pom.xml)" >> "$GITHUB_OUTPUT"
 
-      - name: Cache Playwright browsers
+      - name: Restore Playwright browsers
+        id: playwright-cache
         if: matrix.backend == 'playwright'
-        uses: actions/cache@v5
+        uses: actions/cache/restore@v5
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ steps.playwright.outputs.version }}
@@ -225,6 +226,15 @@ jobs:
             org.codehaus.mojo:exec-maven-plugin:3.2.0:java \
             -Dexec.mainClass=com.microsoft.playwright.CLI \
             -Dexec.args="install --with-deps chromium"
+
+      - name: Save Playwright browsers
+        # Saved before the tests: actions/cache saves only from a job that succeeds,
+        # and the counting jobs fail by design.
+        if: matrix.backend == 'playwright' && steps.playwright-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.playwright.outputs.version }}
 
       - name: Run Integration Tests
         run: |
