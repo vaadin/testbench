@@ -170,17 +170,29 @@ public class PlaywrightBackend implements BrowserBackend {
 
     @Override
     public void back() {
-        page.goBack();
+        try {
+            page.goBack();
+        } catch (PlaywrightException e) {
+            throw translate(e);
+        }
     }
 
     @Override
     public void forward() {
-        page.goForward();
+        try {
+            page.goForward();
+        } catch (PlaywrightException e) {
+            throw translate(e);
+        }
     }
 
     @Override
     public void refresh() {
-        page.reload();
+        try {
+            page.reload();
+        } catch (PlaywrightException e) {
+            throw translate(e);
+        }
     }
 
     @Override

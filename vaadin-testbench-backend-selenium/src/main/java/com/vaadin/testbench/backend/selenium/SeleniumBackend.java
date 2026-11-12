@@ -174,24 +174,43 @@ public class SeleniumBackend implements BrowserBackend {
                 || unwrapped instanceof SafariDriver);
     }
 
+    // A page load past its timeout is TestBench's TimeoutException, as on
+    // Playwright
+
     @Override
     public void navigate(String url) {
-        driver.get(url);
+        try {
+            driver.get(url);
+        } catch (WebDriverException e) {
+            throw translate(e);
+        }
     }
 
     @Override
     public void back() {
-        driver.navigate().back();
+        try {
+            driver.navigate().back();
+        } catch (WebDriverException e) {
+            throw translate(e);
+        }
     }
 
     @Override
     public void forward() {
-        driver.navigate().forward();
+        try {
+            driver.navigate().forward();
+        } catch (WebDriverException e) {
+            throw translate(e);
+        }
     }
 
     @Override
     public void refresh() {
-        driver.navigate().refresh();
+        try {
+            driver.navigate().refresh();
+        } catch (WebDriverException e) {
+            throw translate(e);
+        }
     }
 
     @Override

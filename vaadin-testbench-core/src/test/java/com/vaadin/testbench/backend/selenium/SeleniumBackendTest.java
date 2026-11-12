@@ -96,6 +96,13 @@ public class SeleniumBackendTest {
                 found);
     }
 
+    @Test(expected = com.vaadin.testbench.TimeoutException.class)
+    public void aPageLoadTimeoutIsTestBenchsTimeout() {
+        Mockito.doThrow(new org.openqa.selenium.TimeoutException("slow"))
+                .when(driver).get("http://slow");
+        backend.navigate("http://slow");
+    }
+
     @Test(expected = StaleElementReferenceException.class)
     public void executeScriptThrowsTestBenchsStaleElement() {
         Mockito.when(driver.executeScript("script")).thenThrow(

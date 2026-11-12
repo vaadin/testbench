@@ -11,6 +11,7 @@ package com.vaadin.testbench;
 import java.time.Duration;
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.junit.Rule;
 import org.slf4j.Logger;
@@ -183,8 +184,19 @@ public abstract class TestBenchTestCase
     protected <T> T waitUntil(Function<BrowserDriver, T> condition,
             long timeoutInSeconds) {
         BrowserDriver browser = getDriver();
-        return Wait.until(() -> condition.apply(browser),
-                Duration.ofSeconds(timeoutInSeconds));
+        // The condition's toString names it in the timeout message, as in
+        // Selenium's WebDriverWait
+        return Wait.until(new Supplier<>() {
+            @Override
+            public T get() {
+                return condition.apply(browser);
+            }
+
+            @Override
+            public String toString() {
+                return condition.toString();
+            }
+        }, Duration.ofSeconds(timeoutInSeconds));
     }
 
     /** As {@link #waitUntil(Function, long)}, for up to 10 seconds. */
