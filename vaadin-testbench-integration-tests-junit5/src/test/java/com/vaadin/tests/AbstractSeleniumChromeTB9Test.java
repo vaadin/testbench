@@ -8,7 +8,7 @@
  */
 package com.vaadin.tests;
 
-import io.github.bonigarcia.seljup.DriverCapabilities;
+import io.github.bonigarcia.seljup.Options;
 import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -23,11 +23,13 @@ import com.vaadin.testbench.Parameters;
 public abstract class AbstractSeleniumChromeTB9Test
         extends AbstractSeleniumTB9Test {
 
-    @DriverCapabilities
+    @Options
     ChromeOptions options = createOptions();
 
     // Selenium-Jupiter builds the ChromeDriver itself, so TestBench's
-    // headless parameter reaches it only through these options
+    // headless parameter reaches it only through these options. A local
+    // driver takes them from an @Options field; @DriverCapabilities is read
+    // for a remote one only
     private static ChromeOptions createOptions() {
         ChromeOptions options = new ChromeOptions();
         if (Parameters.isHeadless()) {
