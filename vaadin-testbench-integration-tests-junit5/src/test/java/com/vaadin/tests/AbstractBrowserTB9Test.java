@@ -14,9 +14,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import com.vaadin.testbench.Capabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.ScreenshotOnFailureExtension;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.BrowserFactory;

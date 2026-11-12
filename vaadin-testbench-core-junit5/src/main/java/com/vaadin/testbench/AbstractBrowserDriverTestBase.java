@@ -9,8 +9,8 @@
 package com.vaadin.testbench;
 
 /**
- * Base class for tests using the browser driver. Provides wrapping for
- * {@link TestBenchDriverProxy}.
+ * Base class for tests using the browser driver: holds the test's
+ * {@link BrowserDriver}.
  *
  * @since 9.0
  */

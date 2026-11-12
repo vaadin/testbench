@@ -249,7 +249,7 @@ public class SeleniumElementBackend implements ElementBackend {
 
     /**
      * Also equal to the {@link WebElement} itself, or anything wrapping it,
-     * since {@link WebElement#equals} is.
+     * since a {@code WebElement}'s {@code equals} is.
      */
     @Override
     public boolean equals(Object obj) {

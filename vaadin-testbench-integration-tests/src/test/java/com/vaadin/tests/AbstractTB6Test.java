@@ -16,9 +16,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import com.vaadin.testbench.Capabilities;
-
 import com.vaadin.flow.component.Component;
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.BrowserFactory;
 import com.vaadin.testbench.parallel.BrowserUtil;

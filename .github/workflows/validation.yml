@@ -2,7 +2,7 @@ name: TestBench Validation
 
 on:
   push:
-    branches: [main,'25.2']
+    branches: [main,'25.2','feature/playwright']
   pull_request:
     types: [opened, synchronize, reopened, edited]
   workflow_dispatch:
@@ -137,14 +137,19 @@ jobs:
           retention-days: 7
 
   integration-tests:
-    name: Integration Tests (${{ matrix.name }})
+    # Each IT module on both backends in both modes (D_pluggable_backends, D_modes in
+    # testbench-next). Selenium in compat is today's run and gates; the other three
+    # count what breaks, so they may fail without failing the run.
+    name: Integration Tests (${{ matrix.junit.name }}, ${{ matrix.backend }}, ${{ matrix.mode }})
     needs: build
     if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-26.04
     timeout-minutes: 45
+    continue-on-error: ${{ matrix.backend != 'selenium' || matrix.mode != 'compat' }}
     services:
       selenium:
-        image: selenium/standalone-chrome:latest
+        # Playwright drives a local browser and fails on a hub; an empty image starts no service.
+        image: ${{ matrix.backend == 'selenium' && 'selenium/standalone-chrome:latest' || '' }}
         ports:
           - 4444:4444
         options: >-
@@ -158,13 +163,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
+        junit:
           - name: JUnit 4
             module: vaadin-testbench-integration-tests
           - name: JUnit 5
             module: vaadin-testbench-integration-tests-junit5
           - name: JUnit 6
             module: vaadin-testbench-integration-tests-junit6
+        backend: [selenium, playwright]
+        mode: [compat, modern]
 
     steps:
       - name: Checkout repository
@@ -196,16 +203,47 @@ jobs:
           mkdir -p ~/.vaadin/
           echo '{"username":"'`echo $TB_LICENSE | cut -d / -f1`'","proKey":"'`echo $TB_LICENSE | cut -d / -f2`'"}' > ~/.vaadin/proKey
 
+      - name: Read the Playwright version
+        id: playwright
+        if: matrix.backend == 'playwright'
+        run: |
+          echo "version=$(sed -n 's:.*<playwright.version>\(.*\)</playwright.version>.*:\1:p' \
+            vaadin-testbench-backend-playwright/pom.xml)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        if: matrix.backend == 'playwright'
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ steps.playwright.outputs.version }}
+
+      - name: Install Chromium and its system libraries
+        if: matrix.backend == 'playwright'
+        # A no-op for the browser on a cache hit; the libraries come from apt each time.
+        run: |
+          mvn -B -ntp -pl vaadin-testbench-backend-playwright \
+            org.codehaus.mojo:exec-maven-plugin:3.2.0:java \
+            -Dexec.mainClass=com.microsoft.playwright.CLI \
+            -Dexec.args="install --with-deps chromium"
+
       - name: Run Integration Tests
         run: |
+          if [ "${{ matrix.backend }}" = selenium ]; then
+            profiles=validation
+            browser="-Dcom.vaadin.testbench.Parameters.hubHostname=localhost -Ddeployment.hostname=host.docker.internal"
+          else
+            profiles=validation,playwright
+            browser="-Dcom.vaadin.testbench.Parameters.runLocally=chrome -Dcom.vaadin.testbench.Parameters.headless=true"
+          fi
           mvn verify \
-            -pl ${{ matrix.module }} -am \
-            -P validation \
+            -pl ${{ matrix.junit.module }} -am \
+            -P $profiles \
             -DskipUnitTests \
             -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
             -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
-            -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
-            -Ddeployment.hostname=host.docker.internal \
+            -Dcom.vaadin.testbench.Parameters.backend=${{ matrix.backend }} \
+            -Dcom.vaadin.testbench.Parameters.mode=${{ matrix.mode }} \
+            $browser \
             -Dfailsafe.forkCount=5 \
             -B
 
@@ -213,7 +251,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v5
         with:
-          name: error-screenshots-${{ matrix.name }}
+          name: error-screenshots-${{ matrix.junit.name }}-${{ matrix.backend }}-${{ matrix.mode }}
           path: |
             **/error-screenshots/**
           retention-days: 7
@@ -222,9 +260,60 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v5
         with:
-          name: integration-test-results-${{ matrix.name }}
+          # Only the gating run goes into the published "Test Results"; the others are counts.
+          name: ${{ (matrix.backend == 'selenium' && matrix.mode == 'compat') && 'integration-test-results' || 'count-results' }}-${{ matrix.junit.name }}-${{ matrix.backend }}-${{ matrix.mode }}
           path: |
             **/target/failsafe-reports/TEST-*.xml
+          retention-days: 7
+
+  backend-parity:
+    # Every SPI method on both backends against the same pages: BackendParityTest.
+    name: Backend Parity
+    needs: build
+    if: ${{ !github.event.pull_request.head.repo.fork }}
+    runs-on: ubuntu-26.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ env.HEAD_SHA }}
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v5
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+
+      - name: Restore Maven cache
+        uses: actions/cache/restore@v5
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.run_id }}
+
+      - name: Set TB License
+        run: |
+          TB_LICENSE=${{secrets.TB_LICENSE}}
+          mkdir -p ~/.vaadin/
+          echo '{"username":"'`echo $TB_LICENSE | cut -d / -f1`'","proKey":"'`echo $TB_LICENSE | cut -d / -f2`'"}' > ~/.vaadin/proKey
+
+      - name: Run BackendParityTest
+        # The runner image's Chrome and its matching chromedriver: both backends drive the same build.
+        run: |
+          mvn test -B \
+            -pl vaadin-testbench-backend-playwright \
+            -Dtest=BackendParityTest \
+            -Dwebdriver.chrome.driver=$CHROMEWEBDRIVER/chromedriver \
+            -Dcom.vaadin.testbench.playwright.executablePath=/usr/bin/google-chrome
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: integration-test-results-backend-parity
+          path: |
+            **/target/surefire-reports/TEST-*.xml
           retention-days: 7
 
   loadtest-converter-tests:
@@ -289,7 +378,7 @@ jobs:
       checks: write
       pull-requests: write
     if: ${{ always() && !github.event.pull_request.head.repo.fork }}
-    needs: [format-check, build, unit-tests, integration-tests, loadtest-converter-tests]
+    needs: [format-check, build, unit-tests, integration-tests, backend-parity, loadtest-converter-tests]
     runs-on: ubuntu-26.04
 
     steps:
@@ -318,12 +407,14 @@ jobs:
           echo "build: ${{ needs.build.result }}"
           echo "unit-tests: ${{ needs.unit-tests.result }}"
           echo "integration-tests: ${{ needs.integration-tests.result }}"
+          echo "backend-parity: ${{ needs.backend-parity.result }}"
           echo "loadtest-converter-tests: ${{ needs.loadtest-converter-tests.result }}"
 
           if [ "${{ needs.format-check.result }}" != "success" ] || \
              [ "${{ needs.build.result }}" != "success" ] || \
              [ "${{ needs.unit-tests.result }}" != "success" ] || \
              [ "${{ needs.integration-tests.result }}" != "success" ] || \
+             [ "${{ needs.backend-parity.result }}" != "success" ] || \
              [ "${{ needs.loadtest-converter-tests.result }}" != "success" ]; then
             echo "One or more validation jobs failed"
             exit 1

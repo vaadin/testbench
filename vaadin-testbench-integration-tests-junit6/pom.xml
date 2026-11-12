@@ -295,6 +295,19 @@
 
     <profiles>
         <profile>
+            <!-- These ITs on the Playwright backend, beside the Selenium one their
+                 hatch casts need; pick it with Parameters.backend=playwright.
+                 Branch-only, as CI's backend matrix. -->
+            <id>playwright</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.vaadin</groupId>
+                    <artifactId>vaadin-testbench-backend-playwright</artifactId>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>validation</id>
             <build>
                 <plugins>

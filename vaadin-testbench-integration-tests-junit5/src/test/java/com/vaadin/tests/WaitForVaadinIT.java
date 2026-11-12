@@ -15,8 +15,8 @@ import org.openqa.selenium.JavascriptExecutor;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
-import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.BrowserTest;
+import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 
 public class WaitForVaadinIT extends AbstractBrowserTB9Test {
 

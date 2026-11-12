@@ -12,14 +12,14 @@ import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.provider.ValueSource;
-import com.vaadin.testbench.Platform;
-import com.vaadin.testbench.Capabilities;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ParameterizedView;
 import com.vaadin.testbench.BrowserTest;
 import com.vaadin.testbench.By;
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.ParameterizedBrowserTest;
+import com.vaadin.testbench.Platform;
 import com.vaadin.testbench.TestBenchElement;
 
 public class ParameterizedIT extends AbstractBrowserTB9Test {
@@ -66,7 +66,8 @@ public class ParameterizedIT extends AbstractBrowserTB9Test {
         // This is a temporary hack for testing against local selenium hub on
         // docker
         if (Boolean.getBoolean("test.hub.linux")) {
-            list.forEach(c -> c.setCapability(Capabilities.PLATFORM_NAME, Platform.LINUX));
+            list.forEach(c -> c.setCapability(Capabilities.PLATFORM_NAME,
+                    Platform.LINUX));
         }
         return list;
     }

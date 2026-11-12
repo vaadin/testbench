@@ -8,9 +8,8 @@
  */
 package com.vaadin.tests;
 
-import com.vaadin.testbench.Platform;
 import com.vaadin.testbench.Capabilities;
-
+import com.vaadin.testbench.Platform;
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.DefaultBrowserFactory;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;

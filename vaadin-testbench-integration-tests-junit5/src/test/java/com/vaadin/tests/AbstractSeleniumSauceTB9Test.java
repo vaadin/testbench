@@ -14,8 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
-import com.vaadin.testbench.backend.selenium.SeleniumCapabilities;
 import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.backend.selenium.SeleniumCapabilities;
 import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 

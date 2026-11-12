@@ -25,6 +25,11 @@
 
     <properties>
         <skipSeleniumBan>false</skipSeleniumBan>
+        <!-- Copies of flow-components' Apache-licensed sources: TestBench's
+             formatter would relicense their headers and reformat them away
+             from the pristine copies they are diffed against. -->
+        <spotless.check.skip>true</spotless.check.skip>
+        <spotless.apply.skip>true</spotless.apply.skip>
     </properties>
 
     <dependencies>
