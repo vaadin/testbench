@@ -12,11 +12,9 @@ import java.lang.reflect.Field;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openqa.selenium.JavascriptExecutor;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
-import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 
 public class WaitForVaadinIT extends AbstractTB6Test {
 
@@ -132,8 +130,9 @@ public class WaitForVaadinIT extends AbstractTB6Test {
         setWaitForVaadinLoopHook(() -> {
             if (System.currentTimeMillis()
                     - systemCurrentTimeMillis > timeout) {
-                ((JavascriptExecutor) ((SeleniumBackend) getCommandExecutor()
-                        .getBackend()).getDriver())
+                // The backend's, not the executor's: that one would wait for
+                // Vaadin from inside this wait
+                getCommandExecutor().getBackend()
                         .executeScript(scriptToRunAfterTimeout);
                 setWaitForVaadinLoopHook(null);
             }
