@@ -22,11 +22,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
-import org.openqa.selenium.logging.LogEntry;
-import org.openqa.selenium.logging.LogType;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 
@@ -412,7 +409,8 @@ public abstract class AbstractBrowserTestBase
 
     /**
      * Gets the log entries from the browser that have the given logging level
-     * or higher. Selenium only, so far.
+     * or higher. Selenium only, so far: elsewhere it throws
+     * {@link NotYetImplementedException}.
      *
      * @param level
      *            the minimum severity of logs included
@@ -422,13 +420,7 @@ public abstract class AbstractBrowserTestBase
         // https://github.com/vaadin/testbench/issues/1233
         getCommandExecutor().waitForVaadin();
 
-        if (!(getCommandExecutor()
-                .getBackend() instanceof SeleniumBackend selenium)) {
-            throw NotYetImplementedException
-                    .notYetImplemented("getLogEntries off Selenium");
-        }
-        return selenium.getDriver().manage().logs().get(LogType.BROWSER)
-                .getAll().stream()
+        return getCommandExecutor().getBackend().getLogEntries().stream()
                 .filter(logEntry -> logEntry.getLevel().intValue() >= level
                         .intValue())
                 // we always have this error

@@ -8,9 +8,8 @@
  */
 package com.vaadin.testbench.browser;
 
-import org.openqa.selenium.Capabilities;
-
 import com.vaadin.testbench.BrowserDriver;
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.parallel.Browser;
 
 /**
@@ -20,7 +19,7 @@ import com.vaadin.testbench.parallel.Browser;
  * @param driver
  *            the test's browser
  * @param capabilities
- *            immutable list of capabilities
+ *            the capabilities the browser was asked for, a copy
  * @param hubHostname
  *            hostname of the hub
  * @param runLocallyBrowser

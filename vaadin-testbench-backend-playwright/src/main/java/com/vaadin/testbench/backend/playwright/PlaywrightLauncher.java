@@ -9,6 +9,7 @@
 package com.vaadin.testbench.backend.playwright;
 
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -16,22 +17,31 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
 import com.microsoft.playwright.options.HarMode;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.backend.BrowserLauncher;
+import com.vaadin.testbench.backend.BrowserSetup;
+import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.spi.BrowserBackend;
 
 /**
  * Starts each test's browser as a fresh {@link BrowserContext}, its own cookies
  * and so its own Vaadin session, in a browser shared by the tests of one
- * thread. System properties:
+ * thread. System properties: The browser is the one the setup's capabilities
+ * name, as {@code @RunLocally} or {@code Parameters.runLocally} chose it:
+ * Chrome is Chromium, Edge is Chromium's {@code msedge} channel, Firefox is
+ * Firefox, Safari is WebKit. A hub, Sauce Labs included, is Selenium's alone. A
+ * test can also hand TestBench its own {@link Browser}, {@link BrowserContext}
+ * or {@link Page}. System properties:
  * <ul>
- * <li>{@code com.vaadin.testbench.playwright.browser}: {@code chromium} (the
- * default), {@code firefox} or {@code webkit};</li>
+ * <li>{@code com.vaadin.testbench.playwright.browser}: {@code chromium},
+ * {@code firefox} or {@code webkit}, over what the capabilities name;</li>
  * <li>{@code com.vaadin.testbench.playwright.executablePath}: the browser to
  * start, instead of one Playwright downloads; with it set, Playwright downloads
  * nothing;</li>
@@ -48,8 +58,10 @@ public class PlaywrightLauncher implements BrowserLauncher {
 
     private static final String PREFIX = "com.vaadin.testbench.playwright.";
 
-    // Playwright's objects belong to the thread that made them
-    private static final ThreadLocal<Browser> BROWSERS = new ThreadLocal<>();
+    // Playwright's objects belong to the thread that made them; one browser
+    // per type and channel
+    private static final ThreadLocal<Map<String, Browser>> BROWSERS = ThreadLocal
+            .withInitial(HashMap::new);
     private static final List<Playwright> STARTED = new CopyOnWriteArrayList<>();
 
     static {
@@ -71,7 +83,41 @@ public class PlaywrightLauncher implements BrowserLauncher {
     }
 
     @Override
-    public BrowserBackend launch() {
+    public BrowserBackend launch(BrowserSetup setup) {
+        if (setup.hubUrl() != null) {
+            throw new UnsupportedOperationException(
+                    "Playwright cannot run a browser on a Selenium hub (@RunOnHub,"
+                            + " com.vaadin.testbench.Parameters.hubHostname or Sauce Labs);"
+                            + " set com.vaadin.testbench.Parameters.backend=selenium");
+        }
+        return newPage(browser(setup.capabilities()));
+    }
+
+    @Override
+    public @Nullable BrowserBackend wrap(Object driver) {
+        if (driver instanceof Page page) {
+            return new PlaywrightBackend(page);
+        }
+        if (driver instanceof BrowserContext context) {
+            return new PlaywrightBackend(context.newPage());
+        }
+        if (driver instanceof Browser browser) {
+            return newPage(browser);
+        }
+        return null;
+    }
+
+    @Override
+    public String describeDrivers() {
+        return "a Playwright Browser, BrowserContext or Page";
+    }
+
+    @Override
+    public @Nullable Capabilities toCapabilities(Object capabilities) {
+        return null;
+    }
+
+    private static BrowserBackend newPage(Browser browser) {
         Browser.NewContextOptions options = new Browser.NewContextOptions();
         String viewport = System.getProperty(PREFIX + "viewport");
         if (viewport != null) {
@@ -84,20 +130,34 @@ public class PlaywrightLauncher implements BrowserLauncher {
             options.setRecordHarPath(Path.of(har))
                     .setRecordHarMode(HarMode.FULL);
         }
-        BrowserContext context = browser().newContext(options);
+        BrowserContext context = browser.newContext(options);
         return new PlaywrightBackend(context.newPage());
     }
 
-    private static Browser browser() {
-        Browser browser = BROWSERS.get();
+    private static Browser browser(Capabilities capabilities) {
+        String type = System.getProperty(PREFIX + "browser");
+        @Nullable
+        String channel = null;
+        if (type == null) {
+            if (BrowserUtil.isFirefox(capabilities)) {
+                type = "firefox";
+            } else if (BrowserUtil.isSafari(capabilities)) {
+                type = "webkit";
+            } else {
+                type = "chromium";
+                channel = BrowserUtil.isEdge(capabilities) ? "msedge" : null;
+            }
+        }
+        String key = channel == null ? type : type + "/" + channel;
+        Browser browser = BROWSERS.get().get(key);
         if (browser == null || !browser.isConnected()) {
-            browser = startBrowser();
-            BROWSERS.set(browser);
+            browser = startBrowser(type, channel);
+            BROWSERS.get().put(key, browser);
         }
         return browser;
     }
 
-    private static Browser startBrowser() {
+    private static Browser startBrowser(String name, @Nullable String channel) {
         @Nullable
         String executable = System.getProperty(PREFIX + "executablePath");
         Playwright.CreateOptions createOptions = new Playwright.CreateOptions();
@@ -112,8 +172,9 @@ public class PlaywrightLauncher implements BrowserLauncher {
                         "com.vaadin.testbench.Parameters.headless")));
         if (executable != null) {
             launch.setExecutablePath(Path.of(executable));
+        } else if (channel != null) {
+            launch.setChannel(channel);
         }
-        String name = System.getProperty(PREFIX + "browser", "chromium");
         BrowserType type = switch (name) {
         case "chromium" -> playwright.chromium();
         case "firefox" -> playwright.firefox();

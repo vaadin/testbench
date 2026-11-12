@@ -30,6 +30,7 @@
     </repositories>
 
     <properties>
+        <skipSeleniumBan>false</skipSeleniumBan>
         <junit.version>6.0.0</junit.version>
         <mockito.version>5.18.0</mockito.version>
         <shared.sources.dir>${project.basedir}/../vaadin-testbench-core-junit5</shared.sources.dir>
@@ -182,13 +183,12 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
+        <!-- Unit tests drive mocked Selenium drivers -->
         <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-remote-driver</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-testbench-backend-selenium</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -208,12 +208,6 @@
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-engine</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-http</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>

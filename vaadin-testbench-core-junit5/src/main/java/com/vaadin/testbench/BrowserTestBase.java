@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.openqa.selenium.Capabilities;
 
 import com.vaadin.testbench.browser.BrowserTestInfo;
 import com.vaadin.testbench.parallel.Browser;

@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.BrowserTestBase;
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.DriverSupplier;
 import com.vaadin.testbench.ParameterizedBrowserTest;
 import com.vaadin.testbench.annotations.RunLocally;
@@ -31,13 +31,13 @@ class ParameterizedBrowserTestTest {
             implements DriverSupplier {
 
         protected WebDriver webDriver = Mockito.mock(WebDriver.class);
-        protected DesiredCapabilities expectedCapabilities;
+        protected Capabilities expectedCapabilities;
 
         public Support(Browser browser) {
             this(browser.getDesiredCapabilities());
         }
 
-        public Support(DesiredCapabilities expectedCapabilities) {
+        public Support(Capabilities expectedCapabilities) {
             this.expectedCapabilities = expectedCapabilities;
         }
 
@@ -83,7 +83,8 @@ class ParameterizedBrowserTestTest {
 
         public BrowserFromRunLocallyWithVersion() {
             super(BrowserUtil.chrome());
-            expectedCapabilities.setVersion(TEST_BROWSER_VERSION);
+            expectedCapabilities.setCapability(Capabilities.BROWSER_VERSION,
+                    TEST_BROWSER_VERSION);
         }
     }
 

@@ -139,6 +139,9 @@
             </plugin>
         </plugins>
     </build>
+    <properties>
+        <skipSeleniumBan>false</skipSeleniumBan>
+    </properties>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -151,13 +154,12 @@
         </dependencies>
     </dependencyManagement>
     <dependencies>
+        <!-- Unit tests drive mocked Selenium drivers -->
         <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-remote-driver</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-testbench-backend-selenium</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -170,12 +172,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.2</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-http</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>

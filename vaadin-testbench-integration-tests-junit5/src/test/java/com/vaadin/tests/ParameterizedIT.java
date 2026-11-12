@@ -12,8 +12,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import com.vaadin.testbench.Platform;
+import com.vaadin.testbench.Capabilities;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ParameterizedView;
@@ -60,13 +60,13 @@ public class ParameterizedIT extends AbstractBrowserTB9Test {
     }
 
     @Override
-    public List<DesiredCapabilities> getBrowserConfiguration() {
-        List<DesiredCapabilities> list = super.getBrowserConfiguration();
+    public List<Capabilities> getBrowserConfiguration() {
+        List<Capabilities> list = super.getBrowserConfiguration();
         // Base class forces WIN10 as platform
         // This is a temporary hack for testing against local selenium hub on
         // docker
         if (Boolean.getBoolean("test.hub.linux")) {
-            list.forEach(c -> c.setPlatform(Platform.LINUX));
+            list.forEach(c -> c.setCapability(Capabilities.PLATFORM_NAME, Platform.LINUX));
         }
         return list;
     }

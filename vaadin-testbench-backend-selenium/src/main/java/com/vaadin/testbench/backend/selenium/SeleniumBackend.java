@@ -8,6 +8,8 @@
  */
 package com.vaadin.testbench.backend.selenium;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -24,12 +26,22 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WrapsDriver;
+import org.openqa.selenium.chromium.ChromiumDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.WheelInput;
+import org.openqa.selenium.logging.LogType;
+import org.openqa.selenium.remote.HttpCommandExecutor;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.safari.SafariDriver;
 
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.Dimension;
+import com.vaadin.testbench.LogEntry;
 import com.vaadin.testbench.NoSuchElementException;
+import com.vaadin.testbench.Point;
 import com.vaadin.testbench.StaleElementReferenceException;
 import com.vaadin.testbench.TimeoutException;
 import com.vaadin.testbench.spi.BrowserBackend;
@@ -108,6 +120,61 @@ public class SeleniumBackend implements BrowserBackend {
     }
 
     @Override
+    public Capabilities getCapabilities() {
+        if (driver instanceof HasCapabilities hasCapabilities) {
+            return SeleniumCapabilities
+                    .fromSelenium(hasCapabilities.getCapabilities());
+        }
+        return new Capabilities();
+    }
+
+    /**
+     * The hub's or the local driver server's address for a
+     * {@link RemoteWebDriver}; this machine's for any other driver.
+     */
+    @Override
+    public @Nullable InetAddress getRemoteAddress()
+            throws UnknownHostException {
+        if (driver instanceof RemoteWebDriver remote) {
+            if (remote
+                    .getCommandExecutor() instanceof HttpCommandExecutor http) {
+                return InetAddress
+                        .getByName(http.getAddressOfRemoteServer().getHost());
+            }
+            return null;
+        }
+        return InetAddress.getLocalHost();
+    }
+
+    @Override
+    public boolean isSessionGone() {
+        return driver instanceof RemoteWebDriver remote
+                && remote.getSessionId() == null;
+    }
+
+    @Override
+    public List<LogEntry> getLogEntries() {
+        return driver.manage().logs().get(LogType.BROWSER).getAll().stream()
+                .map(entry -> new LogEntry(entry.getLevel(),
+                        entry.getTimestamp(), entry.getMessage()))
+                .toList();
+    }
+
+    /**
+     * Whether the browser runs elsewhere, so a file must be sent to it before a
+     * file input can take it.
+     */
+    boolean isRemote() {
+        WebDriver unwrapped = driver;
+        while (unwrapped instanceof WrapsDriver wrapsDriver) {
+            unwrapped = wrapsDriver.getWrappedDriver();
+        }
+        return !(unwrapped instanceof ChromiumDriver
+                || unwrapped instanceof FirefoxDriver
+                || unwrapped instanceof SafariDriver);
+    }
+
+    @Override
     public void navigate(String url) {
         driver.get(url);
     }
@@ -152,6 +219,12 @@ public class SeleniumBackend implements BrowserBackend {
     public void setWindowSize(Dimension size) {
         driver.manage().window().setSize(new org.openqa.selenium.Dimension(
                 size.getWidth(), size.getHeight()));
+    }
+
+    @Override
+    public void setWindowPosition(Point position) {
+        driver.manage().window().setPosition(new org.openqa.selenium.Point(
+                position.getX(), position.getY()));
     }
 
     @Override

@@ -19,6 +19,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
+import com.vaadin.testbench.testutils.SeleniumElements;
 
 public class TestBenchElementTest {
 
@@ -29,7 +30,7 @@ public class TestBenchElementTest {
         Mockito.when(webElement.getDomAttribute("class"))
                 .thenReturn("v-button v-disabled");
 
-        TestBenchElement element = TestBench.createElement(webElement, null);
+        TestBenchElement element = SeleniumElements.wrap(webElement, null);
         Assertions.assertFalse(element.isEnabled());
     }
 
@@ -37,8 +38,8 @@ public class TestBenchElementTest {
     public void elementsEquals() {
         RemoteWebElement webElement = new RemoteWebElement();
         webElement.setId("remote1");
-        TestBenchElement element = TestBench.createElement(webElement, null);
-        TestBenchElement element2 = TestBench.createElement(webElement, null);
+        TestBenchElement element = SeleniumElements.wrap(webElement, null);
+        TestBenchElement element2 = SeleniumElements.wrap(webElement, null);
 
         Assertions.assertTrue(webElement.equals(webElement));
         Assertions.assertTrue(element.equals(element));
@@ -53,7 +54,7 @@ public class TestBenchElementTest {
     public void elementsHashCode() {
         RemoteWebElement webElement = new RemoteWebElement();
         webElement.setId("remote1");
-        TestBenchElement element = TestBench.createElement(webElement, null);
+        TestBenchElement element = SeleniumElements.wrap(webElement, null);
 
         HashSet<Object> elements = new HashSet<>();
         elements.add(webElement);
@@ -109,12 +110,13 @@ public class TestBenchElementTest {
         WebElement webElement = Mockito.mock(WebElement.class);
         Mockito.when(webElement.getDomAttribute("class")).thenReturn(className);
 
-        return TestBench.createElement(webElement, null);
+        return SeleniumElements.wrap(webElement, null);
     }
 
     @Test
     public void wrapNullElement() {
-        Assertions.assertNull(TestBench.createElement(null, null));
+        Assertions.assertNull(
+                TestBench.createElement(TestBenchElement.class, null, null));
     }
 
     public class DebugTestBenchElement extends TestBenchElement {
@@ -165,8 +167,7 @@ public class TestBenchElementTest {
                 .mock(TestBenchCommandExecutor.class);
         Mockito.when(executor.executeScript(Mockito.any()))
                 .thenThrow(new RuntimeException("foobar"));
-        TestBenchElement element = TestBench.createElement(webElement,
-                executor);
+        TestBenchElement element = SeleniumElements.wrap(webElement, executor);
         RuntimeException exceptionReceived = null;
         try {
             element.executeScript("foo");

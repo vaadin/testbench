@@ -14,8 +14,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.openqa.selenium.WebDriver;
-
 /**
  * <p>
  * Test classes annotated with RunOnHub will be run on the hub whose host is
@@ -23,7 +21,7 @@ import org.openqa.selenium.WebDriver;
  * </p>
  *
  * <p>
- * This parameter will be used to instantiate the {@link WebDriver}.<br>
+ * This parameter will be used to start the browser.<br>
  * </p>
  *
  * Usage:<br>

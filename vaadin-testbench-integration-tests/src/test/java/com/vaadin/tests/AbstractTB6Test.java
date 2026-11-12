@@ -16,7 +16,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
-import org.openqa.selenium.remote.DesiredCapabilities;
+import com.vaadin.testbench.Capabilities;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
@@ -34,7 +34,7 @@ import com.vaadin.testbench.parallel.ParallelTest;
  * <pre>
  * &#064;Override
  * &#064;BrowserConfiguration
- * public List&lt;DesiredCapabilities&gt; getBrowserConfiguration() {
+ * public List&lt;Capabilities&gt; getBrowserConfiguration() {
  * }
  * </pre>
  *
@@ -72,7 +72,7 @@ public abstract class AbstractTB6Test extends ParallelTest {
     }
 
     @BrowserConfiguration
-    public List<DesiredCapabilities> getBrowserConfiguration() {
+    public List<Capabilities> getBrowserConfiguration() {
         return Arrays.asList(BrowserUtil.firefox(), BrowserUtil.chrome(),
                 BrowserUtil.edge());
     }

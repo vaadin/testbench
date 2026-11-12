@@ -8,19 +8,25 @@
  */
 package com.vaadin.testbench.backend.selenium;
 
+import java.io.File;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Rectangle;
+import org.openqa.selenium.UnsupportedCommandException;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WrapsElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.interactions.MoveTargetOutOfBoundsException;
+import org.openqa.selenium.remote.LocalFileDetector;
+import org.openqa.selenium.remote.RemoteWebElement;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.Parameters;
@@ -169,7 +175,35 @@ public class SeleniumElementBackend implements ElementBackend {
 
     @Override
     public byte[] getScreenshot() {
-        return call(() -> element.getScreenshotAs(OutputType.BYTES));
+        try {
+            return call(() -> element.getScreenshotAs(OutputType.BYTES));
+        } catch (UnsupportedCommandException e) {
+            throw new UnsupportedOperationException(e.getMessage(), e);
+        } catch (WebDriverException e) {
+            if (e.getCause() instanceof UnsupportedCommandException) {
+                throw new UnsupportedOperationException(e.getMessage(), e);
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * Types the paths, newline-separated, after giving a remote browser's
+     * element a {@link LocalFileDetector}, which sends it the files.
+     */
+    @Override
+    public void setInputFiles(List<File> files) {
+        if (backend != null && backend.isRemote()) {
+            WebElement unwrapped = element;
+            while (unwrapped instanceof WrapsElement wrapsElement) {
+                unwrapped = wrapsElement.getWrappedElement();
+            }
+            if (unwrapped instanceof RemoteWebElement remote) {
+                remote.setFileDetector(new LocalFileDetector());
+            }
+        }
+        sendKeys(files.stream().map(File::getPath)
+                .collect(Collectors.joining("\n")));
     }
 
     private static <T> T call(Supplier<T> seleniumCall) {

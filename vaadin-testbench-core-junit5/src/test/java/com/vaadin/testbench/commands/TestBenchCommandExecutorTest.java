@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -220,6 +221,8 @@ public class TestBenchCommandExecutorTest {
             Capabilities mockedCapabilities = Mockito.mock(Capabilities.class);
             Mockito.when(mockedCapabilities.getBrowserName())
                     .thenReturn("Firefox");
+            Mockito.when(mockedCapabilities.asMap())
+                    .thenReturn(Map.of("browserName", "Firefox"));
             Mockito.when(driver.getCapabilities())
                     .thenReturn(mockedCapabilities);
         }
@@ -231,7 +234,8 @@ public class TestBenchCommandExecutorTest {
         ReferenceNameGenerator rngMock = Mockito
                 .mock(ReferenceNameGenerator.class);
         Mockito.when(rngMock.generateName(Mockito.eq(refId),
-                Mockito.any(Capabilities.class))).thenReturn(expected);
+                Mockito.any(com.vaadin.testbench.Capabilities.class)))
+                .thenReturn(expected);
         return rngMock;
     }
 
@@ -241,7 +245,8 @@ public class TestBenchCommandExecutorTest {
         Mockito.when(icMock.imageEqualToReference(
                 Mockito.any(BufferedImage.class), Mockito.eq(referenceName),
                 Mockito.eq(Parameters.getScreenshotComparisonTolerance()),
-                Mockito.any(Capabilities.class))).thenReturn(expected);
+                Mockito.any(com.vaadin.testbench.Capabilities.class)))
+                .thenReturn(expected);
         return icMock;
     }
 

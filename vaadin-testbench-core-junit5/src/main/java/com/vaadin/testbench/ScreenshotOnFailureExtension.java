@@ -18,11 +18,9 @@ import java.util.List;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestWatcher;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.screenshot.ImageFileUtil;
 import com.vaadin.testbench.spi.BrowserBackend;
 
@@ -108,9 +106,7 @@ public class ScreenshotOnFailureExtension implements TestWatcher {
 
         BrowserBackend backend = driverHolder.getDriver().getCommandExecutor()
                 .getBackend();
-        if (backend instanceof SeleniumBackend selenium
-                && selenium.getDriver() instanceof RemoteWebDriver remote
-                && remote.getSessionId() == null) {
+        if (backend.isSessionGone()) {
             getLogger().warn(
                     "Unable capture failure screenshot: web driver is no longer available");
             return;

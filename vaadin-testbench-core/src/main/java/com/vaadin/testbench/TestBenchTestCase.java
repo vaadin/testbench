@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.junit.Rule;
-import org.openqa.selenium.WebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,11 +82,23 @@ public abstract class TestBenchTestCase
     }
 
     /**
-     * Sets a Selenium driver this test has set up itself, as TestBench's
-     * {@link BrowserDriver}: the test then runs on Selenium.
+     * Sets a driver this test built with a backend's library, as TestBench's
+     * {@link BrowserDriver}, on that backend:
+     *
+     * <pre>{@code
+     * setDriver(new ChromeDriver());
+     * }</pre>
+     *
+     * @param driver
+     *            a Selenium {@code WebDriver}, a Playwright {@code Browser},
+     *            {@code BrowserContext} or {@code Page}, or a
+     *            {@link BrowserDriver}
+     * @see TestBench#createDriver(Object)
      */
-    public void setDriver(WebDriver driver) {
-        setDriver(driver == null ? null : TestBench.createDriver(driver));
+    public void setDriver(Object driver) {
+        setDriver(driver == null || driver instanceof BrowserDriver
+                ? (BrowserDriver) driver
+                : TestBench.createDriver(driver));
     }
 
     /** Searches the page. */

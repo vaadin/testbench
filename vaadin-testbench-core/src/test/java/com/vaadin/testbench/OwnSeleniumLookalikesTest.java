@@ -10,8 +10,10 @@ package com.vaadin.testbench;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -111,5 +113,81 @@ public class OwnSeleniumLookalikesTest {
         Assert.assertEquals(
                 new org.openqa.selenium.Dimension(800, 600).toString(),
                 new Dimension(800, 600).toString());
+    }
+
+    @Test
+    public void platformsAreSeleniumsNameForNameWithTheirAliasesAndFamilies() {
+        Map<String, List<String>> selenium = new LinkedHashMap<>();
+        for (org.openqa.selenium.Platform platform : org.openqa.selenium.Platform
+                .values()) {
+            selenium.put(platform.name(),
+                    List.of(platform.toString(),
+                            String.valueOf(platform.family()),
+                            Arrays.toString(platform.getPartOfOsName())));
+        }
+        Map<String, List<String>> ours = new LinkedHashMap<>();
+        for (Platform platform : Platform.values()) {
+            ours.put(platform.name(),
+                    List.of(platform.toString(),
+                            String.valueOf(platform.family()),
+                            Arrays.toString(platform.getPartOfOsName())));
+        }
+        Assert.assertEquals(selenium, ours);
+    }
+
+    @Test
+    public void platformsParseAsSeleniums() {
+        for (org.openqa.selenium.Platform platform : org.openqa.selenium.Platform
+                .values()) {
+            for (String name : platform.getPartOfOsName()) {
+                Assert.assertEquals(name,
+                        org.openqa.selenium.Platform.fromString(name).name(),
+                        Platform.fromString(name).name());
+            }
+            Assert.assertEquals(platform.name(),
+                    Platform.fromString(platform.toString()).name());
+            for (Platform other : Platform.values()) {
+                Assert.assertEquals(platform + " is " + other,
+                        platform.is(org.openqa.selenium.Platform
+                                .valueOf(other.name())),
+                        Platform.valueOf(platform.name()).is(other));
+            }
+        }
+        for (String osName : new String[] { "Linux", "Mac OS X", "Windows 10",
+                "Windows 11", "Windows NT", "FreeBSD", "SunOS", "" }) {
+            Assert.assertEquals(osName,
+                    org.openqa.selenium.Platform
+                            .extractFromSysProperty(osName, "10.0").name(),
+                    Platform.extractFromSysProperty(osName, "10.0").name());
+        }
+    }
+
+    @Test
+    public void capabilitiesAnswerAsSeleniums() {
+        for (Map<String, Object> map : List.<Map<String, Object>> of(Map.of(),
+                Map.of("browserName", "chrome", "browserVersion", "142.0",
+                        "platformName", "linux"),
+                Map.of("platformName", "Windows 10"),
+                Map.of("platformName", "foobar"),
+                Map.of("platformName", "mac", "browserVersion", ""))) {
+            org.openqa.selenium.Capabilities selenium = new org.openqa.selenium.ImmutableCapabilities(
+                    map);
+            Capabilities ours = new Capabilities(map);
+            Assert.assertEquals(selenium.getBrowserName(),
+                    ours.getBrowserName());
+            Assert.assertEquals(selenium.getBrowserVersion(),
+                    ours.getBrowserVersion());
+            Assert.assertEquals(String.valueOf(selenium.getPlatformName()),
+                    String.valueOf(ours.getPlatformName()));
+        }
+    }
+
+    @Test
+    public void logEntriesPrintAsSeleniums() {
+        Assert.assertEquals(
+                new org.openqa.selenium.logging.LogEntry(Level.SEVERE,
+                        1_700_000_000_123L, "boom").toString(),
+                new LogEntry(Level.SEVERE, 1_700_000_000_123L, "boom")
+                        .toString());
     }
 }

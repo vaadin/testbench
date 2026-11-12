@@ -13,14 +13,15 @@ import java.time.Duration;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.CommandExecutor;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.HttpCommandExecutor;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.http.ClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.backend.selenium.SeleniumCapabilities;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 
 public class RemoteDriver {
@@ -38,8 +39,8 @@ public class RemoteDriver {
      * @throws Exception
      *             if the driver could not be created
      */
-    public WebDriver createDriver(String hubURL,
-            DesiredCapabilities capabilities) throws Exception {
+    public WebDriver createDriver(String hubURL, Capabilities capabilities)
+            throws Exception {
         for (int i = 1; i <= BROWSER_INIT_ATTEMPTS; i++) {
             try {
                 ClientConfig config = ClientConfig.defaultConfig()
@@ -47,7 +48,8 @@ public class RemoteDriver {
                                 Duration.ofSeconds(Parameters.getReadTimeout()))
                         .baseUrl(new URL(hubURL));
                 CommandExecutor executor = new HttpCommandExecutor(config);
-                WebDriver driver = new RemoteWebDriver(executor, capabilities);
+                WebDriver driver = new RemoteWebDriver(executor,
+                        SeleniumCapabilities.toSelenium(capabilities));
                 return driver;
             } catch (Exception e) {
                 if (i == BROWSER_INIT_ATTEMPTS) {
@@ -81,7 +83,7 @@ public class RemoteDriver {
         return LoggerFactory.getLogger(getClass());
     }
 
-    private String getTestName(DesiredCapabilities capabilities) {
+    private String getTestName(Capabilities capabilities) {
         // Try to get test name from sauce:options first (SauceLabs)
         Object testName = SauceLabsIntegration.getSauceLabsOption(capabilities,
                 SauceLabsIntegration.CapabilityType.NAME);

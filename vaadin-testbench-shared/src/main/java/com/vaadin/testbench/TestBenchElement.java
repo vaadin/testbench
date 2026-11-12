@@ -26,10 +26,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.jspecify.annotations.Nullable;
-import org.openqa.selenium.HasCapabilities;
-import org.openqa.selenium.WebElement;
 
-import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.commands.CanCompareScreenshots;
 import com.vaadin.testbench.commands.ScreenshotComparator;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
@@ -564,42 +561,28 @@ public class TestBenchElement
 
     @Override
     public boolean compareScreen(String referenceId) throws IOException {
+        waitForVaadin();
         return ScreenshotComparator.compareScreen(referenceId,
                 getCommandExecutor().getReferenceNameGenerator(),
-                getCommandExecutor().getImageComparison(), seleniumElement(),
-                seleniumCapabilities());
+                getCommandExecutor().getImageComparison(),
+                getCommandExecutor().getBackend(), elementBackend);
     }
 
     @Override
     public boolean compareScreen(File reference) throws IOException {
+        waitForVaadin();
         return ScreenshotComparator.compareScreen(reference,
-                getCommandExecutor().getImageComparison(), seleniumElement(),
-                seleniumCapabilities());
-
+                getCommandExecutor().getImageComparison(),
+                getCommandExecutor().getBackend(), elementBackend);
     }
 
     @Override
     public boolean compareScreen(BufferedImage reference, String referenceName)
             throws IOException {
-        return ScreenshotComparator.compareScreen(reference, referenceName,
-                getCommandExecutor().getImageComparison(), seleniumElement(),
-                seleniumCapabilities());
-    }
-
-    // Screenshot comparison is Selenium-only until v2
-    private WebElement seleniumElement() {
-        seleniumCapabilities();
         waitForVaadin();
-        return SeleniumBackend.webElementOf(elementBackend);
-    }
-
-    private HasCapabilities seleniumCapabilities() {
-        if (getCommandExecutor()
-                .getBackend() instanceof SeleniumBackend selenium) {
-            return (HasCapabilities) selenium.getDriver();
-        }
-        throw NotYetImplementedException
-                .notYetImplemented("compareScreen off Selenium");
+        return ScreenshotComparator.compareScreen(reference, referenceName,
+                getCommandExecutor().getImageComparison(),
+                getCommandExecutor().getBackend(), elementBackend);
     }
 
     /***

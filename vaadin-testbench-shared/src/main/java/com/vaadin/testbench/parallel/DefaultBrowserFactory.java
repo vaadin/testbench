@@ -8,63 +8,46 @@
  */
 package com.vaadin.testbench.parallel;
 
-import org.openqa.selenium.MutableCapabilities;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeOptions;
-import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.safari.SafariOptions;
-
+import com.vaadin.testbench.Capabilities;
+import com.vaadin.testbench.Platform;
 import com.vaadin.testbench.annotations.BrowserFactory;
 
 /**
  * <p>
- * Default {@link TestBenchBrowserFactory} used to generate
- * {@link DesiredCapabilities} through {@link BrowserFactory}
+ * Default {@link TestBenchBrowserFactory} used to generate {@link Capabilities}
+ * through {@link BrowserFactory}
  * </p>
+ * The browser names are the W3C ones Selenium's options classes set; the
+ * Selenium backend adds those classes' own defaults when it starts the browser.
  */
 public class DefaultBrowserFactory implements TestBenchBrowserFactory {
 
     @Override
-    public DesiredCapabilities create(Browser browser) {
+    public Capabilities create(Browser browser) {
         return create(browser, "", Platform.ANY);
     }
 
     @Override
-    public DesiredCapabilities create(Browser browser, String version) {
+    public Capabilities create(Browser browser, String version) {
         return create(browser, version, Platform.ANY);
     }
 
     @Override
-    public DesiredCapabilities create(Browser browser, String version,
+    public Capabilities create(Browser browser, String version,
             Platform platform) {
-        MutableCapabilities desiredCapabilities;
-
-        switch (browser) {
-        case CHROME:
-            desiredCapabilities = new ChromeOptions();
-            break;
-        case SAFARI:
-            desiredCapabilities = new SafariOptions();
-            break;
-        case EDGE:
-            desiredCapabilities = new EdgeOptions();
-            break;
-        case FIREFOX:
-        default:
-            desiredCapabilities = new FirefoxOptions();
-        }
+        Capabilities capabilities = new Capabilities();
+        capabilities.setCapability(Capabilities.BROWSER_NAME, switch (browser) {
+        case CHROME -> "chrome";
+        case SAFARI -> "safari";
+        case EDGE -> "MicrosoftEdge";
+        case FIREFOX -> "firefox";
+        });
         if (version != null && !version.isEmpty()) {
-            desiredCapabilities.setCapability(CapabilityType.BROWSER_VERSION,
-                    version);
+            capabilities.setCapability(Capabilities.BROWSER_VERSION, version);
         }
         if (platform != null) {
-            desiredCapabilities.setCapability(CapabilityType.PLATFORM_NAME,
-                    platform);
+            capabilities.setCapability(Capabilities.PLATFORM_NAME, platform);
         }
-
-        return new DesiredCapabilities(desiredCapabilities);
+        return capabilities;
     }
 }

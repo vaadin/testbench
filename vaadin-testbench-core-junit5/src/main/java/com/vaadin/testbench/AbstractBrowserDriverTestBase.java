@@ -8,10 +8,8 @@
  */
 package com.vaadin.testbench;
 
-import org.openqa.selenium.WebDriver;
-
 /**
- * Base class for tests using {@link WebDriver}. Provides wrapping for
+ * Base class for tests using the browser driver. Provides wrapping for
  * {@link TestBenchDriverProxy}.
  *
  * @since 9.0
@@ -31,10 +29,22 @@ public abstract class AbstractBrowserDriverTestBase
     }
 
     /**
-     * Sets a Selenium driver this test has set up itself, as TestBench's
-     * {@link BrowserDriver}: the test then runs on Selenium.
+     * Sets a driver this test built with a backend's library, as TestBench's
+     * {@link BrowserDriver}, on that backend:
+     *
+     * <pre>{@code
+     * setDriver(new ChromeDriver());
+     * }</pre>
+     *
+     * @param driver
+     *            a Selenium {@code WebDriver}, a Playwright {@code Browser},
+     *            {@code BrowserContext} or {@code Page}, or a
+     *            {@link BrowserDriver}
+     * @see TestBench#createDriver(Object)
      */
-    public void setDriver(WebDriver driver) {
-        setDriver(driver == null ? null : TestBench.createDriver(driver));
+    public void setDriver(Object driver) {
+        setDriver(driver == null || driver instanceof BrowserDriver
+                ? (BrowserDriver) driver
+                : TestBench.createDriver(driver));
     }
 }

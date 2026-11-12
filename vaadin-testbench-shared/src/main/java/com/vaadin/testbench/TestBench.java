@@ -11,14 +11,10 @@ package com.vaadin.testbench;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-
 import com.vaadin.pro.licensechecker.Capabilities;
 import com.vaadin.pro.licensechecker.Capability;
 import com.vaadin.pro.licensechecker.LicenseChecker;
-import com.vaadin.testbench.backend.selenium.SeleniumBackend;
-import com.vaadin.testbench.backend.selenium.SeleniumElementBackend;
+import com.vaadin.testbench.backend.BackendChoice;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
@@ -42,14 +38,30 @@ public class TestBench {
         // can set global properties there for all tests
     }
 
-    /** The driver of a test on Selenium, around the browser's own driver. */
-    public static BrowserDriver createDriver(WebDriver driver) {
-        return createDriver(new SeleniumBackend(driver));
+    /**
+     * The driver of a test around a driver it built with a backend's library,
+     * on that backend:
+     *
+     * <pre>{@code
+     * setDriver(TestBench.createDriver(new ChromeDriver()));
+     * }</pre>
+     *
+     * @param driver
+     *            a Selenium {@code WebDriver}, or a Playwright {@code Browser},
+     *            {@code BrowserContext} or {@code Page}
+     * @throws IllegalArgumentException
+     *             if no backend on the classpath takes the driver
+     * @throws IllegalStateException
+     *             if {@code Parameters.backend} names another backend
+     */
+    public static BrowserDriver createDriver(Object driver) {
+        return createDriver(BackendChoice.wrap(driver));
     }
 
-    public static BrowserDriver createDriver(WebDriver driver,
+    /** {@link #createDriver(Object)} with the given executor. */
+    public static BrowserDriver createDriver(Object driver,
             TestBenchCommandExecutor commandExecutor) {
-        return createDriver(new SeleniumBackend(driver), commandExecutor);
+        return createDriver(BackendChoice.wrap(driver), commandExecutor);
     }
 
     /** The driver of a test on any backend. */
@@ -72,29 +84,6 @@ public class TestBench {
             wrapped.copyRefind(element);
         }
         return wrapped;
-    }
-
-    public static TestBenchElement createElement(WebElement webElement,
-            TestBenchCommandExecutor tbCommandExecutor) {
-        return createElement(TestBenchElement.class, webElement,
-                tbCommandExecutor);
-    }
-
-    /**
-     * Creates an element of the given type around a Selenium element.
-     *
-     * @return {@code null} if {@code webElement} is {@code null}
-     */
-    public static <T extends TestBenchElement> T createElement(Class<T> clazz,
-            WebElement webElement, TestBenchCommandExecutor tbCommandExecutor) {
-        if (webElement == null) {
-            return null;
-        }
-        SeleniumBackend backend = tbCommandExecutor == null ? null
-                : (SeleniumBackend) tbCommandExecutor.getBackend();
-        return createElement(clazz,
-                new SeleniumElementBackend(backend, webElement),
-                tbCommandExecutor);
     }
 
     /**

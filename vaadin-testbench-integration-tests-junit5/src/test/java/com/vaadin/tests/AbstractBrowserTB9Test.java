@@ -14,8 +14,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import com.vaadin.testbench.Capabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import com.vaadin.testbench.ScreenshotOnFailureExtension;
@@ -34,7 +33,7 @@ import com.vaadin.testbench.parallel.BrowserUtil;
  * <pre>
  * &#064;Override
  * &#064;BrowserConfiguration
- * public List&lt;DesiredCapabilities&gt; getBrowserConfiguration() {
+ * public List&lt;Capabilities&gt; getBrowserConfiguration() {
  * }
  * </pre>
  *
@@ -60,7 +59,7 @@ public abstract class AbstractBrowserTB9Test extends AbstractTB9Test {
     }
 
     @BrowserConfiguration
-    public List<DesiredCapabilities> getBrowserConfiguration() {
+    public List<Capabilities> getBrowserConfiguration() {
         if (getDriver() instanceof RemoteWebDriver) {
             return Arrays.asList(BrowserUtil.firefox(), BrowserUtil.chrome(),
                     BrowserUtil.edge());

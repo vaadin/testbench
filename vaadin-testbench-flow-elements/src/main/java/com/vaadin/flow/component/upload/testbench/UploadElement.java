@@ -18,19 +18,7 @@ package com.vaadin.flow.component.upload.testbench;
 import java.io.File;
 import java.util.List;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.WrapsDriver;
-import org.openqa.selenium.WrapsElement;
-import org.openqa.selenium.chromium.ChromiumDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.remote.LocalFileDetector;
-import org.openqa.selenium.remote.RemoteWebElement;
-import org.openqa.selenium.safari.SafariDriver;
-
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.testbench.backend.selenium.SeleniumBackend;
-import com.vaadin.testbench.backend.selenium.SeleniumElementBackend;
 import com.vaadin.testbench.elementsbase.Element;
 
 /**
@@ -68,12 +56,7 @@ public class UploadElement extends TestBenchElement {
         if (isMaxFilesReached()) {
             removeFile(0);
         }
-        TestBenchElement uploadElement;
-        if (isRemoteSelenium()) {
-            uploadElement = setLocalFileDetector();
-        } else {
-            uploadElement = getUploadElement();
-        }
+        TestBenchElement uploadElement = getUploadElement();
 
         // Element must be focusable for Edge and Firefox
         Boolean hidden = uploadElement.getPropertyBoolean("hidden");
@@ -85,7 +68,9 @@ public class UploadElement extends TestBenchElement {
             // editable"
             uploadElement.clear();
         }
-        uploadElement.sendKeys(file.getPath());
+        // A file input takes no typing on Playwright; on Selenium this types
+        // the path, sending the file to a remote browser first
+        uploadElement.getElementBackend().setInputFiles(List.of(file));
         uploadElement.setProperty("hidden", hidden);
 
         if (maxSeconds > 0) {
@@ -175,27 +160,6 @@ public class UploadElement extends TestBenchElement {
         return getPropertyBoolean("maxFilesReached");
     }
 
-    private TestBenchElement setLocalFileDetector() {
-        TestBenchElement uploadElement = getUploadElement();
-
-        WebElement realUploadElement = ((SeleniumElementBackend) uploadElement
-                .getElementBackend()).getWebElement();
-        while (realUploadElement instanceof WrapsElement) {
-            realUploadElement = ((WrapsElement) realUploadElement)
-                    .getWrappedElement();
-        }
-        if (realUploadElement instanceof RemoteWebElement) {
-            ((RemoteWebElement) realUploadElement)
-                    .setFileDetector(new LocalFileDetector());
-        } else {
-            throw new IllegalArgumentException("Expected argument of type "
-                    + RemoteWebElement.class.getName() + ", received "
-                    + realUploadElement.getClass().getName());
-        }
-
-        return uploadElement;
-    }
-
     private TestBenchElement getUploadElement() {
         return getPropertyElement("$", "fileInput");
     }
@@ -207,22 +171,6 @@ public class UploadElement extends TestBenchElement {
         executeScript(
                 "arguments[0].files.forEach(function(file) { return arguments[0].dispatchEvent(new CustomEvent('file-abort', {detail: {file: file}}));})",
                 this);
-    }
-
-    // A remote Selenium browser needs the file sent to it first; other
-    // backends read it locally
-    private boolean isRemoteSelenium() {
-        if (!(getCommandExecutor()
-                .getBackend() instanceof SeleniumBackend selenium)) {
-            return false;
-        }
-        WebDriver driver = selenium.getDriver();
-        while (driver instanceof WrapsDriver) {
-            driver = ((WrapsDriver) driver).getWrappedDriver();
-        }
-        return !(driver instanceof ChromiumDriver
-                || driver instanceof FirefoxDriver
-                || driver instanceof SafariDriver);
     }
 
     // The names Selenium's Browser.EDGE matches

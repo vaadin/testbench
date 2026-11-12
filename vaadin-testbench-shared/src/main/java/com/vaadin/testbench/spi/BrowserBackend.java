@@ -8,13 +8,18 @@
  */
 package com.vaadin.testbench.spi;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Set;
 
 import org.jspecify.annotations.Nullable;
 
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.Dimension;
+import com.vaadin.testbench.LogEntry;
 import com.vaadin.testbench.NoSuchElementException;
+import com.vaadin.testbench.Point;
 import com.vaadin.testbench.StaleElementReferenceException;
 
 /**
@@ -83,6 +88,36 @@ public interface BrowserBackend {
     @Nullable
     String getBrowserName();
 
+    /**
+     * The browser as WebDriver capabilities: at least its name, as
+     * {@link #getBrowserName()}, version and platform. Screenshot reference
+     * names and a test's {@code getCapabilities()} read it.
+     */
+    Capabilities getCapabilities();
+
+    /**
+     * The machine the browser runs on, as {@code getRemoteControlName()}
+     * reports it.
+     *
+     * @return {@code null} when unknown
+     */
+    @Nullable
+    InetAddress getRemoteAddress() throws UnknownHostException;
+
+    /**
+     * Whether the browser's session is gone, so a screenshot of a failure can
+     * no longer be taken.
+     */
+    boolean isSessionGone();
+
+    /**
+     * The browser console's entries since the last call.
+     *
+     * @throws com.vaadin.testbench.NotYetImplementedException
+     *             on a backend that cannot read them yet
+     */
+    List<LogEntry> getLogEntries();
+
     /** Loads {@code url} in the current window and waits for it to load. */
     void navigate(String url);
 
@@ -106,6 +141,9 @@ public interface BrowserBackend {
     Dimension getWindowSize();
 
     void setWindowSize(Dimension size);
+
+    /** Moves the window; a backend without windows does nothing. */
+    void setWindowPosition(Point position);
 
     /** @return a PNG of the viewport */
     byte[] getScreenshot();

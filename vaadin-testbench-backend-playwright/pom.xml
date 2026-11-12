@@ -45,6 +45,13 @@
             <version>${playwright.version}</version>
         </dependency>
 
+        <!-- The parity test's other side -->
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-testbench-backend-selenium</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
         <!-- testbench.properties, which TestBench reads on start, is in the core modules -->
         <dependency>
             <groupId>com.vaadin</groupId>

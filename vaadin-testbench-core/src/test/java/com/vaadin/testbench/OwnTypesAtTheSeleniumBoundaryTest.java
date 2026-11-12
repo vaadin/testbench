@@ -19,6 +19,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.spi.ElementBackend;
+import com.vaadin.testbench.testutils.SeleniumElements;
 
 /**
  * An element speaks TestBench's own types; the Selenium backend turns them into
@@ -68,7 +69,7 @@ public class OwnTypesAtTheSeleniumBoundaryTest {
                 });
         BrowserDriver browser = TestBench.createDriver(driver);
         WebElement raw = Mockito.mock(WebElement.class);
-        TestBenchElement element = TestBench.createElement(raw,
+        TestBenchElement element = SeleniumElements.wrap(raw,
                 browser.getCommandExecutor());
 
         browser.executeScript("script", element,

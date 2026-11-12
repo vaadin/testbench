@@ -8,11 +8,10 @@
  */
 package com.vaadin.testbench.parallel;
 
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.remote.Browser;
-import org.openqa.selenium.remote.CapabilityType;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import java.util.Set;
+
+import com.vaadin.testbench.Capabilities;
+import com.vaadin.testbench.Platform;
 
 /**
  * Provides helper method for selecting the browser to run on
@@ -21,14 +20,22 @@ public class BrowserUtil {
 
     private static TestBenchBrowserFactory browserFactory = new DefaultBrowserFactory();
 
+    // The names Selenium's org.openqa.selenium.remote.Browser matches
+    private static final Set<String> CHROME_NAMES = Set.of("chrome",
+            "chrome-headless-shell");
+    private static final Set<String> EDGE_NAMES = Set.of("MicrosoftEdge",
+            "msedge");
+    private static final Set<String> FIREFOX_NAMES = Set.of("firefox");
+    private static final Set<String> SAFARI_NAMES = Set.of("safari", "Safari");
+
     /**
      * Gets the capabilities for Safari
      *
      * @return an object describing the capabilities required for running a test
      *         on Safari
      */
-    public static DesiredCapabilities safari() {
-        DesiredCapabilities c = browserFactory
+    public static Capabilities safari() {
+        Capabilities c = browserFactory
                 .create(com.vaadin.testbench.parallel.Browser.SAFARI);
         return c;
     }
@@ -39,8 +46,8 @@ public class BrowserUtil {
      * @return an object describing the capabilities required for running a test
      *         on Chrome
      */
-    public static DesiredCapabilities chrome() {
-        DesiredCapabilities c = browserFactory
+    public static Capabilities chrome() {
+        Capabilities c = browserFactory
                 .create(com.vaadin.testbench.parallel.Browser.CHROME);
         return c;
     }
@@ -51,8 +58,8 @@ public class BrowserUtil {
      * @return an object describing the capabilities required for running a test
      *         on Firefox
      */
-    public static DesiredCapabilities firefox() {
-        DesiredCapabilities c = browserFactory
+    public static Capabilities firefox() {
+        Capabilities c = browserFactory
                 .create(com.vaadin.testbench.parallel.Browser.FIREFOX);
         return c;
     }
@@ -63,8 +70,8 @@ public class BrowserUtil {
      * @return an object describing the capabilities required for running a test
      *         on Edge
      */
-    public static DesiredCapabilities edge() {
-        DesiredCapabilities c = browserFactory
+    public static Capabilities edge() {
+        Capabilities c = browserFactory
                 .create(com.vaadin.testbench.parallel.Browser.EDGE);
         return c;
     }
@@ -78,7 +85,7 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return Browser.EDGE.is(capabilities);
+        return EDGE_NAMES.contains(capabilities.getBrowserName());
     }
 
     /**
@@ -90,7 +97,7 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return Browser.CHROME.is(capabilities);
+        return CHROME_NAMES.contains(capabilities.getBrowserName());
     }
 
     /**
@@ -102,7 +109,7 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return Browser.SAFARI.is(capabilities);
+        return SAFARI_NAMES.contains(capabilities.getBrowserName());
     }
 
     /**
@@ -114,7 +121,7 @@ public class BrowserUtil {
         if (capabilities == null) {
             return false;
         }
-        return Browser.FIREFOX.is(capabilities);
+        return FIREFOX_NAMES.contains(capabilities.getBrowserName());
     }
 
     /**
@@ -153,19 +160,15 @@ public class BrowserUtil {
         if (capabilities == null) {
             return "Unknown";
         }
-        try {
-            Platform p = capabilities.getPlatformName();
-            Platform family = p != null ? p.family() : null;
-            if (family == Platform.WINDOWS || p == Platform.WINDOWS) {
-                return "Windows";
-            } else if (family == Platform.MAC || p == Platform.MAC) {
-                return "Mac";
-            }
-
-        } catch (Exception e) {
+        Platform p = capabilities.getPlatformName();
+        Platform family = p != null ? p.family() : null;
+        if (family == Platform.WINDOWS || p == Platform.WINDOWS) {
+            return "Windows";
+        } else if (family == Platform.MAC || p == Platform.MAC) {
+            return "Mac";
         }
         Object rawPlatform = capabilities
-                .getCapability(CapabilityType.PLATFORM_NAME);
+                .getCapability(Capabilities.PLATFORM_NAME);
         if (rawPlatform == null) {
             return "Unknown";
         }
@@ -173,14 +176,14 @@ public class BrowserUtil {
     }
 
     /**
-     * Sets new BrowserFactory to generate default DesiredCapabilities for each
+     * Sets new BrowserFactory to generate default Capabilities for each
      * Browser.<br>
      * Extend BrowserFactory and override its methods in order to add default
      * version, platform or other capabilities.
      *
      * @param browserFactory
      *            BrowserFactory instance to use to generate default
-     *            DesiredCapabilities
+     *            Capabilities
      * @since 9.0
      */
     public static void setBrowserFactory(
@@ -189,9 +192,9 @@ public class BrowserUtil {
     }
 
     /**
-     * Gets the BrowserFactory used to generate new DesiredCapabilities
+     * Gets the BrowserFactory used to generate new Capabilities
      *
-     * @return BrowserFactory used to generate new DesiredCapabilities
+     * @return BrowserFactory used to generate new Capabilities
      */
     public static TestBenchBrowserFactory getBrowserFactory() {
         return browserFactory;

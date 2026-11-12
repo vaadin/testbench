@@ -47,10 +47,13 @@
         <spotless.plugin.version>3.10.4</spotless.plugin.version>
         <currentYear>2026</currentYear>
         <skipUnitTests>${skipTests}</skipUnitTests>
+        <!-- A module that must run without Selenium sets this to false (D_browser_setup) -->
+        <skipSeleniumBan>true</skipSeleniumBan>
     </properties>
     <modules>
         <module>vaadin-testbench-bom</module>
         <module>vaadin-testbench-shared</module>
+        <module>vaadin-testbench-backend-selenium</module>
         <module>vaadin-testbench-core</module>
         <module>vaadin-testbench-core-junit5</module>
         <module>vaadin-testbench-core-junit6</module>
@@ -123,6 +126,35 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <!-- JUnit reads every member of a test's base classes, so Selenium there stops
+                     a test from running without the Selenium jar: no Selenium but in tests -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.7.0</version>
+                <executions>
+                    <execution>
+                        <id>ban-selenium</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skipSeleniumBan}</skip>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>org.seleniumhq.selenium:*:*:*:compile</exclude>
+                                        <exclude>org.seleniumhq.selenium:*:*:*:runtime</exclude>
+                                        <exclude>org.seleniumhq.selenium:*:*:*:provided</exclude>
+                                        <exclude>org.seleniumhq.selenium:*:*:*:system</exclude>
+                                    </excludes>
+                                    <message>Selenium belongs in vaadin-testbench-backend-selenium, or in test scope</message>
+                                </bannedDependencies>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <version>2.5</version>

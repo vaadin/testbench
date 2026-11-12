@@ -23,7 +23,18 @@
         </license>
     </licenses>
 
+    <properties>
+        <skipSeleniumBan>false</skipSeleniumBan>
+    </properties>
+
     <dependencies>
+        <!-- ElementApiSignatureTest's known leak -->
+        <dependency>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-testbench-backend-selenium</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-testbench-shared</artifactId>

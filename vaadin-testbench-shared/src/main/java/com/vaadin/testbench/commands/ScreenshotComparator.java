@@ -19,23 +19,22 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.HasCapabilities;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.UnsupportedCommandException;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ImageFileUtil;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
+import com.vaadin.testbench.spi.BrowserBackend;
+import com.vaadin.testbench.spi.ElementBackend;
 
+/**
+ * Compares a screenshot of the page, or of one element of it when
+ * {@code element} is not {@code null}, with a reference image.
+ */
 public class ScreenshotComparator {
 
     private static Set<String> browsersWithoutElementScreenshot = Collections
@@ -43,17 +42,16 @@ public class ScreenshotComparator {
 
     public static boolean compareScreen(String referenceId,
             ReferenceNameGenerator referenceNameGenerator,
-            ImageComparison imageComparison, TakesScreenshot takesScreenshot,
-            HasCapabilities driver) throws IOException {
-        Capabilities capabilities = driver.getCapabilities();
+            ImageComparison imageComparison, BrowserBackend browser,
+            @Nullable ElementBackend element) throws IOException {
+        Capabilities capabilities = browser.getCapabilities();
         String referenceName = referenceNameGenerator.generateName(referenceId,
                 capabilities);
 
         for (int times = 0; times < Parameters
                 .getMaxScreenshotRetries(); times++) {
             boolean equal = imageComparison.imageEqualToReference(
-                    getScreenshot((TakesScreenshot) driver, takesScreenshot,
-                            capabilities),
+                    getScreenshot(browser, element, capabilities),
                     referenceName,
                     Parameters.getScreenshotComparisonTolerance(),
                     capabilities);
@@ -79,42 +77,28 @@ public class ScreenshotComparator {
      * @return a captured image
      * @throws IOException
      */
-    private static BufferedImage getScreenshot(TakesScreenshot driver,
-            TakesScreenshot screenshotContext, Capabilities capabilities)
+    private static BufferedImage getScreenshot(BrowserBackend browser,
+            @Nullable ElementBackend element, Capabilities capabilities)
             throws IOException {
-        boolean elementScreenshot = (screenshotContext instanceof WebElement);
         String browserName = capabilities.getBrowserName();
-
-        if (elementScreenshot
+        if (element != null
                 && !browsersWithoutElementScreenshot.contains(browserName)) {
             // Detect if the driver supports element screenshots or not
             try {
-                byte[] screenshotBytes = screenshotContext
-                        .getScreenshotAs(OutputType.BYTES);
-                return ImageIO.read(new ByteArrayInputStream(screenshotBytes));
-            } catch (UnsupportedCommandException e) {
+                return ImageIO.read(
+                        new ByteArrayInputStream(element.getScreenshot()));
+            } catch (UnsupportedOperationException e) {
                 browsersWithoutElementScreenshot.add(browserName);
-            } catch (WebDriverException e) {
-                if (e.getCause() instanceof UnsupportedCommandException) {
-                    browsersWithoutElementScreenshot.add(browserName);
-                } else {
-                    throw e;
-                }
             }
         }
-
-        if (elementScreenshot
-                && browsersWithoutElementScreenshot.contains(browserName)) {
+        if (element != null) {
             // Driver does not support element screenshots, get whole screen
             // and crop
-            BufferedImage image = ImageIO.read(new ByteArrayInputStream(
-                    driver.getScreenshotAs(OutputType.BYTES)));
-            return cropToElement((WebElement) screenshotContext, image);
-        } else {
-            // Element or full screen image
-            return ImageIO.read(new ByteArrayInputStream(
-                    screenshotContext.getScreenshotAs(OutputType.BYTES)));
+            BufferedImage image = ImageIO
+                    .read(new ByteArrayInputStream(browser.getScreenshot()));
+            return cropToElement(element, image);
         }
+        return ImageIO.read(new ByteArrayInputStream(browser.getScreenshot()));
     }
 
     /**
@@ -129,13 +113,12 @@ public class ScreenshotComparator {
      * @throws IOException
      *             if element outside of the screenshot
      */
-    public static BufferedImage cropToElement(WebElement element,
+    public static BufferedImage cropToElement(ElementBackend element,
             BufferedImage fullScreen) throws IOException {
-        Point loc = element.getLocation();
-        Dimension size = element.getSize();
-        int x = loc.x, y = loc.y;
-        int w = size.width;
-        int h = size.height;
+        ElementBackend.Rect rect = element.getRect();
+        int x = rect.x(), y = rect.y();
+        int w = rect.width();
+        int h = rect.height();
 
         if (x >= 0 && x < fullScreen.getWidth()) {
             // X loc on screen
@@ -159,8 +142,8 @@ public class ScreenshotComparator {
     }
 
     public static boolean compareScreen(File reference,
-            ImageComparison imageComparison, TakesScreenshot takesScreenshot,
-            HasCapabilities driver) throws IOException {
+            ImageComparison imageComparison, BrowserBackend browser,
+            @Nullable ElementBackend element) throws IOException {
         BufferedImage image = null;
         try {
             image = ImageIO.read(reference);
@@ -169,18 +152,19 @@ public class ScreenshotComparator {
             // can be used as the reference
         }
         return compareScreen(image, reference.getName(), imageComparison,
-                takesScreenshot, driver);
+                browser, element);
     }
 
     public static boolean compareScreen(BufferedImage reference,
             String referenceName, ImageComparison imageComparison,
-            TakesScreenshot takesScreenshot, HasCapabilities driver)
+            BrowserBackend browser, @Nullable ElementBackend element)
             throws IOException {
         for (int times = 0; times < Parameters
                 .getMaxScreenshotRetries(); times++) {
             BufferedImage screenshotImage = ImageIO
                     .read(new ByteArrayInputStream(
-                            takesScreenshot.getScreenshotAs(OutputType.BYTES)));
+                            element != null ? element.getScreenshot()
+                                    : browser.getScreenshot()));
             if (reference == null) {
                 // Store the screenshot in the errors directory and fail the
                 // test
@@ -210,6 +194,7 @@ public class ScreenshotComparator {
         try {
             Thread.sleep(delay);
         } catch (InterruptedException e) {
+            getLogger().debug("Interrupted between screenshot retries", e);
         }
     }
 

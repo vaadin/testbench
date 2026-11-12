@@ -8,6 +8,7 @@
  */
 package com.vaadin.testbench.spi;
 
+import java.io.File;
 import java.util.List;
 
 import org.jspecify.annotations.Nullable;
@@ -97,8 +98,19 @@ public interface ElementBackend {
     /** The element's box in CSS pixels, relative to the page. */
     Rect getRect();
 
-    /** @return a PNG of the element */
+    /**
+     * @return a PNG of the element
+     * @throws UnsupportedOperationException
+     *             if the browser takes no screenshot of an element; the caller
+     *             crops one of the page
+     */
     byte[] getScreenshot();
+
+    /**
+     * Gives a file input these local files, as typing their paths into it does
+     * on a local Selenium browser; a remote one is sent the files first.
+     */
+    void setInputFiles(List<File> files);
 
     /**
      * A box in CSS pixels, truncated to whole pixels as Selenium does.

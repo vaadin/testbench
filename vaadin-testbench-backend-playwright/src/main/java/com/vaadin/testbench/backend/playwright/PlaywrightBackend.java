@@ -10,6 +10,8 @@ package com.vaadin.testbench.backend.playwright;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,9 +31,14 @@ import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.options.ViewportSize;
 import org.jspecify.annotations.Nullable;
 
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.Dimension;
+import com.vaadin.testbench.LogEntry;
 import com.vaadin.testbench.NoSuchElementException;
+import com.vaadin.testbench.NotYetImplementedException;
 import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.Platform;
+import com.vaadin.testbench.Point;
 import com.vaadin.testbench.StaleElementReferenceException;
 import com.vaadin.testbench.TimeoutException;
 import com.vaadin.testbench.spi.BrowserBackend;
@@ -114,6 +121,44 @@ public class PlaywrightBackend implements BrowserBackend {
         return "chromium".equals(name) ? "chrome" : name;
     }
 
+    /**
+     * The name, the browser's version, and this machine's platform, as
+     * chromedriver reports them.
+     */
+    @Override
+    public Capabilities getCapabilities() {
+        Capabilities capabilities = new Capabilities();
+        capabilities.setCapability(Capabilities.BROWSER_NAME, getBrowserName());
+        Browser browser = page.context().browser();
+        if (browser != null) {
+            capabilities.setCapability(Capabilities.BROWSER_VERSION,
+                    browser.version());
+        }
+        Platform platform = Platform.getCurrent();
+        Platform family = platform.family();
+        capabilities.setCapability(Capabilities.PLATFORM_NAME,
+                family == null || platform == Platform.LINUX ? platform
+                        : family);
+        return capabilities;
+    }
+
+    /** The browser runs on this machine. */
+    @Override
+    public InetAddress getRemoteAddress() throws UnknownHostException {
+        return InetAddress.getLocalHost();
+    }
+
+    @Override
+    public boolean isSessionGone() {
+        return page.isClosed();
+    }
+
+    @Override
+    public List<LogEntry> getLogEntries() {
+        throw NotYetImplementedException
+                .notYetImplemented("getLogEntries on Playwright");
+    }
+
     @Override
     public void navigate(String url) {
         try {
@@ -163,6 +208,12 @@ public class PlaywrightBackend implements BrowserBackend {
     @Override
     public void setWindowSize(Dimension size) {
         page.setViewportSize(size.getWidth(), size.getHeight());
+    }
+
+    /** A page has no window to move. */
+    @Override
+    public void setWindowPosition(Point position) {
+        // Nothing to move: the viewport is the window
     }
 
     @Override

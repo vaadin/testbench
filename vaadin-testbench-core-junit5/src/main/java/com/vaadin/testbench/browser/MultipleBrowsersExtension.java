@@ -19,10 +19,10 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
 import org.junit.platform.commons.util.AnnotationUtils;
-import org.openqa.selenium.Capabilities;
 
 import com.vaadin.testbench.BrowserTest;
 import com.vaadin.testbench.BrowserTestClass;
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.parallel.TestNameSuffix;
 

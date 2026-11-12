@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.net.InetSocketAddress;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -46,11 +47,13 @@ import com.vaadin.testbench.Dimension;
 import com.vaadin.testbench.ElementQuery;
 import com.vaadin.testbench.Keyboard;
 import com.vaadin.testbench.Keys;
+import com.vaadin.testbench.Point;
 import com.vaadin.testbench.StaleElementReferenceException;
 import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
+import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 import com.vaadin.testbench.spi.BrowserBackend;
 import com.vaadin.testbench.spi.ElementBackend;
 
@@ -471,6 +474,39 @@ class BackendParityTest {
             return List.of(before.toString(), after.toString(), innerWidth);
         });
         same("page screenshot", b -> isPng(b.getScreenshot()));
+        assertNoMismatches();
+    }
+
+    @Test
+    void browserFacts() throws IOException {
+        // Both drive the same Chromium; the remote address and the log
+        // differ by design (a Playwright browser has no driver server, and
+        // reading its log is not implemented yet)
+        same("capabilities", b -> List.of(b.getCapabilities().getBrowserName(),
+                String.valueOf(b.getCapabilities().getPlatformName()),
+                ReferenceNameGenerator.getMajorVersion(b.getCapabilities())));
+        same("session gone", BrowserBackend::isSessionGone);
+        same("window position", b -> {
+            b.setWindowPosition(new Point(0, 0));
+            return b.executeScript("return window.innerWidth");
+        });
+        // Not in the temp dir: the Chromium snap cannot read /tmp
+        Path file = Path.of("target", "parity-upload.txt").toAbsolutePath();
+        try {
+            Files.writeString(file, "parity");
+            same("file input", b -> {
+                ElementBackend input = (ElementBackend) b.executeScript(
+                        "const i = document.createElement('input');"
+                                + "i.type = 'file'; i.multiple = true;"
+                                + "document.body.appendChild(i); return i;");
+                input.setInputFiles(List.of(file.toFile(), file.toFile()));
+                return b.executeScript(
+                        "return Array.from(arguments[0].files).map(f => f.name + ':' + f.size)",
+                        input);
+            });
+        } finally {
+            Files.delete(file);
+        }
         assertNoMismatches();
     }
 

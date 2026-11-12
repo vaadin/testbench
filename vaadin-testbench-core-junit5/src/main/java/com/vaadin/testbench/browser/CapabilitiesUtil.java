@@ -17,15 +17,15 @@ import java.util.List;
 
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.BrowserFactory;
 import com.vaadin.testbench.annotations.RunLocally;
+import com.vaadin.testbench.backend.BackendChoice;
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.parallel.DefaultBrowserFactory;
@@ -47,10 +47,10 @@ public class CapabilitiesUtil {
      * {@code @RunLocally} annotation or com.vaadin.testbench.runLocally
      * property to override all capabilities.
      */
-    public static Collection<DesiredCapabilities> getDesiredCapabilities(
+    public static Collection<Capabilities> getDesiredCapabilities(
             ExtensionContext context) {
         if (testRunsLocally(context)) {
-            Collection<DesiredCapabilities> desiredCapabilities = new ArrayList<>();
+            Collection<Capabilities> desiredCapabilities = new ArrayList<>();
             Class<?> javaTestClass = context.getRequiredTestClass();
             desiredCapabilities.add(BrowserUtil.getBrowserFactory().create(
                     getRunLocallyBrowserName(javaTestClass),
@@ -73,7 +73,7 @@ public class CapabilitiesUtil {
     public static ConditionEvaluationResult evaluateExecutionCondition(
             ExtensionContext context) {
 
-        Collection<DesiredCapabilities> desiredCapabilities = getDesiredCapabilities(
+        Collection<Capabilities> desiredCapabilities = getDesiredCapabilities(
                 context);
         if (desiredCapabilities.isEmpty()
                 || categoryIsExcludedOrNotExcplicitlyIncluded(context)) {
@@ -187,18 +187,18 @@ public class CapabilitiesUtil {
      * returns a browser capabilities filtered browsers.include and
      * browsers.exclude system properties. (if present)
      */
-    private static Collection<DesiredCapabilities> getFilteredCapabilities(
+    private static Collection<Capabilities> getFilteredCapabilities(
             ExtensionContext context) {
 
-        Collection<DesiredCapabilities> desiredCapabilites = getBrowsersConfiguration(
+        Collection<Capabilities> desiredCapabilites = getBrowsersConfiguration(
                 context);
 
-        ArrayList<DesiredCapabilities> filteredCapabilities = new ArrayList<>();
+        ArrayList<Capabilities> filteredCapabilities = new ArrayList<>();
 
         String include = System.getProperty("browsers.include");
         String exclude = System.getProperty("browsers.exclude");
 
-        for (DesiredCapabilities d : desiredCapabilites) {
+        for (Capabilities d : desiredCapabilites) {
             String browserName = (d.getBrowserName() + d.getBrowserVersion())
                     .toLowerCase();
             if (include != null && include.trim().length() > 0) {
@@ -219,7 +219,7 @@ public class CapabilitiesUtil {
         return filteredCapabilities;
     }
 
-    private static Collection<DesiredCapabilities> getBrowsersConfiguration(
+    private static Collection<Capabilities> getBrowsersConfiguration(
             ExtensionContext context) {
 
         Class<?> klass = context.getRequiredTestClass();
@@ -244,8 +244,14 @@ public class CapabilitiesUtil {
                     }
 
                     try {
-                        return (Collection<DesiredCapabilities>) method
-                                .invoke(getTestClassInstance(context));
+                        List<Capabilities> converted = new ArrayList<>();
+                        // Ours, or the backend library's
+                        for (Object capabilities : (Collection<?>) method
+                                .invoke(getTestClassInstance(context))) {
+                            converted.add(
+                                    BackendChoice.toCapabilities(capabilities));
+                        }
+                        return converted;
                     } catch (Exception e) {
                         // Handle possible exceptions.
 
@@ -271,7 +277,7 @@ public class CapabilitiesUtil {
         return getBrowserConfigurationFromParameterOrDefault();
     }
 
-    private static List<DesiredCapabilities> getBrowserConfigurationFromParameterOrDefault() {
+    private static List<Capabilities> getBrowserConfigurationFromParameterOrDefault() {
         if (Parameters.getGridBrowsers().isEmpty()) {
             return getDefaultCapabilities();
         } else {
@@ -283,7 +289,7 @@ public class CapabilitiesUtil {
      * @return default capabilities, used if no {@link BrowserConfiguration}
      *         method was found
      */
-    public static List<DesiredCapabilities> getDefaultCapabilities() {
+    public static List<Capabilities> getDefaultCapabilities() {
         return Collections.singletonList(BrowserUtil.chrome());
     }
 
@@ -310,11 +316,11 @@ public class CapabilitiesUtil {
             /*
              * Validates if method's return type is Collection.
              * ClassCastException may still occur if method's return type is not
-             * Collection<DesiredCapabilities>
+             * a Collection of Capabilities
              */
             String errMsg = String.format(genericErrorMessage,
                     method.getDeclaringClass().getName(), method.getName(),
-                    "BrowserConfiguration annotated method must return a Collection<DesiredCapabilities>");
+                    "BrowserConfiguration annotated method must return a Collection of Capabilities");
             getLogger().info(errMsg);
             return false;
         }

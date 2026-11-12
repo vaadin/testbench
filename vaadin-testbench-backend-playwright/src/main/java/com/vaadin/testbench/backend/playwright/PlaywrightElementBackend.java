@@ -8,6 +8,7 @@
  */
 package com.vaadin.testbench.backend.playwright;
 
+import java.io.File;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -288,6 +289,18 @@ public class PlaywrightElementBackend implements ElementBackend {
     // Truncated, as Selenium's Rectangle is
     private static int intOf(Object number) {
         return ((Number) number).intValue();
+    }
+
+    @Override
+    public void setInputFiles(List<File> files) {
+        act(() -> {
+            handle.setInputFiles(
+                    files.stream().map(File::toPath)
+                            .toArray(java.nio.file.Path[]::new),
+                    new ElementHandle.SetInputFilesOptions()
+                            .setTimeout(timeout()));
+            return null;
+        });
     }
 
     @Override

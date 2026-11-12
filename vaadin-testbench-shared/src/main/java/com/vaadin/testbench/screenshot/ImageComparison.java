@@ -15,10 +15,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 
-import org.openqa.selenium.Capabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.screenshot.ImageUtil.ImageProperties;
 

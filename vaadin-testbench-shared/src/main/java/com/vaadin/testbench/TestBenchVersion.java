@@ -10,7 +10,6 @@ package com.vaadin.testbench;
 
 import java.util.Properties;
 
-import org.openqa.selenium.BuildInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +23,9 @@ import com.vaadin.pro.licensechecker.LicenseChecker;
 public class TestBenchVersion {
 
     public static final String testbenchVersion;
+
+    /** The Selenium version this TestBench is built with. */
+    public static final String expectedSeleniumVersion;
     static {
         Properties properties = new Properties();
         try {
@@ -34,17 +36,8 @@ public class TestBenchVersion {
             throw new ExceptionInInitializerError(e);
         }
 
-        String seleniumVersion = new BuildInfo().getReleaseLabel();
         testbenchVersion = properties.getProperty("testbench.version");
-        String expectedVersion = properties.getProperty("selenium.version");
-        if (seleniumVersion == null
-                || !seleniumVersion.equals(expectedVersion)) {
-            getLogger().warn(
-                    "This version of TestBench depends on Selenium version "
-                            + expectedVersion + " but version "
-                            + seleniumVersion
-                            + " was found. Make sure you do not have multiple versions of Selenium on the classpath.");
-        }
+        expectedSeleniumVersion = properties.getProperty("selenium.version");
 
         LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
                 testbenchVersion, null, Capabilities.of(Capability.PRE_TRIAL));

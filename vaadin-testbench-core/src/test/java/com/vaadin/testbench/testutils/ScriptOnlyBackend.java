@@ -8,10 +8,14 @@
  */
 package com.vaadin.testbench.testutils;
 
+import java.net.InetAddress;
 import java.util.List;
 import java.util.Set;
 
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.Dimension;
+import com.vaadin.testbench.LogEntry;
+import com.vaadin.testbench.Point;
 import com.vaadin.testbench.spi.BrowserBackend;
 import com.vaadin.testbench.spi.Input;
 
@@ -33,6 +37,33 @@ public abstract class ScriptOnlyBackend implements BrowserBackend {
     @Override
     public String getBrowserName() {
         return "chrome";
+    }
+
+    @Override
+    public Capabilities getCapabilities() {
+        Capabilities capabilities = new Capabilities();
+        capabilities.setCapability(Capabilities.BROWSER_NAME, getBrowserName());
+        return capabilities;
+    }
+
+    @Override
+    public InetAddress getRemoteAddress() {
+        throw notFaked();
+    }
+
+    @Override
+    public boolean isSessionGone() {
+        return false;
+    }
+
+    @Override
+    public List<LogEntry> getLogEntries() {
+        throw notFaked();
+    }
+
+    /** No window to move, as on Playwright. */
+    @Override
+    public void setWindowPosition(Point position) {
     }
 
     @Override

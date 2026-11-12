@@ -19,6 +19,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebElement;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
+import com.vaadin.testbench.testutils.SeleniumElements;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -33,7 +34,7 @@ public class TestBenchElementTest {
         Mockito.when(webElement.getDomAttribute("class"))
                 .thenReturn("v-button v-disabled");
 
-        TestBenchElement element = TestBench.createElement(webElement, null);
+        TestBenchElement element = SeleniumElements.wrap(webElement, null);
         assertFalse(element.isEnabled());
     }
 
@@ -43,7 +44,7 @@ public class TestBenchElementTest {
         Mockito.when(webElement.getAttribute("id"))
                 .thenReturn("identification");
 
-        TestBenchElement element = TestBench.createElement(webElement, null);
+        TestBenchElement element = SeleniumElements.wrap(webElement, null);
         assertEquals("identification", element.getId());
     }
 
@@ -51,8 +52,8 @@ public class TestBenchElementTest {
     public void elementsEquals() {
         RemoteWebElement webElement = new RemoteWebElement();
         webElement.setId("remote1");
-        TestBenchElement element = TestBench.createElement(webElement, null);
-        TestBenchElement element2 = TestBench.createElement(webElement, null);
+        TestBenchElement element = SeleniumElements.wrap(webElement, null);
+        TestBenchElement element2 = SeleniumElements.wrap(webElement, null);
 
         assertTrue(webElement.equals(webElement));
         assertTrue(element.equals(element));
@@ -67,7 +68,7 @@ public class TestBenchElementTest {
     public void elementsHashCode() {
         RemoteWebElement webElement = new RemoteWebElement();
         webElement.setId("remote1");
-        TestBenchElement element = TestBench.createElement(webElement, null);
+        TestBenchElement element = SeleniumElements.wrap(webElement, null);
 
         HashSet<Object> elements = new HashSet<>();
         elements.add(webElement);
@@ -119,12 +120,13 @@ public class TestBenchElementTest {
         WebElement webElement = Mockito.mock(WebElement.class);
         Mockito.when(webElement.getDomAttribute("class")).thenReturn(className);
 
-        return TestBench.createElement(webElement, null);
+        return SeleniumElements.wrap(webElement, null);
     }
 
     @Test
     public void wrapNullElement() {
-        Assert.assertNull(TestBench.createElement(null, null));
+        Assert.assertNull(
+                TestBench.createElement(TestBenchElement.class, null, null));
     }
 
     public class DebugTestBenchElement extends TestBenchElement {
@@ -175,8 +177,7 @@ public class TestBenchElementTest {
                 .mock(TestBenchCommandExecutor.class);
         Mockito.when(executor.executeScript(Mockito.any()))
                 .thenThrow(new RuntimeException("foobar"));
-        TestBenchElement element = TestBench.createElement(webElement,
-                executor);
+        TestBenchElement element = SeleniumElements.wrap(webElement, executor);
         RuntimeException exceptionReceived = null;
         try {
             element.executeScript("foo");

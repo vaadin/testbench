@@ -20,20 +20,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openqa.selenium.HasCapabilities;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.HttpCommandExecutor;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.Dimension;
-import com.vaadin.testbench.NotYetImplementedException;
+import com.vaadin.testbench.Point;
 import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchElement;
-import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
 import com.vaadin.testbench.spi.BrowserBackend;
@@ -86,7 +79,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
     /**
      * @param backend
      *            the browser to drive, as {@code TestBench.createDriver} sets
-     *            it for a Selenium driver
+     *            it
      */
     public void setBackend(BrowserBackend backend) {
         this.backend = backend;
@@ -106,31 +99,11 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
         return backend;
     }
 
-    // Screenshots and the remote control's name are
-    // Selenium-only until v2
-    private WebDriver seleniumDriver() {
-        if (getBackend() instanceof SeleniumBackend selenium) {
-            return selenium.getDriver();
-        }
-        throw NotYetImplementedException.notYetImplemented(
-                "Screenshots and the remote control off Selenium");
-    }
-
     @Override
     public String getRemoteControlName() {
         InetAddress ia = null;
         try {
-            WebDriver realDriver = seleniumDriver();
-            if (realDriver instanceof RemoteWebDriver) {
-                RemoteWebDriver rwd = (RemoteWebDriver) realDriver;
-                if (rwd.getCommandExecutor() instanceof HttpCommandExecutor) {
-                    ia = InetAddress.getByName(
-                            ((HttpCommandExecutor) rwd.getCommandExecutor())
-                                    .getAddressOfRemoteServer().getHost());
-                }
-            } else {
-                ia = InetAddress.getLocalHost();
-            }
+            ia = getBackend().getRemoteAddress();
         } catch (UnknownHostException e) {
             getLogger().warn("Could not find name of remote control", e);
             return "unknown";
@@ -173,18 +146,15 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
     @Override
     public boolean compareScreen(String referenceId) throws IOException {
         waitForVaadin();
-        WebDriver driver = seleniumDriver();
         return ScreenshotComparator.compareScreen(referenceId,
-                referenceNameGenerator, imageComparison,
-                (TakesScreenshot) driver, (HasCapabilities) driver);
+                referenceNameGenerator, imageComparison, getBackend(), null);
     }
 
     @Override
     public boolean compareScreen(File reference) throws IOException {
         waitForVaadin();
-        WebDriver driver = seleniumDriver();
         return ScreenshotComparator.compareScreen(reference, imageComparison,
-                (TakesScreenshot) driver, (HasCapabilities) driver);
+                getBackend(), null);
 
     }
 
@@ -192,10 +162,8 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
     public boolean compareScreen(BufferedImage reference, String referenceName)
             throws IOException {
         waitForVaadin();
-        WebDriver driver = seleniumDriver();
         return ScreenshotComparator.compareScreen(reference, referenceName,
-                imageComparison, (TakesScreenshot) driver,
-                (HasCapabilities) driver);
+                imageComparison, getBackend(), null);
 
     }
 
@@ -382,11 +350,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
             final int desiredHeight) throws UnsupportedOperationException {
         final int MAX_RESIZE_ATTEMPTS = 5;
         try {
-            // Selenium only: a Playwright page has no window to move
-            if (getBackend() instanceof SeleniumBackend selenium) {
-                selenium.getDriver().manage().window()
-                        .setPosition(new Point(0, 0));
-            }
+            getBackend().setWindowPosition(new Point(0, 0));
             // Start with the desired dimensions; the loop will adjust for
             // browser chrome (title bar, borders, etc.)
             getBackend()

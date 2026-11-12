@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.annotations.Attribute;
-import com.vaadin.testbench.backend.selenium.SeleniumBackend;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.elementsbase.Element;
 import com.vaadin.testbench.internal.SharedUtil;
@@ -1672,8 +1671,10 @@ public class ElementQuery<T extends TestBenchElement> {
         String message = "'" + tagName + "' is not a tag name. Use a tag "
                 + "name or \"*\", and filters such as withClassName() or "
                 + "withAttribute() for the rest";
-        // Temporary: remove when vaadin/testbench#2394 is decided
-        if (executor.getBackend() instanceof SeleniumBackend) {
+        // Temporary: remove when vaadin/testbench#2394 is decided. By name,
+        // since shared cannot see the Selenium module
+        if (executor.getBackend().getClass().getName().equals(
+                "com.vaadin.testbench.backend.selenium.SeleniumBackend")) {
             if (WARNED_TAG_NAMES.add(tagName)) {
                 LoggerFactory.getLogger(ElementQuery.class).warn(
                         message + "; it works on the Selenium backend only");

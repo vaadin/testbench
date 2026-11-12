@@ -25,6 +25,7 @@ import com.vaadin.testbench.ElementQuery.AttributeMatch;
 import com.vaadin.testbench.annotations.Attribute;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.elementsbase.Element;
+import com.vaadin.testbench.testutils.SeleniumElements;
 
 import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.CONTAINS_WORD;
 import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.EXISTS;
@@ -60,7 +61,7 @@ public class ElementQueryTest {
     public void setup() {
         mockDriver = TestBench
                 .createDriver(Mockito.mock(WebDriverWithJS.class));
-        exampleElement = TestBench.createElement(Mockito.mock(WebElement.class),
+        exampleElement = SeleniumElements.wrap(Mockito.mock(WebElement.class),
                 mockDriver.getCommandExecutor());
 
         mockElement = Mockito.mock(ExampleElement.class);

@@ -15,8 +15,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.parallel.ParallelRunner.TBMethod;
 
@@ -29,7 +29,7 @@ public class JobNameCapabilitiesTest {
         List<FrameworkMethod> testMethods = parallelRunner.computeTestMethods();
         Assert.assertEquals(4, testMethods.size());
         for (FrameworkMethod testMethod : testMethods) {
-            DesiredCapabilities cap = ((TBMethod) testMethod).getCapabilities();
+            Capabilities cap = ((TBMethod) testMethod).getCapabilities();
             Assert.assertEquals("bar",
                     SauceLabsIntegration.getSauceLabsOption(cap, "foo"));
             if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
@@ -61,11 +61,11 @@ public class JobNameCapabilitiesTest {
         }
 
         @BrowserConfiguration
-        public List<DesiredCapabilities> getBrowsers() {
-            List<DesiredCapabilities> caps = Arrays.asList(
+        public List<Capabilities> getBrowsers() {
+            List<Capabilities> caps = Arrays.asList(
                     Browser.CHROME.getDesiredCapabilities(),
                     Browser.FIREFOX.getDesiredCapabilities());
-            for (DesiredCapabilities cap : caps) {
+            for (Capabilities cap : caps) {
                 SauceLabsIntegration.setSauceLabsOption(cap, "foo", "bar");
             }
             return caps;

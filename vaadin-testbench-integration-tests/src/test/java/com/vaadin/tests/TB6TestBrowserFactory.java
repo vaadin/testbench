@@ -8,8 +8,8 @@
  */
 package com.vaadin.tests;
 
-import org.openqa.selenium.Platform;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import com.vaadin.testbench.Platform;
+import com.vaadin.testbench.Capabilities;
 
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.DefaultBrowserFactory;
@@ -21,9 +21,9 @@ import com.vaadin.testbench.parallel.SauceLabsIntegration;
 public class TB6TestBrowserFactory extends DefaultBrowserFactory {
 
     @Override
-    public DesiredCapabilities create(Browser browser, String version,
+    public Capabilities create(Browser browser, String version,
             Platform platform) {
-        DesiredCapabilities desiredCapabilities = super.create(browser, version,
+        Capabilities desiredCapabilities = super.create(browser, version,
                 platform);
 
         SauceLabsIntegration.setSauceLabsOption(desiredCapabilities,

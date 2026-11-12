@@ -8,8 +8,8 @@
  */
 package com.vaadin.testbench.screenshot;
 
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.Platform;
+import com.vaadin.testbench.Capabilities;
+import com.vaadin.testbench.Platform;
 
 /**
  * Generates the name of a reference screen shot from a string ID and browser
