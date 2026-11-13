@@ -137,12 +137,15 @@ jobs:
           retention-days: 7
 
   integration-tests:
-    # Each IT module on both backends (D_pluggable_backends in testbench-next).
-    name: Integration Tests (${{ matrix.junit.name }}, ${{ matrix.backend }})
+    # Each IT module on both backends in both modes (D_pluggable_backends, D_modes in
+    # testbench-next). compat gates on both backends; modern counts what breaks, so it
+    # may fail without failing the run.
+    name: Integration Tests (${{ matrix.junit.name }}, ${{ matrix.backend }}, ${{ matrix.mode }})
     needs: build
     if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-26.04
     timeout-minutes: 45
+    continue-on-error: ${{ matrix.mode != 'compat' }}
     services:
       selenium:
         # Playwright drives a local browser and fails on a hub; an empty image starts no service.
@@ -168,6 +171,7 @@ jobs:
           - name: JUnit 6
             module: vaadin-testbench-integration-tests-junit6
         backend: [selenium, playwright]
+        mode: [compat, modern]
 
     steps:
       - name: Checkout repository
@@ -224,7 +228,8 @@ jobs:
             -Dexec.args="install --with-deps chromium"
 
       - name: Save Playwright browsers
-        # Saved before the tests: actions/cache saves only from a job that succeeds.
+        # Saved before the tests: actions/cache saves only from a job that succeeds,
+        # and the counting jobs fail by design.
         if: matrix.backend == 'playwright' && steps.playwright-cache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v5
         with:
@@ -247,6 +252,7 @@ jobs:
             -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
             -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
             -Dcom.vaadin.testbench.Parameters.backend=${{ matrix.backend }} \
+            -Dcom.vaadin.testbench.Parameters.mode=${{ matrix.mode }} \
             $browser \
             -Dfailsafe.forkCount=5 \
             -B
@@ -255,7 +261,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v5
         with:
-          name: error-screenshots-${{ matrix.junit.name }}-${{ matrix.backend }}
+          name: error-screenshots-${{ matrix.junit.name }}-${{ matrix.backend }}-${{ matrix.mode }}
           path: |
             **/error-screenshots/**
           retention-days: 7
@@ -264,7 +270,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v5
         with:
-          name: integration-test-results-${{ matrix.junit.name }}-${{ matrix.backend }}
+          # Only the gating runs go into the published "Test Results"; the others are counts.
+          name: ${{ matrix.mode == 'compat' && 'integration-test-results' || 'count-results' }}-${{ matrix.junit.name }}-${{ matrix.backend }}-${{ matrix.mode }}
           path: |
             **/target/failsafe-reports/TEST-*.xml
           retention-days: 7
@@ -390,7 +397,7 @@ jobs:
         with:
           name: test-results
           pattern: '{unit-test-results,integration-test-results-*}'
-          # One directory per artifact: both backends' runs write the same report paths.
+          # One directory per artifact: both backends' compat runs write the same report paths.
           separate-directories: true
           delete-merged: true
 

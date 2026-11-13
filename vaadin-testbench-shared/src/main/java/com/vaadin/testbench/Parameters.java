@@ -36,6 +36,7 @@ public class Parameters {
     private static int readTimeout;
     private static int hubPort;
     private static String[] chromeOptions;
+    private static volatile Mode mode;
     static {
         isDebug = getSystemPropertyBoolean("debug", false);
 
@@ -150,6 +151,39 @@ public class Parameters {
         return Parameters.class.getName() + "." + unqualifiedName;
     }
 
+    /**
+     * The {@link Mode} of this run: the {@code mode} system property
+     * ({@code compat} or {@code modern}, any case), {@link Mode#COMPAT} when
+     * unset.
+     *
+     * @throws IllegalArgumentException
+     *             if the property names no mode: a typo must not silently run a
+     *             migrated suite in {@code compat}
+     */
+    public static Mode getMode() {
+        Mode current = mode;
+        if (current == null) {
+            String value = getSystemPropertyString("mode", "compat");
+            try {
+                current = Mode.valueOf(value.trim().toUpperCase(Locale.ROOT));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("'" + value + "' is not a "
+                        + getQualifiedParameter("mode")
+                        + ": use compat or modern", e);
+            }
+            mode = current;
+        }
+        return current;
+    }
+
+    /**
+     * Overrides the {@code mode} system property for the rest of the run;
+     * {@code null} reads the property again.
+     */
+    public static void setMode(Mode mode) {
+        Parameters.mode = mode;
+    }
+
     /** The backends {@link #getBackend()} knows. */
     public static final String PLAYWRIGHT = "playwright", SELENIUM = "selenium";
 
@@ -181,9 +215,10 @@ public class Parameters {
 
     /**
      * How long an action (a click, typing, hover) waits for its element to take
-     * it before it fails: the {@code actionTimeout} system property, in
-     * milliseconds, {@value #DEFAULT_ACTION_TIMEOUT_MS} when unset, as long as
-     * {@code waitForSingle()} waits. The same on every backend.
+     * it before it fails, and how long the query's {@code assertNone()} and
+     * {@code assertCount(n)} search: the {@code actionTimeout} system property,
+     * in milliseconds, {@value #DEFAULT_ACTION_TIMEOUT_MS} when unset, as long
+     * as {@code waitForSingle()} waits. The same on every backend.
      */
     public static Duration getActionTimeout() {
         return Duration.ofMillis(getSystemPropertyInt("actionTimeout",

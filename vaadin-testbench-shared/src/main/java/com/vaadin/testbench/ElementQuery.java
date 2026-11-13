@@ -1336,6 +1336,9 @@ public class ElementQuery<T extends TestBenchElement> {
      * @return The element of the type specified in the constructor
      * @throws NoSuchElementException
      *             if no element is found
+     * @throws UnsupportedOperationException
+     *             in {@link Mode#MODERN}, which never picks one of several
+     *             elements silently
      * @see #single()
      * @deprecated Use {@link #single()} for more reliable tests that assert
      *             exactly one matching element, or use {@link #get(int)} with
@@ -1344,6 +1347,7 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     @Deprecated(since = "10.0", forRemoval = true)
     public T first() {
+        rejectInModernMode("first()", "single()");
         return get(0);
     }
 
@@ -1394,6 +1398,9 @@ public class ElementQuery<T extends TestBenchElement> {
      * @throws NoSuchElementException
      *             if no element is found
      *
+     * @throws UnsupportedOperationException
+     *             in {@link Mode#MODERN}, which never picks one of several
+     *             elements silently
      * @see #first()
      * @see #waitForSingle(long)
      * @deprecated Use {@link #waitForSingle(long)} for more reliable tests that
@@ -1402,6 +1409,7 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     @Deprecated(since = "10.0", forRemoval = true)
     public T waitForFirst(long timeOutInSeconds) {
+        rejectInModernMode("waitForFirst()", "waitForSingle()");
         T result = Wait.until(() -> {
             try {
                 return first();
@@ -1415,6 +1423,15 @@ public class ElementQuery<T extends TestBenchElement> {
             return result;
         }
 
+    }
+
+    private static void rejectInModernMode(String method, String strict) {
+        if (Parameters.getMode() == Mode.MODERN) {
+            throw new UnsupportedOperationException(method
+                    + " is not available in the modern mode: use " + strict
+                    + " if exactly one element should match, or get(0) for"
+                    + " the first of several");
+        }
     }
 
     /**
@@ -1491,6 +1508,76 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     public boolean exists() {
         return !all().isEmpty();
+    }
+
+    /**
+     * Asserts that nothing matches, searching again until nothing does or
+     * {@link Parameters#getActionTimeout()} is over: the retrying partner of
+     * {@link #single()}, for an element that goes away.
+     *
+     * <pre>{@code
+     * $(ConfirmDialogElement.class).assertNone();
+     * }</pre>
+     *
+     * @throws AssertionError
+     *             if something still matches when the time is over
+     */
+    public void assertNone() {
+        assertCount(0);
+    }
+
+    /**
+     * Asserts that exactly {@code count} elements match, searching again until
+     * they do or {@link Parameters#getActionTimeout()} is over:
+     *
+     * <pre>{@code
+     * List<TestBenchElement> rows = grid.$("tr").assertCount(3);
+     * }</pre>
+     *
+     * @return the elements it counted
+     * @throws AssertionError
+     *             if another number matches when the time is over
+     */
+    public List<T> assertCount(int count) {
+        if (count < 0) {
+            throw new IllegalArgumentException("A count of " + count);
+        }
+        Duration timeout = Parameters.getActionTimeout();
+        long end = System.nanoTime() + timeout.toNanos();
+        while (true) {
+            List<T> found = all();
+            if (found.size() == count) {
+                return found;
+            }
+            if (System.nanoTime() - end > 0) {
+                throw new AssertionError("Expected "
+                        + (count == 0 ? "no" : String.valueOf(count))
+                        + " elements " + describeSearch() + ", found "
+                        + found.size() + " after " + timeout.toMillis()
+                        + " ms");
+            }
+            try {
+                Thread.sleep(ASSERT_POLL_MS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException(
+                        "Interrupted while counting elements", e);
+            }
+        }
+    }
+
+    private static final long ASSERT_POLL_MS = 100;
+
+    private String describeSearch() {
+        String description = "with tag <" + tagName + ">";
+        String attrPairs = getAttributePairs();
+        if (!attrPairs.isEmpty()) {
+            description += " and the attributes " + attrPairs;
+        }
+        if (!conditions.isEmpty()) {
+            description += " and " + conditions.size() + " more conditions";
+        }
+        return description;
     }
 
     /**
