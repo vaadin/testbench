@@ -397,6 +397,8 @@ jobs:
         with:
           name: test-results
           pattern: '{unit-test-results,integration-test-results-*}'
+          # One directory per artifact: both backends' compat runs write the same report paths.
+          separate-directories: true
           delete-merged: true
 
       - name: Download merged test results
