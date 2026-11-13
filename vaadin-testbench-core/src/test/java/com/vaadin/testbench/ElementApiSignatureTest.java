@@ -8,7 +8,6 @@
  */
 package com.vaadin.testbench;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
@@ -20,9 +19,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
@@ -35,18 +31,18 @@ import java.util.stream.Stream;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.vaadin.flow.component.button.testbench.ButtonElement;
-
 /**
  * The element API names no Selenium type: a test written against it can run on
  * any backend, and Selenium is reached only through the backend escape hatch.
  * <p>
- * The API is what a test reaches from the element classes: their supertypes,
- * and every {@code com.vaadin} type their public and protected signatures name,
- * followed from there ({@code TestBenchElement}, {@code ElementQuery}, the
- * mixins, {@code TestBenchCommandExecutor}, the SPI). A signature leaks when a
- * type in it, or a type argument, bound or {@code throws} clause, is a Selenium
- * type or extends one.
+ * The API is what an element class and a test reach from
+ * {@code TestBenchElement}, its mixins, {@code ElementQuery} and
+ * {@code BrowserDriver}: their supertypes, and every {@code com.vaadin} type
+ * their public and protected signatures name, followed from there
+ * ({@code TestBenchCommandExecutor}, the SPI). A signature leaks when a type in
+ * it, or a type argument, bound or {@code throws} clause, is a Selenium type or
+ * extends one. The flow-components element classes have their own copy of this
+ * test, walking from every element class.
  */
 public class ElementApiSignatureTest {
 
@@ -54,8 +50,22 @@ public class ElementApiSignatureTest {
     private static final Set<String> NOT_FOLLOWED = Set
             .of("com.vaadin.testbench.screenshot");
 
+    /**
+     * Where an element class and a test enter the API. The exceptions are
+     * unchecked, so no signature names them, yet tests catch them by name.
+     */
+    private static final List<Class<?>> ROOTS = List.of(TestBenchElement.class,
+            ElementQuery.class, BrowserDriver.class, HasCallFunction.class,
+            HasClearButton.class, HasDriver.class, HasElementQuery.class,
+            HasHelper.class, HasLabel.class, HasLabelAsText.class,
+            HasPlaceholder.class, HasPropertySettersGetters.class,
+            HasSelectByText.class, HasStringValueProperty.class,
+            HasTestBenchCommandExecutor.class, HasValidation.class,
+            NoSuchElementException.class, StaleElementReferenceException.class,
+            TimeoutException.class);
+
     @Test
-    public void elementApiNamesNoSeleniumType() throws Exception {
+    public void elementApiNamesNoSeleniumType() {
         Set<String> leaks = new TreeSet<>();
         for (Class<?> type : elementApi()) {
             check(type, leaks);
@@ -64,7 +74,7 @@ public class ElementApiSignatureTest {
     }
 
     @Test
-    public void theApiReachesTheCoreTypes() throws Exception {
+    public void theApiReachesTheCoreTypes() {
         Set<Class<?>> api = elementApi();
         for (Class<?> core : List.of(TestBenchElement.class, ElementQuery.class,
                 HasLabel.class, HasElementQuery.class,
@@ -84,9 +94,8 @@ public class ElementApiSignatureTest {
         Assert.assertFalse(leaks.isEmpty());
     }
 
-    private static Set<Class<?>> elementApi()
-            throws IOException, URISyntaxException {
-        Deque<Class<?>> toVisit = new ArrayDeque<>(elementClasses());
+    private static Set<Class<?>> elementApi() {
+        Deque<Class<?>> toVisit = new ArrayDeque<>(ROOTS);
         Set<Class<?>> api = new HashSet<>();
         while (!toVisit.isEmpty()) {
             Class<?> type = toVisit.pop();
@@ -100,29 +109,6 @@ public class ElementApiSignatureTest {
             }
         }
         return api;
-    }
-
-    private static List<Class<?>> elementClasses()
-            throws IOException, URISyntaxException {
-        Path root = Path.of(ButtonElement.class.getProtectionDomain()
-                .getCodeSource().getLocation().toURI());
-        try (Stream<Path> files = Files.walk(root)) {
-            return files.filter(file -> file.toString().endsWith(".class"))
-                    .map(file -> root.relativize(file).toString())
-                    .map(name -> name.substring(0, name.length() - 6)
-                            .replace('/', '.'))
-                    .map(ElementApiSignatureTest::load)
-                    .filter(ElementApiSignatureTest::isApi).toList();
-        }
-    }
-
-    private static Class<?> load(String name) {
-        try {
-            return Class.forName(name, false,
-                    ElementApiSignatureTest.class.getClassLoader());
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     private static boolean isApi(Class<?> type) {

@@ -57,7 +57,6 @@
         <module>vaadin-testbench-core</module>
         <module>vaadin-testbench-core-junit5</module>
         <module>vaadin-testbench-core-junit6</module>
-        <module>vaadin-testbench-flow-elements</module>
         <module>vaadin-testbench-backend-playwright</module>
         <module>vaadin-testbench-unit-shared</module>
         <module>vaadin-testbench-unit</module>
