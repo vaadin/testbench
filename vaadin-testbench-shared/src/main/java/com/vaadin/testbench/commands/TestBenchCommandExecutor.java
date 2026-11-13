@@ -14,11 +14,14 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Locale;
 
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.HasCapabilities;
+import org.openqa.selenium.JavascriptException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Point;
+import org.openqa.selenium.ScriptTimeoutException;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.HttpCommandExecutor;
@@ -47,28 +50,53 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
 
     private boolean enableWaitForVaadin = true;
     private boolean autoScrollIntoView = true;
+
+    /**
+     * Calls back with {@code true} when Vaadin is idle and {@code false} when
+     * it should be asked again.
+     * <p>
+     * When the page provides {@code window.Vaadin.Flow.ready()}, Flow decides
+     * what idle means and the script only returns once Flow is idle or the
+     * given timeout has passed. Otherwise, e.g. on older Flow versions or while
+     * the dev server is starting, the state is checked once and returned
+     * immediately.
+     */
     // @formatter:off
-    String WAIT_FOR_VAADIN_SCRIPT =
-            "if (document.readyState != 'complete') {"
-            + "  return false;"
+    private static final String WAIT_FOR_VAADIN_SCRIPT =
+            "var callback = arguments[arguments.length - 1];"
+            + "var flow = window.Vaadin && window.Vaadin.Flow;"
+            + "if (flow && typeof flow.ready === 'function') {"
+            + "  flow.ready({ timeout: arguments[0] }).then("
+            + "    function() { callback(true); },"
+            + "    function() { callback(false); });"
+            + "  return;"
             + "}"
-            + "if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.devServerIsNotLoaded) {"
-            + "  return false;"
-            + "} else if (window.Vaadin && window.Vaadin.Flow && window.Vaadin.Flow.clients) {"
-            + "  var clients = window.Vaadin.Flow.clients;"
+            + "if (document.readyState != 'complete') {"
+            + "  callback(false);"
+            + "} else if (flow && flow.devServerIsNotLoaded) {"
+            + "  callback(false);"
+            + "} else if (flow && flow.clients) {"
+            + "  var clients = flow.clients;"
             + "  for (var client in clients) {"
             + "    if (clients[client].isActive()) {"
-            + "      return false;"
+            + "      callback(false);"
+            + "      return;"
             + "    }"
             + "  }"
-            + "  return true;"
+            + "  callback(true);"
             + "} else {"
-            + "  return true;"
+            + "  callback(true);"
             + "}";
     // @formatter:on
 
-    // A hook for testing purposes
-    private Runnable waitForVaadinLoopHook;
+    private static final long WAIT_FOR_VAADIN_TIMEOUT_MS = 40000;
+
+    /**
+     * The longest a single call to {@code window.Vaadin.Flow.ready()} may wait.
+     * Kept below the default WebDriver script timeout of 30s so that Flow's own
+     * timeout ends the call rather than the driver.
+     */
+    private static final long FLOW_READY_TIMEOUT_MS = 10000;
 
     public TestBenchCommandExecutor(ImageComparison imageComparison,
             ReferenceNameGenerator referenceNameGenerator) {
@@ -109,6 +137,10 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
 
     /**
      * Block until Vaadin reports it has finished processing server messages.
+     * <p>
+     * When the page provides {@code window.Vaadin.Flow.ready()}, the waiting
+     * happens in the browser and costs a single WebDriver call. Otherwise the
+     * state is polled until Vaadin is idle.
      */
     public void waitForVaadin() {
         if (!enableWaitForVaadin) {
@@ -116,24 +148,54 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
             return;
         }
 
-        long timeoutTime = System.currentTimeMillis() + 40000;
-        Boolean finished = false;
-        while (System.currentTimeMillis() < timeoutTime && !finished) {
-            if (waitForVaadinLoopHook != null) {
-                waitForVaadinLoopHook.run();
-            }
-            // Must use the wrapped driver here to avoid calling waitForVaadin
-            // again
-            finished = (Boolean) ((JavascriptExecutor) getDriver()
-                    .getWrappedDriver()).executeScript(WAIT_FOR_VAADIN_SCRIPT);
-            if (finished == null) {
-                // This should never happen but according to
-                // https://dev.vaadin.com/ticket/19703, it happens
-                getLogger().debug(
-                        "waitForVaadin returned null, this should never happen");
-                finished = false;
+        // Must use the wrapped driver here to avoid calling waitForVaadin
+        // again
+        JavascriptExecutor executor = (JavascriptExecutor) getDriver()
+                .getWrappedDriver();
+        long timeoutTime = System.currentTimeMillis()
+                + WAIT_FOR_VAADIN_TIMEOUT_MS;
+        while (System.currentTimeMillis() < timeoutTime) {
+            long flowReadyTimeout = Math.min(FLOW_READY_TIMEOUT_MS,
+                    timeoutTime - System.currentTimeMillis());
+            if (isVaadinIdle(executor, flowReadyTimeout)) {
+                return;
             }
         }
+    }
+
+    private boolean isVaadinIdle(JavascriptExecutor executor,
+            long flowReadyTimeout) {
+        Object finished;
+        try {
+            finished = executor.executeAsyncScript(WAIT_FOR_VAADIN_SCRIPT,
+                    flowReadyTimeout);
+        } catch (ScriptTimeoutException e) {
+            getLogger().debug("Waiting for Vaadin was interrupted", e);
+            return false;
+        } catch (JavascriptException e) {
+            if (!isPageUnloaded(e)) {
+                throw e;
+            }
+            // The page was replaced while waiting, e.g. by a navigation or by
+            // the dev server finishing its startup
+            getLogger().debug("Waiting for Vaadin was interrupted", e);
+            return false;
+        }
+        if (finished == null) {
+            // This should never happen but according to
+            // https://dev.vaadin.com/ticket/19703, it happens
+            getLogger().debug(
+                    "waitForVaadin returned null, this should never happen");
+        }
+        return Boolean.TRUE.equals(finished);
+    }
+
+    private static boolean isPageUnloaded(JavascriptException e) {
+        // e.g. "document unloaded while waiting for result" (Chrome) or
+        // "Document was unloaded" (Firefox)
+        String message = e.getRawMessage();
+        return message != null
+                && message.toLowerCase(Locale.ROOT).contains("unloaded");
     }
 
     @Override
