@@ -31,7 +31,6 @@ import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.elementsbase.Element;
 import com.vaadin.testbench.spi.ElementBackend;
-import com.vaadin.testbench.spi.Input;
 
 /**
  * One DOM node of the page, with Vaadin specific helper functionality.
@@ -833,47 +832,5 @@ public class TestBenchElement
         ensureInteractable();
         waitForVaadin();
         elementBackend.hover();
-    }
-
-    /**
-     * Drags this element onto {@code target} with the mouse: presses the left
-     * button in this element's centre, moves to the target's, releases.
-     *
-     * <pre>{@code
-     * spreadsheet.getColumnHeader(3).getResizeHandle()
-     *         .dragTo(spreadsheet.getColumnHeader(5));
-     * }</pre>
-     *
-     * The mouse events of a user's drag; from a {@code draggable} element,
-     * Chromium starts HTML drag and drop, on both backends.
-     */
-    public void dragTo(TestBenchElement target) {
-        ensureInteractable();
-        waitForVaadin();
-        getCommandExecutor().getBackend().perform(List.of(
-                new Input.MoveToElement(elementBackend, 0, 0),
-                new Input.MouseDown(Input.Button.LEFT),
-                new Input.MoveToElement(target.getElementBackend(), 0, 0),
-                new Input.MouseUp(Input.Button.LEFT)));
-    }
-
-    /**
-     * Drags this element by an offset with the mouse: presses the left button
-     * in its centre, moves by {@code (x, y)} CSS pixels, releases.
-     *
-     * <pre>{@code
-     * splitLayout.getSplitter().dragBy(150, 0);
-     * }</pre>
-     *
-     * The mouse events, as {@link #dragTo(TestBenchElement)}.
-     */
-    public void dragBy(int x, int y) {
-        ensureInteractable();
-        waitForVaadin();
-        getCommandExecutor().getBackend()
-                .perform(List.of(new Input.MoveToElement(elementBackend, 0, 0),
-                        new Input.MouseDown(Input.Button.LEFT),
-                        new Input.MoveBy(x, y),
-                        new Input.MouseUp(Input.Button.LEFT)));
     }
 }

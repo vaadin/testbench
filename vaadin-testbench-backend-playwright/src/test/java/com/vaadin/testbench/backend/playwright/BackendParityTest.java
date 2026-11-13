@@ -641,8 +641,6 @@ class BackendParityTest {
     @Test
     void drags() {
         Map<String, Consumer<BrowserDriver>> cases = new LinkedHashMap<>();
-        cases.put("dragTo", d -> element(d, "drag").dragTo(element(d, "drop")));
-        cases.put("dragBy", d -> element(d, "drag").dragBy(40, 10));
         cases.put("Actions dragAndDrop", d -> new Actions(d)
                 .dragAndDrop(element(d, "drag"), element(d, "drop")).perform());
         cases.put("Actions dragAndDropBy", d -> new Actions(d)
@@ -678,7 +676,8 @@ class BackendParityTest {
         same("drag a draggable", b -> {
             b.executeScript("window.scrollTo(0, 0); window.mouseLog = [];");
             BrowserDriver d = driverOn(b);
-            element(d, "html5").dragTo(element(d, "drop"));
+            new Actions(d).dragAndDrop(element(d, "html5"), element(d, "drop"))
+                    .perform();
             return b.executeScript("return window.mouseLog.join('; ')");
         });
         assertNoMismatches();

@@ -8,6 +8,10 @@
  */
 package com.vaadin.testbench.backend.selenium;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.jspecify.annotations.Nullable;
 import org.openqa.selenium.BuildInfo;
 import org.openqa.selenium.WebDriver;
@@ -15,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.TestBenchVersion;
 import com.vaadin.testbench.backend.BrowserLauncher;
 import com.vaadin.testbench.backend.BrowserSetup;
 import com.vaadin.testbench.parallel.setup.LocalDriver;
@@ -30,13 +33,31 @@ public class SeleniumLauncher implements BrowserLauncher {
 
     static {
         String found = new BuildInfo().getReleaseLabel();
-        String expected = TestBenchVersion.expectedSeleniumVersion;
-        if (found == null || !found.equals(expected)) {
+        String expected = expectedSeleniumVersion();
+        if (expected != null && !expected.equals(found)) {
             LoggerFactory.getLogger(SeleniumLauncher.class).warn(
                     "This version of TestBench depends on Selenium version "
                             + expected + " but version " + found
                             + " was found. Make sure you do not have multiple versions of Selenium on the classpath.");
         }
+    }
+
+    // The Selenium version TestBench is built with, from the properties core
+    // and the JUnit 5 module ship
+    private static @Nullable String expectedSeleniumVersion() {
+        Properties properties = new Properties();
+        try (InputStream in = SeleniumLauncher.class.getResourceAsStream(
+                "/com/vaadin/testbench/testbench.properties")) {
+            if (in == null) {
+                return null;
+            }
+            properties.load(in);
+        } catch (IOException e) {
+            LoggerFactory.getLogger(SeleniumLauncher.class)
+                    .debug("Cannot read TestBench's properties", e);
+            return null;
+        }
+        return properties.getProperty("selenium.version");
     }
 
     @Override

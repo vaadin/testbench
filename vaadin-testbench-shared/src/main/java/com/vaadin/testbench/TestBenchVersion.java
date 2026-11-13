@@ -23,9 +23,6 @@ import com.vaadin.pro.licensechecker.LicenseChecker;
 public class TestBenchVersion {
 
     public static final String testbenchVersion;
-
-    /** The Selenium version this TestBench is built with. */
-    public static final String expectedSeleniumVersion;
     static {
         Properties properties = new Properties();
         try {
@@ -37,7 +34,6 @@ public class TestBenchVersion {
         }
 
         testbenchVersion = properties.getProperty("testbench.version");
-        expectedSeleniumVersion = properties.getProperty("selenium.version");
 
         LicenseChecker.checkLicenseFromStaticBlock("vaadin-testbench",
                 testbenchVersion, null, Capabilities.of(Capability.PRE_TRIAL));
