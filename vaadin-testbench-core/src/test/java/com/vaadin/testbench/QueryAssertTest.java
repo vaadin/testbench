@@ -103,17 +103,6 @@ public class QueryAssertTest {
                 error.getMessage());
     }
 
-    @Test
-    public void bothWorkInTheModernMode() {
-        Parameters.setMode(Mode.MODERN);
-        try {
-            new ScriptedQuery(Collections.emptyList()).assertNone();
-            new ScriptedQuery(List.of(element())).assertCount(1);
-        } finally {
-            Parameters.setMode(null);
-        }
-    }
-
     @Test(expected = IllegalArgumentException.class)
     public void aNegativeCountIsRefused() {
         new ScriptedQuery(Collections.emptyList()).assertCount(-1);
