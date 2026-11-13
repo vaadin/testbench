@@ -8,14 +8,23 @@
  */
 package com.vaadin.flow.component.sidenav;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import com.vaadin.flow.component.HasElement;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.dom.DomListenerRegistration;
 import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.testbench.unit.UIUnitTest;
 import com.vaadin.testbench.unit.ViewPackages;
+import com.vaadin.testbench.unit.internal.MockPage;
 
 @ViewPackages
 class SideNavTesterTest extends UIUnitTest {
@@ -107,6 +116,9 @@ class SideNavTesterTest extends UIUnitTest {
 
     @Test
     void clickItem_byText_parentWithoutPath_expandsAndCollapse() {
+        AtomicInteger clicks = new AtomicInteger();
+        view.adminSection.getElement().addEventListener("click",
+                event -> clicks.incrementAndGet());
         Assertions.assertFalse(view.adminSection.isExpanded(),
                 "Expected SideNavItem to be collapsed by default");
         sideNav_.clickItem("Admin");
@@ -115,6 +127,138 @@ class SideNavTesterTest extends UIUnitTest {
         sideNav_.clickItem("Admin");
         Assertions.assertFalse(view.adminSection.isExpanded(),
                 "Expected SideNav to be collapsed again after second click");
+        Assertions.assertEquals(2, clicks.get());
+    }
+
+    @Test
+    void clickItem_withClickListener_listenerRunsAndNavigationHappens() {
+        AtomicInteger clicks = new AtomicInteger();
+        view.sideNav.getItems().get(0).getElement().addEventListener("click",
+                event -> clicks.incrementAndGet());
+        sideNav_.clickItem("Messages");
+        Assertions.assertEquals(1, clicks.get());
+        assertNavigatedToTargetViewWithParam("N/A");
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { false, true })
+    void clickItem_preventDefault_listenerRunsWithoutNavigation(
+            boolean routerIgnore) {
+        AtomicInteger clicks = new AtomicInteger();
+        SideNavItem logout = new SideNavItem("Log Out", "sidenav-target/out");
+        logout.setRouterIgnore(routerIgnore);
+        logout.getElement()
+                .addEventListener("click", event -> clicks.incrementAndGet())
+                .preventDefault();
+        view.sideNav.addItem(logout);
+
+        sideNav_.clickItem("Log Out");
+
+        Assertions.assertEquals(1, clicks.get());
+        assertNoNavigation();
+        Assertions.assertNull(getExternalNavigationURL());
+    }
+
+    @Test
+    void clickItem_routerIgnore_navigatesOutsideRouter() {
+        SideNavItem item = new SideNavItem("Outside", "sidenav-target/out");
+        item.setRouterIgnore(true);
+        view.sideNav.addItem(item);
+
+        sideNav_.clickItem("Outside");
+
+        assertNoNavigation();
+        Assertions.assertEquals("sidenav-target/out",
+                getExternalNavigationURL());
+    }
+
+    @Test
+    void clickItem_preventDefaultRemovedByListener_navigationStillPrevented() {
+        SideNavItem item = new SideNavItem("Once", "sidenav-target/once");
+        DomListenerRegistration[] registration = new DomListenerRegistration[1];
+        registration[0] = item.getElement()
+                .addEventListener("click", event -> registration[0].remove())
+                .preventDefault();
+        view.sideNav.addItem(item);
+
+        sideNav_.clickItem("Once");
+
+        assertNoNavigation();
+    }
+
+    @Test
+    void clickItem_singleMouseClick_clickCountIsOne() {
+        List<String> details = new ArrayList<>();
+        view.sideNav.getItems().get(0).getElement().addEventListener("click",
+                event -> details.add(
+                        event.getEventData().get("event.detail").toString()))
+                .addEventData("event.detail");
+
+        sideNav_.clickItem("Messages");
+
+        Assertions.assertEquals(List.of("1"), details);
+    }
+
+    @Test
+    void clickItem_filteredListeners_evaluatedForLeftClick() {
+        List<String> runs = new ArrayList<>();
+        SideNavItem item = view.sideNav.getItems().get(0);
+        item.getElement().addEventListener("click", event -> runs.add("left"))
+                .setFilter("event.button === 0 && !event.ctrlKey");
+        item.getElement().addEventListener("click", event -> runs.add("right"))
+                .setFilter("event.button === 2");
+        // Prevents only a ctrl-click, which a left click is not
+        item.getElement().addEventListener("click", event -> runs.add("ctrl"))
+                .setFilter("event.ctrlKey").preventDefault();
+        item.getElement().addEventListener("click",
+                event -> runs.add(
+                        "button " + event.getEventData().get("event.button")))
+                .addEventData("event.button");
+
+        sideNav_.clickItem("Messages");
+
+        Assertions.assertEquals(List.of("button 0", "left"),
+                runs.stream().sorted().toList());
+        assertNavigatedToTargetViewWithParam("N/A");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "https://vaadin.com/docs",
+            "mailto:info@vaadin.com" })
+    void clickItem_absoluteUrl_navigatesOutsideRouter(String url) {
+        SideNavItem item = new SideNavItem("Docs");
+        item.setUnsafePath(url);
+        view.sideNav.addItem(item);
+
+        sideNav_.clickItem("Docs");
+
+        assertNoNavigation();
+        Assertions.assertEquals(url, getExternalNavigationURL());
+    }
+
+    @Test
+    void clickItem_targetSelf_navigatesThroughRouter() {
+        view.sideNav.getItems().get(0).setTarget("_self");
+
+        sideNav_.clickItem("Messages");
+
+        assertNavigatedToTargetViewWithParam("N/A");
+        Assertions.assertNull(getExternalNavigationURL());
+    }
+
+    @Test
+    void clickItem_openInNewBrowserTab_opensWindowWithoutNavigation() {
+        SideNavItem item = new SideNavItem("New Tab", "sidenav-target/tab");
+        item.setOpenInNewBrowserTab(true);
+        view.sideNav.addItem(item);
+
+        sideNav_.clickItem("New Tab");
+
+        assertNoNavigation();
+        Assertions.assertNull(getExternalNavigationURL());
+        Assertions.assertEquals(List.of("sidenav-target/tab"),
+                ((MockPage) UI.getCurrent().getPage()).getOpenedWindows()
+                        .get("_blank"));
     }
 
     @Test
@@ -313,6 +457,11 @@ class SideNavTesterTest extends UIUnitTest {
         HasElement currentView = getCurrentView();
         Assertions.assertSame(view, currentView,
                 "Expecting click on SideNav item without path to stay on current view");
+    }
+
+    private static String getExternalNavigationURL() {
+        return ((MockPage) UI.getCurrent().getPage())
+                .getLastExternalNavigationURL();
     }
 
     private void navigateToSideNavView() {
