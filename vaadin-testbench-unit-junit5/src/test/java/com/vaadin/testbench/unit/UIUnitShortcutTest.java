@@ -51,6 +51,21 @@ class UIUnitShortcutTest extends UIUnitTest {
     }
 
     @Test
+    void fireShortcut_keydownListenerThatCannotBeEvaluated_shortcutStillFires() {
+        AtomicInteger eventsCounter = new AtomicInteger();
+        UI.getCurrent().addShortcutListener(eventsCounter::incrementAndGet,
+                Key.ENTER);
+        // Needs a browser to evaluate, and prevents the default action
+        UI.getCurrent().getElement().addEventListener("keydown", event -> {
+        }).setFilter("event.target.id === 'editor' && event.key === 's'")
+                .preventDefault();
+
+        fireShortcut(Key.ENTER);
+
+        Assertions.assertEquals(1, eventsCounter.get());
+    }
+
+    @Test
     void fireShortcut_nestedComponents_listenersInvoked() {
         AtomicInteger buttonEvents = new AtomicInteger();
         AtomicInteger nestedButtonEvents = new AtomicInteger();
