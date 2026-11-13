@@ -127,11 +127,8 @@ final class TestBenchDriver implements BrowserDriver {
     }
 
     @Override
-    @SuppressWarnings({ "deprecation", "unchecked" })
     public List<TestBenchElement> findElements(By by) {
-        return (List<TestBenchElement>) commandExecutor.executeScript(
-                "return Array.from(document.querySelectorAll(arguments[0]))",
-                by.toCssSelector());
+        return By.find(by, commandExecutor, null);
     }
 
     @Override
