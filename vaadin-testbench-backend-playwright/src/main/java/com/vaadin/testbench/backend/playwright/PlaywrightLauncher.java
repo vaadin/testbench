@@ -19,7 +19,6 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.BrowserType;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
-import com.microsoft.playwright.options.HarMode;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 
@@ -33,12 +32,12 @@ import com.vaadin.testbench.spi.BrowserBackend;
 /**
  * Starts each test's browser as a fresh {@link BrowserContext}, its own cookies
  * and so its own Vaadin session, in a browser shared by the tests of one
- * thread. System properties: The browser is the one the setup's capabilities
- * name, as {@code @RunLocally} or {@code Parameters.runLocally} chose it:
- * Chrome is Chromium, Edge is Chromium's {@code msedge} channel, Firefox is
- * Firefox, Safari is WebKit. A hub, Sauce Labs included, is Selenium's alone. A
- * test can also hand TestBench its own {@link Browser}, {@link BrowserContext}
- * or {@link Page}. System properties:
+ * thread. The browser is the one the setup's capabilities name, as
+ * {@code @RunLocally} or {@code Parameters.runLocally} chose it: Chrome is
+ * Chromium, Edge is Chromium's {@code msedge} channel, Firefox is Firefox,
+ * Safari is WebKit. A hub, Sauce Labs included, is Selenium's alone. A test can
+ * also hand TestBench its own {@link Browser}, {@link BrowserContext} or
+ * {@link Page}. System properties:
  * <ul>
  * <li>{@code com.vaadin.testbench.playwright.browser}: {@code chromium},
  * {@code firefox} or {@code webkit}, over what the capabilities name;</li>
@@ -51,9 +50,7 @@ import com.vaadin.testbench.spi.BrowserBackend;
  * Playwright's own checks may hold an action, in milliseconds, {@code 10000} by
  * default;</li>
  * <li>{@code com.vaadin.testbench.Parameters.headless}: headless unless
- * {@code false};</li>
- * <li>{@code k6.harOutputPath}: records the test's traffic to that HAR file,
- * for loadtest's {@code record-playwright} goal.</li>
+ * {@code false}.</li>
  * </ul>
  * Temporary names, until browser setup has an API of its own.
  */
@@ -127,11 +124,6 @@ public class PlaywrightLauncher implements BrowserLauncher {
             String[] size = viewport.trim().split("x");
             options.setViewportSize(Integer.parseInt(size[0]),
                     Integer.parseInt(size[1]));
-        }
-        String har = System.getProperty("k6.harOutputPath");
-        if (har != null && !har.isEmpty()) {
-            options.setRecordHarPath(Path.of(har))
-                    .setRecordHarMode(HarMode.FULL);
         }
         BrowserContext context = browser.newContext(options);
         return new PlaywrightBackend(context.newPage());

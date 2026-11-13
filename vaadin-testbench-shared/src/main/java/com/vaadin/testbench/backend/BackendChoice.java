@@ -25,7 +25,7 @@ import com.vaadin.testbench.spi.BrowserBackend;
  * Which backend a test runs on: the one {@link Parameters#getBackend()} names,
  * else Playwright when {@code vaadin-testbench-backend-playwright} is on the
  * classpath, else Selenium. A driver the test built itself runs on the backend
- * of its library instead (D_browser_setup).
+ * of its library instead.
  */
 public final class BackendChoice {
 

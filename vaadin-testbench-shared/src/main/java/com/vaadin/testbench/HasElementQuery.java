@@ -32,9 +32,7 @@ public interface HasElementQuery {
      * element; called on a test, it searches the page.
      *
      * @param tagName
-     *            the tag name of the element to find, such as
-     *            {@code "vaadin-button"}, or {@code "*"} for any; a CSS
-     *            selector searches as before, with a warning
+     *            the tag name of the element to find
      * @return an appropriate {@link ElementQuery} instance
      */
     ElementQuery<TestBenchElement> $(String tagName);

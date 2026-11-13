@@ -45,9 +45,7 @@ public class WaitForVaadinGuardTest {
     /** TestBench has never waited in these; a new entry needs a reason. */
     private static final Set<String> ELEMENT_METHODS_NOT_WAITING = Set.of(
             // compares document.activeElement, never went through the proxy
-            "isFocused",
-            // screenshot comparison is not ported yet
-            "compareScreen");
+            "isFocused");
 
     /** As the javassist proxy's list had it. */
     private static final Set<String> DRIVER_METHODS_NOT_WAITING = Set.of(

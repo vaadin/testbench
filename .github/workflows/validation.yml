@@ -137,7 +137,7 @@ jobs:
           retention-days: 7
 
   integration-tests:
-    # Each IT module on both backends (D_pluggable_backends in testbench-next).
+    # Each IT module on both backends.
     name: Integration Tests (${{ matrix.junit.name }}, ${{ matrix.backend }})
     needs: build
     if: ${{ !github.event.pull_request.head.repo.fork }}

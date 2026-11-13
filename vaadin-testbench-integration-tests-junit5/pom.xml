@@ -244,8 +244,7 @@
     <profiles>
         <profile>
             <!-- These ITs on the Playwright backend, beside the Selenium one their
-                 hatch casts need; pick it with Parameters.backend=playwright.
-                 Branch-only, as CI's backend matrix. -->
+                 hatch casts need; pick it with Parameters.backend=playwright. -->
             <id>playwright</id>
             <dependencies>
                 <dependency>

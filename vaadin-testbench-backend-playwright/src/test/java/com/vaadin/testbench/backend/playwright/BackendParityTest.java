@@ -357,7 +357,7 @@ class BackendParityTest {
             });
         }
         // Selenium also fires a keydown with an empty key per character,
-        // Playwright none (R_pw_keys); what arrives is the same
+        // Playwright none; what arrives is the same
         same("sendKeys non-ASCII", b -> {
             b.executeScript("document.getElementById('keys').value = ''");
             byId(b, "keys").sendKeys("é漢😀");
@@ -587,7 +587,7 @@ class BackendParityTest {
      * Key sequences into the focused element, through {@code Actions}. None
      * holds {@code Keys.NULL}, which {@code Keys.chord} ends with: in
      * {@code Actions} chromedriver sends an "Unidentified" keydown for it,
-     * which Playwright cannot (R_pw_keys).
+     * which Playwright cannot.
      */
     @Test
     void keysThroughActions() {
@@ -756,7 +756,9 @@ class BackendParityTest {
         }
     }
 
-    /** R_selenium_chrome_answers: Selenium waits for it, so must we. */
+    /**
+     * A script after one that navigated runs in the new page, as on Selenium.
+     */
     @Test
     void aScriptRightAfterANavigationRunsInTheNewPage() {
         for (int i = 0; i < 5; i++) {

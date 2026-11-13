@@ -46,10 +46,6 @@ import org.junit.Test;
  */
 public class ElementApiSignatureTest {
 
-    /** Selenium-typed until v2 decides on screenshot comparison. */
-    private static final Set<String> NOT_FOLLOWED = Set
-            .of("com.vaadin.testbench.screenshot");
-
     /**
      * Where an element class and a test enter the API. The exceptions are
      * unchecked, so no signature names them, yet tests catch them by name.
@@ -121,8 +117,7 @@ public class ElementApiSignatureTest {
     }
 
     private static boolean isFollowed(Class<?> type) {
-        return type.getName().startsWith("com.vaadin.") && isApi(type)
-                && !NOT_FOLLOWED.contains(type.getPackageName());
+        return type.getName().startsWith("com.vaadin.") && isApi(type);
     }
 
     private static void check(Class<?> type, Set<String> leaks) {
