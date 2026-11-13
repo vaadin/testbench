@@ -11,6 +11,7 @@ package com.vaadin.tests;
 import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
+import org.openqa.selenium.WebDriverException;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.TemplateView;
@@ -106,6 +107,32 @@ public class ElementQueryIT extends AbstractBrowserTB9Test {
                 .$("button").id("shadow-button-2");
         Assertions.assertEquals("Shadow Button 2", button.getText());
 
+    }
+
+    @BrowserTest
+    void selectorListWithId_filterAppliesToWholeList() {
+        openTestURL();
+
+        List<TestBenchElement> elements = $(TemplateViewElement.class)
+                .waitForFirst().$("div, button").withId("shadow-button-2")
+                .all();
+        Assertions.assertEquals(1, elements.size());
+        Assertions.assertEquals("Shadow Button 2", elements.get(0).getText());
+
+        List<TestBenchElement> onPage = $("div, button")
+                .withId("light-button-1").all();
+        Assertions.assertEquals(1, onPage.size());
+        Assertions.assertEquals("Button 1", onPage.get(0).getText());
+    }
+
+    @BrowserTest
+    void invalidSelectorWithId_throws() {
+        openTestURL();
+
+        TemplateViewElement view = $(TemplateViewElement.class).waitForFirst();
+        Assertions.assertThrows(WebDriverException.class,
+                () -> view.$("button:no-such-pseudo-class")
+                        .withId("shadow-button-2").all());
     }
 
     @BrowserTest
