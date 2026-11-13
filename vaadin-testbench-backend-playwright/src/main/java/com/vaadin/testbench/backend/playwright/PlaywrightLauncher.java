@@ -47,9 +47,6 @@ import com.vaadin.testbench.spi.BrowserBackend;
  * nothing;</li>
  * <li>{@code com.vaadin.testbench.playwright.viewport}: {@code 1280x720} (the
  * default) or another {@code <width>x<height>};</li>
- * <li>{@code com.vaadin.testbench.playwright.actionTimeout}: how long
- * Playwright's own checks may hold an action, in milliseconds, {@code 10000} by
- * default;</li>
  * <li>{@code com.vaadin.testbench.Parameters.headless}: headless unless
  * {@code false};</li>
  * <li>{@code k6.harOutputPath}: records the test's traffic to that HAR file,

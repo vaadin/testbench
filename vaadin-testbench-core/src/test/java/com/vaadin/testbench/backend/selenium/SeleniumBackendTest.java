@@ -14,6 +14,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.HasCapabilities;
 import org.openqa.selenium.ImmutableCapabilities;
@@ -118,13 +119,46 @@ public class SeleniumBackendTest {
     }
 
     @Test
-    public void anActionFailsAtOnce() {
+    public void anActionWaitsUntilItsElementCanTakeIt() {
+        WebElement button = Mockito.mock(WebElement.class);
+        Mockito.doThrow(new ElementNotInteractableException("not yet"))
+                .doThrow(new ElementClickInterceptedException("covered"))
+                .doNothing().when(button).click();
+
+        new SeleniumElementBackend(backend, button).click();
+
+        Mockito.verify(button, Mockito.times(3)).click();
+    }
+
+    @Test
+    public void anActionFailsOnceTheActionTimeoutIsOver() {
+        String property = "com.vaadin.testbench.Parameters.actionTimeout";
+        System.setProperty(property, "300");
+        try {
+            WebElement hidden = Mockito.mock(WebElement.class);
+            Mockito.doThrow(new ElementNotInteractableException("hidden"))
+                    .when(hidden).sendKeys(Mockito.any());
+            long start = System.nanoTime();
+            Assert.assertThrows(ElementNotInteractableException.class,
+                    () -> new SeleniumElementBackend(backend, hidden)
+                            .sendKeys("x"));
+            long waitedMs = (System.nanoTime() - start) / 1_000_000;
+            Assert.assertTrue("waited " + waitedMs + " ms",
+                    waitedMs >= 300 && waitedMs < 2000);
+        } finally {
+            System.clearProperty(property);
+        }
+    }
+
+    @Test
+    public void aReadDoesNotWait() {
         WebElement hidden = Mockito.mock(WebElement.class);
-        Mockito.doThrow(new ElementNotInteractableException("hidden"))
-                .when(hidden).click();
+        Mockito.when(hidden.getText())
+                .thenThrow(new ElementNotInteractableException("hidden"));
+        long start = System.nanoTime();
         Assert.assertThrows(ElementNotInteractableException.class,
-                () -> new SeleniumElementBackend(backend, hidden).click());
-        Mockito.verify(hidden, Mockito.times(1)).click();
+                () -> new SeleniumElementBackend(backend, hidden).getText());
+        Assert.assertTrue((System.nanoTime() - start) / 1_000_000 < 200);
     }
 
     @Test(expected = StaleElementReferenceException.class)

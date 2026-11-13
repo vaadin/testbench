@@ -35,6 +35,7 @@ import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.Dimension;
 import com.vaadin.testbench.LogEntry;
 import com.vaadin.testbench.NoSuchElementException;
+import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.Platform;
 import com.vaadin.testbench.Point;
 import com.vaadin.testbench.StaleElementReferenceException;
@@ -65,10 +66,7 @@ public class PlaywrightBackend implements BrowserBackend {
     private int nextHandle;
 
     public PlaywrightBackend(Page page) {
-        this(page,
-                Duration.ofMillis(Long.parseLong(System.getProperty(
-                        "com.vaadin.testbench.playwright.actionTimeout",
-                        "10000"))));
+        this(page, Parameters.getActionTimeout());
     }
 
     PlaywrightBackend(Page page, Duration actionTimeout) {
@@ -81,11 +79,7 @@ public class PlaywrightBackend implements BrowserBackend {
         return page;
     }
 
-    /**
-     * How long Playwright's own checks may hold an action (visible, stable,
-     * enabled, not covered) before it fails; its 30 s default makes a failing
-     * test slow.
-     */
+    /** How long an action waits for its element to take it. */
     Duration getActionTimeout() {
         return actionTimeout;
     }
