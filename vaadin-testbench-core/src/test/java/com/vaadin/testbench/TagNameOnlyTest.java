@@ -25,8 +25,9 @@ import com.vaadin.testbench.spi.ElementBackend;
 import com.vaadin.testbench.testutils.ScriptOnlyBackend;
 
 /**
- * {@code $(String)} takes a tag name; a CSS selector keeps searching, on every
- * backend, until vaadin/testbench#2394 is decided.
+ * {@code $(String)} takes a tag name: a CSS selector throws on any backend but
+ * Selenium, which keeps searching with it until vaadin/testbench#2394 is
+ * decided.
  */
 public class TagNameOnlyTest {
 
@@ -79,13 +80,19 @@ public class TagNameOnlyTest {
     }
 
     @Test
-    public void cssSelectorsStillSearchOnOtherBackends() {
+    public void cssSelectorsThrowOnOtherBackends() {
         TestBenchElement element = elementOnOtherBackend();
         for (String selector : List.of(".highcharts-point", "a, b",
                 "div > span", "button + vaadin-tooltip", "[part~='x']",
                 ":not([hidden])", "div.v-system-error", "my-element.v2", "#id",
-                "a b")) {
-            Assert.assertEquals(selector, List.of(), element.$(selector).all());
+                "a b", "1div", "")) {
+            try {
+                element.$(selector).all();
+                Assert.fail("Expected '" + selector + "' to be rejected");
+            } catch (IllegalArgumentException e) {
+                Assert.assertTrue(e.getMessage(),
+                        e.getMessage().contains("is not a tag name"));
+            }
         }
     }
 

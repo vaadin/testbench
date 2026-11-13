@@ -121,11 +121,13 @@ public abstract class TestBenchTestCase
     }
 
     /** As {@link BrowserDriver#findElement(By)}. */
+    @SuppressWarnings("deprecation")
     public TestBenchElement findElement(By by) {
         return getDriver().findElement(by);
     }
 
     /** As {@link BrowserDriver#findElements(By)}. */
+    @SuppressWarnings("deprecation")
     public List<TestBenchElement> findElements(By by) {
         return getDriver().findElements(by);
     }

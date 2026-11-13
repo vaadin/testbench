@@ -26,7 +26,10 @@ import java.util.regex.Pattern;
  * Selenium-only.
  * <p>
  * Equal when {@link #toString()} is, as Selenium's are. Immutable.
+ *
+ * @deprecated Use {@code $}, which also searches the shadow root.
  */
+@Deprecated
 public final class By {
 
     // Selenium's escaping for By.id and By.className (By.java, selenium-api
@@ -44,18 +47,20 @@ public final class By {
     }
 
     /**
-     * The {@code $} form: {@code $(ButtonElement.class).id(id)}, or
-     * {@code $("*").id(id)} when no element class fits. Unlike this, {@code id}
-     * fails on a duplicate id.
+     * @deprecated Use {@code $(ButtonElement.class).id(id)}, or
+     *             {@code $("*").id(id)} when no element class fits. Unlike
+     *             this, {@code id} fails on a duplicate id.
      */
+    @Deprecated
     public static By id(String id) {
         Objects.requireNonNull(id, "Cannot find elements when id is null.");
         return new By("By.id: " + id, "#" + cssEscape(id));
     }
 
     /**
-     * The {@code $} form: {@code $("tag")}.
+     * @deprecated Use {@code $("tag")}.
      */
+    @Deprecated
     public static By tagName(String tagName) {
         Objects.requireNonNull(tagName,
                 "Cannot find elements when the tag name is null.");
@@ -66,14 +71,13 @@ public final class By {
     }
 
     /**
-     * The {@code $} form:
-     * {@code $(ButtonElement.class).withClassName(className)}.
-     *
      * @param className
      *            one class name; for several, use {@link #cssSelector(String)}
      * @throws IllegalArgumentException
      *             if {@code className} holds whitespace
+     * @deprecated Use {@code $(ButtonElement.class).withClassName(className)}.
      */
+    @Deprecated
     public static By className(String className) {
         Objects.requireNonNull(className,
                 "Cannot find elements when the class name expression is null.");
@@ -85,12 +89,14 @@ public final class By {
     }
 
     /**
-     * The {@code $} form: {@code $("tag")} with its filters:
-     * {@code By.cssSelector("vaadin-button.primary")} becomes
-     * {@code $("vaadin-button").withClassName("primary")}, and attributes take
-     * {@code withAttribute}. {@code $} takes a tag name, not a selector, so a
-     * selector beyond tag, class and attributes has no {@code $} form.
+     * @deprecated Use {@code $("tag")} with its filters:
+     *             {@code By.cssSelector("vaadin-button.primary")} becomes
+     *             {@code $("vaadin-button").withClassName("primary")}, and
+     *             attributes take {@code withAttribute}. {@code $} takes a tag
+     *             name, not a selector, so a selector beyond tag, class and
+     *             attributes has no {@code $} form.
      */
+    @Deprecated
     public static By cssSelector(String cssSelector) {
         Objects.requireNonNull(cssSelector,
                 "Cannot find elements when the selector is null");

@@ -33,8 +33,8 @@ public interface HasElementQuery {
      *
      * @param tagName
      *            the tag name of the element to find, such as
-     *            {@code "vaadin-button"}, or {@code "*"} for any; a CSS
-     *            selector searches as before, with a warning
+     *            {@code "vaadin-button"}, or {@code "*"} for any; not a CSS
+     *            selector, which throws on any backend but Selenium
      * @return an appropriate {@link ElementQuery} instance
      */
     ElementQuery<TestBenchElement> $(String tagName);

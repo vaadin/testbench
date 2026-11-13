@@ -23,6 +23,7 @@ import org.jspecify.annotations.Nullable;
  * getDriver().get(getRootURL() + "/crud");
  * getDriver().manage().window().setSize(new Dimension(1024, 768));
  * getDriver().navigate().refresh();
+ * getDriver().getKeyboard().sendKeys(Keys.ESCAPE);
  * }</pre>
  *
  * Every call waits for Vaadin first, except navigation, the window size,
@@ -72,6 +73,7 @@ public interface BrowserDriver extends HasTestBenchCommandExecutor {
      *
      * @return empty when nothing matches
      */
+    @SuppressWarnings("deprecation")
     List<TestBenchElement> findElements(By by);
 
     /**
@@ -80,6 +82,7 @@ public interface BrowserDriver extends HasTestBenchCommandExecutor {
      * @throws NoSuchElementException
      *             if nothing matches
      */
+    @SuppressWarnings("deprecation")
     TestBenchElement findElement(By by);
 
     String getWindowHandle();
@@ -94,6 +97,15 @@ public interface BrowserDriver extends HasTestBenchCommandExecutor {
 
     /** Closes the browser. */
     void quit();
+
+    /**
+     * The keyboard, typing into whatever has the focus, as a user would:
+     *
+     * <pre>{@code
+     * getDriver().getKeyboard().sendKeys("Jo", Keys.TAB);
+     * }</pre>
+     */
+    Keyboard getKeyboard();
 
     interface Navigation {
 

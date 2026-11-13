@@ -25,9 +25,11 @@ import com.vaadin.testbench.spi.BrowserBackend;
 final class TestBenchDriver implements BrowserDriver {
 
     private final TestBenchCommandExecutor commandExecutor;
+    private final Keyboard keyboard;
 
     TestBenchDriver(TestBenchCommandExecutor commandExecutor) {
         this.commandExecutor = commandExecutor;
+        this.keyboard = new Keyboard(commandExecutor);
     }
 
     private BrowserBackend backend() {
@@ -132,6 +134,7 @@ final class TestBenchDriver implements BrowserDriver {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public TestBenchElement findElement(By by) {
         List<TestBenchElement> found = findElements(by);
         if (found.isEmpty()) {
@@ -178,5 +181,10 @@ final class TestBenchDriver implements BrowserDriver {
     @Override
     public void quit() {
         backend().quit();
+    }
+
+    @Override
+    public Keyboard getKeyboard() {
+        return keyboard;
     }
 }
