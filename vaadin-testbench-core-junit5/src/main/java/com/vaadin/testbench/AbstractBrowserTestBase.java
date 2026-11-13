@@ -15,26 +15,14 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NotFoundException;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.WrapsElement;
-import org.openqa.selenium.logging.LogEntry;
-import org.openqa.selenium.logging.LogType;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
@@ -60,27 +48,24 @@ public abstract class AbstractBrowserTestBase
      */
     private static final String WEB_SOCKET_CONNECTION_ERROR_PREFIX = "WebSocket connection to ";
 
-    /**
-     * Returns the {@link WebDriver} instance or (if the previously provided
-     * WebDriver instance was not already a {@link TestBenchDriverProxy}
-     * instance) a {@link TestBenchDriverProxy} that wraps that driver.
-     *
-     * @return the active WebDriver instance
-     */
-    public abstract WebDriver getDriver();
+    /** @return {@code null} before the browser is set up */
+    @Override
+    public abstract BrowserDriver getDriver();
 
-    public WebElement findElement(org.openqa.selenium.By by) {
-        return getContext().findElement(by);
+    /** As {@link BrowserDriver#findElement(By)}. */
+    public TestBenchElement findElement(By by) {
+        return getDriver().findElement(by);
     }
 
-    public List<WebElement> findElements(org.openqa.selenium.By by) {
-        return getContext().findElements(by);
+    /** As {@link BrowserDriver#findElements(By)}. */
+    public List<TestBenchElement> findElements(By by) {
+        return getDriver().findElements(by);
     }
 
     /**
      * Decorates the element with the specified Element type, making it possible
-     * to use component-specific API on elements found using standard Selenium
-     * API.
+     * to use component-specific API on an element found as a plain
+     * {@link TestBenchElement}.
      *
      * @param <T>
      *            the type of the {@link TestBenchElement} to return
@@ -91,8 +76,8 @@ public abstract class AbstractBrowserTestBase
      * @return The element wrapped in an instance of the specified element type.
      */
     public <T extends TestBenchElement> T wrap(Class<T> elementType,
-            WebElement element) {
-        return ((TestBenchElement) element).wrap(elementType);
+            TestBenchElement element) {
+        return TestBench.wrap(element, elementType);
     }
 
     /**
@@ -100,103 +85,79 @@ public abstract class AbstractBrowserTestBase
      * frame or window. The script fragment provided will be executed as the
      * body of an anonymous function.
      * <p>
-     * This method wraps any returned {@link WebElement} as
-     * {@link TestBenchElement}.
+     * A DOM node comes back as a {@link TestBenchElement}.
      *
      * @param script
      *            the script to execute
      * @param args
      *            the arguments, available in the script as
      *            {@code arguments[0]...arguments[N]}
-     * @return whatever
-     *         {@link JavascriptExecutor#executeScript(String, Object...)}
-     *         returns
-     * @throws UnsupportedOperationException
-     *             if the underlying driver does not support JavaScript
-     *             execution
-     * @see JavascriptExecutor#executeScript(String, Object...)
+     * @see BrowserDriver#executeScript(String, Object...)
      */
     public Object executeScript(String script, Object... args) {
         return getCommandExecutor().executeScript(script, args);
     }
 
     /**
-     * Waits the given number of seconds for the given condition to become
-     * neither null nor false. {@link NotFoundException}s are ignored by
-     * default.
-     * <p>
-     * Use e.g. as
-     * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by), 10);</code>
+     * Waits until {@code condition} returns neither {@code null} nor
+     * {@code false}, asking it every 500 ms; a {@link NoSuchElementException}
+     * it throws counts as not yet.
      *
-     * @param <T>
-     *            The return type of the {@link ExpectedCondition} and this
-     *            method
-     * @param condition
-     *            Models a condition that might reasonably be expected to
-     *            eventually evaluate to something that is neither null nor
-     *            false.
-     * @param timeoutInSeconds
-     *            The timeout in seconds for the wait.
-     * @return The condition's return value if it returned something different
-     *         from null or false before the timeout expired.
+     * <pre>{@code
+     * waitUntil(driver -> $(SideNavElement.class).exists(), 1);
+     * }</pre>
      *
+     * @return what {@code condition} returned last
      * @throws TimeoutException
-     *             If the timeout expires.
-     *
-     * @see FluentWait#until
-     * @see ExpectedCondition
+     *             if the time is up
      */
-    public <T> T waitUntil(ExpectedCondition<T> condition,
+    public <T> T waitUntil(Function<BrowserDriver, T> condition,
             long timeoutInSeconds) {
-        return new WebDriverWait(getDriver(),
-                Duration.ofSeconds(timeoutInSeconds)).until(condition);
+        BrowserDriver browser = getDriver();
+        // The condition's toString names it in the timeout message, as in
+        // Selenium's WebDriverWait
+        return Wait.until(new Supplier<>() {
+            @Override
+            public T get() {
+                return condition.apply(browser);
+            }
+
+            @Override
+            public String toString() {
+                return condition.toString();
+            }
+        }, Duration.ofSeconds(timeoutInSeconds));
     }
 
-    /**
-     * Waits up to 10 seconds for the given condition to become neither null nor
-     * false. {@link NotFoundException}s are ignored by default.
-     * <p>
-     * Use e.g. as
-     * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by));</code>
-     *
-     * @param <T>
-     *            The return type of the {@link ExpectedCondition} and this
-     *            method
-     * @param condition
-     *            Models a condition that might reasonably be expected to
-     *            eventually evaluate to something that is neither null nor
-     *            false.
-     * @return The condition's return value if it returned something different
-     *         from null or false before the timeout expired.
-     *
-     * @throws TimeoutException
-     *             If 10 seconds passed.
-     *
-     * @see FluentWait#until
-     * @see ExpectedCondition
-     */
-    public <T> T waitUntil(ExpectedCondition<T> condition) {
+    /** As {@link #waitUntil(Function, long)}, for up to 10 seconds. */
+    public <T> T waitUntil(Function<BrowserDriver, T> condition) {
         return waitUntil(condition, 10);
     }
 
+    /** Searches the page. */
     @Override
-    public SearchContext getContext() {
-        return getDriver();
+    public <T extends TestBenchElement> ElementQuery<T> $(Class<T> clazz) {
+        return new ElementQuery<>(clazz).onPage(getCommandExecutor());
+    }
+
+    /** Searches the page. */
+    @Override
+    public ElementQuery<TestBenchElement> $(String tagName) {
+        return new ElementQuery<>(TestBenchElement.class, tagName)
+                .onPage(getCommandExecutor());
     }
 
     @Override
     public TestBenchCommandExecutor getCommandExecutor() {
-        return ((HasTestBenchCommandExecutor) getDriver()).getCommandExecutor();
+        return getDriver().getCommandExecutor();
     }
 
     /**
-     * Convenience method the return {@link TestBenchCommands} for the default
-     * {@link WebDriver} instance.
-     *
-     * @return The driver cast to a TestBenchCommands instance.
+     * Convenience method the return {@link TestBenchCommands} for the current
+     * browser.
      */
     public TestBenchCommands testBench() {
-        return ((TestBenchDriverProxy) getDriver()).getCommandExecutor();
+        return getDriver().getCommandExecutor();
     }
 
     /**
@@ -218,15 +179,14 @@ public abstract class AbstractBrowserTestBase
     }
 
     /**
-     * Waits up to 10s for the given condition to become false. Use e.g. as
-     * {@link #waitUntilNot(ExpectedCondition)}.
+     * Waits up to 10s for the given condition to become false.
      *
      * @param condition
      *            the condition to wait for to become false
      * @param <T>
      *            the return type of the expected condition
      */
-    protected <T> void waitUntilNot(ExpectedCondition<T> condition) {
+    protected <T> void waitUntilNot(Function<BrowserDriver, T> condition) {
         waitUntilNot(condition, 10);
     }
 
@@ -240,8 +200,7 @@ public abstract class AbstractBrowserTestBase
      */
     public boolean isElementPresent(By by) {
         try {
-            WebElement element = getDriver().findElement(by);
-            return element != null;
+            return getDriver().findElement(by) != null;
         } catch (Exception e) {
             return false;
         }
@@ -253,7 +212,7 @@ public abstract class AbstractBrowserTestBase
      * @param source
      * @param target
      */
-    public void dragAndDrop(WebElement source, WebElement target) {
+    public void dragAndDrop(TestBenchElement source, TestBenchElement target) {
         getCommandExecutor().executeScript(LazyDndSimulationLoad.DND_SCRIPT,
                 source, target, "DND");
     }
@@ -263,7 +222,7 @@ public abstract class AbstractBrowserTestBase
      *
      * @param source
      */
-    public void drag(WebElement source) {
+    public void drag(TestBenchElement source) {
         getCommandExecutor().executeScript(LazyDndSimulationLoad.DND_SCRIPT,
                 source, null, "DRAG");
     }
@@ -275,14 +234,15 @@ public abstract class AbstractBrowserTestBase
      * @param source
      * @param target
      */
-    public void dragElementOver(WebElement source, WebElement target) {
+    public void dragElementOver(TestBenchElement source,
+            TestBenchElement target) {
         getCommandExecutor().executeScript(LazyDndSimulationLoad.DND_SCRIPT,
                 source, target, "DRAG_OVER");
     }
 
     /**
      * Waits the given number of seconds for the given condition to become
-     * false. Use e.g. as {@link #waitUntilNot(ExpectedCondition)}.
+     * false: {@code null}, {@code false}, or an exception.
      *
      * @param condition
      *            the condition to wait for to become false
@@ -291,21 +251,36 @@ public abstract class AbstractBrowserTestBase
      * @param <T>
      *            the return type of the expected condition
      */
-    protected <T> void waitUntilNot(ExpectedCondition<T> condition,
+    protected <T> void waitUntilNot(Function<BrowserDriver, T> condition,
             long timeoutInSeconds) {
-        waitUntil(ExpectedConditions.not(condition), timeoutInSeconds);
+        // As Selenium's ExpectedConditions.not
+        waitUntil(driver -> {
+            try {
+                T result = condition.apply(driver);
+                return result == null || Boolean.FALSE.equals(result);
+            } catch (RuntimeException e) {
+                return true;
+            }
+        }, timeoutInSeconds);
     }
 
     protected void waitForElementPresent(final By by) {
-        waitUntil(ExpectedConditions.presenceOfElementLocated(by));
+        waitUntil(driver -> driver.findElement(by));
     }
 
     protected void waitForElementNotPresent(final By by) {
-        waitUntil(input -> input.findElements(by).isEmpty());
+        waitUntil(driver -> driver.findElements(by).isEmpty());
     }
 
+    // As Selenium's ExpectedConditions.visibilityOfElementLocated
     protected void waitForElementVisible(final By by) {
-        waitUntil(ExpectedConditions.visibilityOfElementLocated(by));
+        waitUntil(driver -> {
+            try {
+                return driver.findElement(by).isDisplayed();
+            } catch (StaleElementReferenceException e) {
+                return false;
+            }
+        });
     }
 
     /**
@@ -320,7 +295,7 @@ public abstract class AbstractBrowserTestBase
      *            the class names to match
      * @return <code>true</code> if matches, <code>false</code> if not
      */
-    protected boolean hasCssClass(WebElement element, String className) {
+    protected boolean hasCssClass(TestBenchElement element, String className) {
         String classes = element.getDomAttribute("class");
         if (classes == null || classes.isEmpty()) {
             return className == null || className.isEmpty();
@@ -349,19 +324,9 @@ public abstract class AbstractBrowserTestBase
      *             to use {@link Assertions} directly.
      */
     @Deprecated(since = "25.3", forRemoval = true)
-    protected static void assertEquals(WebElement expectedElement,
-            WebElement actualElement) {
-        WebElement unwrappedExpected = expectedElement;
-        WebElement unwrappedActual = actualElement;
-        while (unwrappedExpected instanceof WrapsElement) {
-            unwrappedExpected = ((WrapsElement) unwrappedExpected)
-                    .getWrappedElement();
-        }
-        while (unwrappedActual instanceof WrapsElement) {
-            unwrappedActual = ((WrapsElement) unwrappedActual)
-                    .getWrappedElement();
-        }
-        Assertions.assertEquals(unwrappedExpected, unwrappedActual);
+    protected static void assertEquals(TestBenchElement expectedElement,
+            TestBenchElement actualElement) {
+        Assertions.assertEquals(expectedElement, actualElement);
     }
 
     /**
@@ -387,7 +352,7 @@ public abstract class AbstractBrowserTestBase
      * @param element
      *            the element to scroll to, not {@code null}
      */
-    protected void scrollToElement(WebElement element) {
+    protected void scrollToElement(TestBenchElement element) {
         Objects.requireNonNull(element,
                 "The element to scroll to should not be null");
         getCommandExecutor().executeScript("arguments[0].scrollIntoView(true);",
@@ -400,7 +365,7 @@ public abstract class AbstractBrowserTestBase
      * @param element
      *            the element to scroll to and click
      */
-    protected void scrollIntoViewAndClick(WebElement element) {
+    protected void scrollIntoViewAndClick(TestBenchElement element) {
         scrollToElement(element);
         element.click();
     }
@@ -444,13 +409,14 @@ public abstract class AbstractBrowserTestBase
      * @param element
      *            the element to be clicked on
      */
-    protected void clickElementWithJs(WebElement element) {
+    protected void clickElementWithJs(TestBenchElement element) {
         executeScript("arguments[0].click();", element);
     }
 
     /**
      * Gets the log entries from the browser that have the given logging level
-     * or higher.
+     * or higher. Selenium only, so far: elsewhere it throws
+     * {@link UnsupportedOperationException}.
      *
      * @param level
      *            the minimum severity of logs included
@@ -460,8 +426,7 @@ public abstract class AbstractBrowserTestBase
         // https://github.com/vaadin/testbench/issues/1233
         getCommandExecutor().waitForVaadin();
 
-        return getDriver().manage().logs().get(LogType.BROWSER).getAll()
-                .stream()
+        return getCommandExecutor().getBackend().getLogEntries().stream()
                 .filter(logEntry -> logEntry.getLevel().intValue() >= level
                         .intValue())
                 // we always have this error

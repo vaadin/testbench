@@ -8,19 +8,28 @@
  */
 package com.vaadin.testbench;
 
-import org.openqa.selenium.WebDriver;
-
 /**
- * Class implementing this interface can provide own {@link WebDriver} to be
- * used during test execution.
+ * A test implementing this builds its own browser, with a backend's library;
+ * the test then runs on that backend:
+ *
+ * <pre>{@code
+ * public WebDriver createDriver() {
+ *     return new ChromeDriver(options);
+ * }
+ * }</pre>
+ *
+ * The return type is {@code Object} so this interface names no library; an
+ * implementation narrows it.
  *
  * @since 9.0
  */
 public interface DriverSupplier {
 
     /**
-     * @return {@link WebDriver} to be used during test execution.
+     * @return a Selenium {@code WebDriver}, or a Playwright {@code Browser},
+     *         {@code BrowserContext} or {@code Page}; {@code null} to let
+     *         TestBench start the browser
      */
-    WebDriver createDriver();
+    Object createDriver();
 
 }

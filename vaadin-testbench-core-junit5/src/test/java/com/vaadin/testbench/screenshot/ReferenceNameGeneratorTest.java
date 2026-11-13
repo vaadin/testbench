@@ -12,8 +12,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.Platform;
+
+import com.vaadin.testbench.Capabilities;
+import com.vaadin.testbench.Platform;
 
 public class ReferenceNameGeneratorTest {
 

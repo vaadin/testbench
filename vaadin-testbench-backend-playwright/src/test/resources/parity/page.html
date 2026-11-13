@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>parity</title></head>
+<body>
+<!-- Every span.x names where it sits. #host's own shadow root holds "shadow1" and an x-inner,
+     whose shadow root holds "inner-shadow"; its light DOM holds "light1", "light2", and an x-inner
+     whose shadow root holds "lightinner-shadow"; x-closed's closed shadow root holds "closed". -->
+<x-host id="host"><span class="x" data-name="light1">light1</span><div><span class="x" data-name="light2">light2</span></div><x-inner name="lightinner"></x-inner><x-closed></x-closed></x-host>
+<span class="x" data-name="outside">outside</span>
+<input id="keys">
+<textarea id="area">some text</textarea>
+<div id="gone">gone</div>
+<button id="button" onclick="window.clicks = (window.clicks || []).concat(['click ' + event.shiftKey + ' ' + event.offsetX + ',' + event.offsetY])"
+        ondblclick="window.clicks = (window.clicks || []).concat(['dblclick'])"
+        oncontextmenu="window.clicks = (window.clicks || []).concat(['contextmenu']); return false"
+        onmouseover="window.clicks = (window.clicks || []).concat(['mouseover'])"
+        style="width: 100px; height: 40px">button</button>
+<div id="drag" style="user-select:none; position:absolute; left:400px; top:20px; width:60px; height:30px; background:#ccc">drag</div>
+<div id="drop" style="user-select:none; position:absolute; left:600px; top:120px; width:80px; height:40px; background:#eee">drop</div>
+<div id="html5" draggable="true" style="position:absolute; left:400px; top:200px; width:60px; height:30px; background:#ddd">html5</div>
+<div id="reads">
+<p id="t-ws">  a   b
+ c  </p>
+<p id="t-br">a<br>b</p>
+<p id="t-hidden">a<span style="display:none">hidden</span>b</p>
+<p id="t-vis">a<span style="visibility:hidden">vis</span>b</p>
+<p id="t-upper" style="text-transform:uppercase; color: rgb(10, 20, 30)">up</p>
+<p id="t-nbsp">a&nbsp;b</p>
+<div id="t-blocks"><div>a</div><div>b</div></div>
+<x-text id="t-shadow">slotted</x-text>
+<p id="t-none" style="display:none">none</p>
+<p id="t-offscreen" style="position:absolute; left:-9999px">off</p>
+<p id="t-opacity" style="opacity:0">transparent</p>
+<p id="t-zero" style="width:0; height:0; overflow:hidden">zero</p>
+<p id="t-alpha" style="color: rgba(1, 2, 3, 0.5); width: 33.5px">alpha</p>
+<input id="t-input" value="val" disabled>
+<input type="checkbox" id="t-check" checked>
+<input type="radio" id="t-radio">
+<a id="t-link" href="rel/x" class="a b" tabindex="3">link</a>
+<select id="t-select"><option id="t-one" value="1">one</option><option id="t-two" value="2" selected>two</option></select>
+<fieldset id="t-fieldset" disabled><input id="t-in-fieldset"></fieldset>
+<svg id="t-svg" width="10" height="10"><foreignObject id="t-foreign" width="10" height="10"></foreignObject></svg>
+</div>
+<script src="fixture.js"></script>
+</body>
+</html>

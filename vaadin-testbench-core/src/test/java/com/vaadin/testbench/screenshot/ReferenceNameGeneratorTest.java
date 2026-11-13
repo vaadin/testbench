@@ -11,8 +11,9 @@ package com.vaadin.testbench.screenshot;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.Platform;
+
+import com.vaadin.testbench.Capabilities;
+import com.vaadin.testbench.Platform;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

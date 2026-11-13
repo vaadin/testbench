@@ -14,8 +14,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.openqa.selenium.WebDriver;
-
 import com.vaadin.testbench.parallel.Browser;
 
 /**
@@ -26,7 +24,7 @@ import com.vaadin.testbench.parallel.Browser;
  * You can also define a browser name/version to run on locally using the
  * {@code com.vaadin.testbench.Parameters.runLocally} system parameter.
  * <p>
- * This parameter will be used to instantiate the {@link WebDriver}.<br>
+ * This parameter will be used to start the browser.<br>
  * </p>
  *
  * <p>

@@ -25,15 +25,15 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.BrowserFactory;
 import com.vaadin.testbench.annotations.RunLocally;
+import com.vaadin.testbench.backend.BackendChoice;
 
 /**
  * This runner is loosely based on FactoryTestRunner by Ted Young
@@ -80,7 +80,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
 
         BrowserUtil.setBrowserFactory(getBrowserFactory());
         try {
-            Collection<DesiredCapabilities> desiredCapabilities = getDesiredCapabilities();
+            Collection<Capabilities> desiredCapabilities = getDesiredCapabilities();
 
             TestNameSuffix testNameSuffixProperty = findAnnotation(
                     getTestClass().getJavaClass(), TestNameSuffix.class);
@@ -93,8 +93,8 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
                         || categoryIsExcludedOrNotExcplicitlyIncluded()) {
                     tests.add(new IgnoredTestMethod(m.getMethod()));
                 } else {
-                    for (DesiredCapabilities capabilities : desiredCapabilities) {
-                        DesiredCapabilities methodCapabilities = new DesiredCapabilities(
+                    for (Capabilities capabilities : desiredCapabilities) {
+                        Capabilities methodCapabilities = new Capabilities(
                                 capabilities);
                         TBMethod method = new TBMethod(m.getMethod(),
                                 methodCapabilities);
@@ -185,9 +185,9 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
      * {@code @RunLocally} annotation or com.vaadin.testbench.runLocally
      * property to override all capabilities.
      */
-    private Collection<DesiredCapabilities> getDesiredCapabilities() {
+    private Collection<Capabilities> getDesiredCapabilities() {
         if (testRunsLocally()) {
-            Collection<DesiredCapabilities> desiredCapabilities = new ArrayList<>();
+            Collection<Capabilities> desiredCapabilities = new ArrayList<>();
             Class<?> javaTestClass = getTestClass().getJavaClass();
             desiredCapabilities.add(BrowserUtil.getBrowserFactory().create(
                     getRunLocallyBrowserName(javaTestClass),
@@ -260,16 +260,16 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
      * returns a list of browser capabilities filtered browsers.include and
      * browsers.exclude system properties. (if present)
      */
-    private Collection<DesiredCapabilities> getFilteredCapabilities() {
+    private Collection<Capabilities> getFilteredCapabilities() {
 
-        Collection<DesiredCapabilities> desiredCapabilites = getBrowsersConfiguration();
+        Collection<Capabilities> desiredCapabilites = getBrowsersConfiguration();
 
-        ArrayList<DesiredCapabilities> filteredCapabilities = new ArrayList<>();
+        ArrayList<Capabilities> filteredCapabilities = new ArrayList<>();
 
         String include = System.getProperty("browsers.include");
         String exclude = System.getProperty("browsers.exclude");
 
-        for (DesiredCapabilities d : desiredCapabilites) {
+        for (Capabilities d : desiredCapabilites) {
             String browserName = (d.getBrowserName() + d.getBrowserVersion())
                     .toLowerCase();
             if (include != null && include.trim().length() > 0) {
@@ -290,7 +290,7 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
         return filteredCapabilities;
     }
 
-    private Collection<DesiredCapabilities> getBrowsersConfiguration() {
+    private Collection<Capabilities> getBrowsersConfiguration() {
 
         Class<?> klass = getTestClass().getJavaClass();
 
@@ -314,8 +314,14 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
                     }
 
                     try {
-                        return (Collection<DesiredCapabilities>) method
-                                .invoke(getTestClassInstance());
+                        List<Capabilities> converted = new ArrayList<>();
+                        // Ours, or the backend library's
+                        for (Object capabilities : (Collection<?>) method
+                                .invoke(getTestClassInstance())) {
+                            converted.add(
+                                    BackendChoice.toCapabilities(capabilities));
+                        }
+                        return converted;
                     } catch (Exception e) {
                         // Handle possible exceptions.
 
@@ -364,11 +370,11 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
             /*
              * Validates if method's return type is Collection.
              * ClassCastException may still occur if method's return type is not
-             * Collection<DesiredCapabilities>
+             * a Collection of Capabilities
              */
             String errMsg = String.format(genericErrorMessage,
                     method.getDeclaringClass().getName(), method.getName(),
-                    "BrowserConfiguration annotated method must return a Collection<DesiredCapabilities>");
+                    "BrowserConfiguration annotated method must return a Collection of Capabilities");
             getLogger().info(errMsg);
             return false;
         }
@@ -468,15 +474,15 @@ public class ParallelRunner extends BlockJUnit4ClassRunner {
     }
 
     public static class TBMethod extends FrameworkMethod {
-        private final DesiredCapabilities capabilities;
+        private final Capabilities capabilities;
         private String testNameSuffix = "";
 
-        public TBMethod(Method method, DesiredCapabilities capabilities) {
+        public TBMethod(Method method, Capabilities capabilities) {
             super(method);
             this.capabilities = capabilities;
         }
 
-        public DesiredCapabilities getCapabilities() {
+        public Capabilities getCapabilities() {
             return capabilities;
         }
 

@@ -15,8 +15,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.parallel.ParallelRunner.TBMethod;
@@ -33,7 +33,7 @@ public class DefaultBrowserConfigurationTest {
             List<FrameworkMethod> testMethods = parallelRunner
                     .computeTestMethods();
             Assert.assertEquals(1, testMethods.size());
-            DesiredCapabilities caps = Browser.FIREFOX.getDesiredCapabilities();
+            Capabilities caps = Browser.FIREFOX.getDesiredCapabilities();
             TBMethod method = (TBMethod) testMethods.get(0);
             Assert.assertEquals(caps.getBrowserName(),
                     method.getCapabilities().getBrowserName());
@@ -57,11 +57,10 @@ public class DefaultBrowserConfigurationTest {
             List<FrameworkMethod> testMethods = parallelRunner
                     .computeTestMethods();
             Assert.assertEquals(2, testMethods.size());
-            DesiredCapabilities caps1 = Browser.FIREFOX
-                    .getDesiredCapabilities();
+            Capabilities caps1 = Browser.FIREFOX.getDesiredCapabilities();
             TBMethod method1 = (TBMethod) testMethods.get(0);
-            DesiredCapabilities caps2 = Browser.SAFARI.getDesiredCapabilities();
-            caps2.setVersion("9");
+            Capabilities caps2 = Browser.SAFARI.getDesiredCapabilities();
+            caps2.setCapability(Capabilities.BROWSER_VERSION, "9");
             TBMethod method2 = (TBMethod) testMethods.get(1);
             Assert.assertEquals(caps1.getBrowserName(),
                     method1.getCapabilities().getBrowserName());
@@ -90,7 +89,7 @@ public class DefaultBrowserConfigurationTest {
             List<FrameworkMethod> testMethods = parallelRunner
                     .computeTestMethods();
             Assert.assertEquals(1, testMethods.size());
-            DesiredCapabilities caps = Browser.CHROME.getDesiredCapabilities();
+            Capabilities caps = Browser.CHROME.getDesiredCapabilities();
             TBMethod method = (TBMethod) testMethods.get(0);
             Assert.assertEquals(caps.getBrowserName(),
                     method.getCapabilities().getBrowserName());
@@ -120,7 +119,7 @@ public class DefaultBrowserConfigurationTest {
         }
 
         @BrowserConfiguration
-        public List<DesiredCapabilities> getBrowserConfiguration() {
+        public List<Capabilities> getBrowserConfiguration() {
             return Arrays.asList(Browser.FIREFOX.getDesiredCapabilities());
         }
     }

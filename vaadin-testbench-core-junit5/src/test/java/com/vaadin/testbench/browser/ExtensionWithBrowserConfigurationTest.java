@@ -16,9 +16,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.mockito.Mockito;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.BrowserTest;
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.DriverSupplier;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
@@ -47,7 +47,7 @@ public class ExtensionWithBrowserConfigurationTest implements DriverSupplier {
     @BrowserTest
     public void withBrowserConfigurationInClass(
             BrowserTestInfo browserTestInfo) {
-        DesiredCapabilities caps = Browser.FIREFOX.getDesiredCapabilities();
+        Capabilities caps = Browser.FIREFOX.getDesiredCapabilities();
         Assertions.assertEquals(caps.getBrowserName(),
                 browserTestInfo.capabilities().getBrowserName());
         Assertions.assertEquals(caps.getBrowserVersion(),
@@ -57,7 +57,7 @@ public class ExtensionWithBrowserConfigurationTest implements DriverSupplier {
     }
 
     @BrowserConfiguration
-    public List<DesiredCapabilities> getBrowserConfiguration() {
+    public List<Capabilities> getBrowserConfiguration() {
         return Arrays.asList(Browser.FIREFOX.getDesiredCapabilities());
     }
 

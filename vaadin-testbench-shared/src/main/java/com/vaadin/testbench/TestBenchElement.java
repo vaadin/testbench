@@ -12,83 +12,66 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.jspecify.annotations.Nullable;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.HasCapabilities;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.NotFoundException;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.Rectangle;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.WrapsElement;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.vaadin.testbench.commands.CanCompareScreenshots;
 import com.vaadin.testbench.commands.ScreenshotComparator;
 import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.elementsbase.Element;
-import com.vaadin.testbench.parallel.BrowserUtil;
+import com.vaadin.testbench.spi.ElementBackend;
 
 /**
- * TestBenchElement is a WebElement wrapper. It provides Vaadin specific helper
- * functionality. TestBenchElements are created when you search for elements
- * from TestBenchTestCase or a context relative search from TestBenchElement.
+ * One DOM node of the page, with Vaadin specific helper functionality.
+ * TestBenchElements are created when you search for elements from
+ * TestBenchTestCase or a context relative search from TestBenchElement. The
+ * browser underneath is reached through {@link #getElementBackend()}.
  */
 @Element("*")
-public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
-        CanCompareScreenshots, HasTestBenchCommandExecutor, HasElementQuery,
-        HasPropertySettersGetters, HasCallFunction {
+public class TestBenchElement
+        implements CanCompareScreenshots, HasTestBenchCommandExecutor,
+        HasElementQuery, HasPropertySettersGetters, HasCallFunction {
 
-    private WebElement wrappedElement = null;
+    private ElementBackend elementBackend = null;
     private TestBenchCommandExecutor commandExecutor = null;
 
     protected TestBenchElement() {
 
     }
 
-    protected TestBenchElement(WebElement webElement,
+    /**
+     * An element of this class for the node {@code element} stands for, as
+     * {@code element.wrap(X.class)} makes one: for an element class whose
+     * constructor takes the element it converts.
+     */
+    protected TestBenchElement(TestBenchElement element,
             TestBenchCommandExecutor commandExecutor) {
-        init(webElement, commandExecutor);
+        init(element.getElementBackend(), commandExecutor);
     }
 
     /**
-     * TestBenchElement initialization function. If a subclass of
-     * TestBenchElement needs to run some initialization code, it should
-     * override {@link #init()}, not this function.
+     * Initializes an element built by its no-argument constructor. A subclass
+     * that needs initialization code overrides {@link #init()}, not this.
      *
      * @param element
-     *            WebElement to wrap
-     * @param commandExecutor
-     *            TestBenchCommandExecutor instance
+     *            the DOM node this element stands for
      */
-    protected void init(WebElement element,
+    protected void init(ElementBackend element,
             TestBenchCommandExecutor commandExecutor) {
         if (this.commandExecutor == null) {
             this.commandExecutor = commandExecutor;
-            wrappedElement = element;
+            elementBackend = element;
             init();
         }
     }
@@ -100,7 +83,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      *         <code>false</code> otherwise
      */
     protected boolean isChrome() {
-        return BrowserUtil.isChrome(getCapabilities());
+        return isBrowser("chrome", "chrome-headless-shell");
     }
 
     /**
@@ -110,22 +93,14 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      *         <code>false</code> otherwise
      */
     protected boolean isFirefox() {
-        return BrowserUtil.isFirefox(getCapabilities());
+        return isBrowser("firefox");
     }
 
-    /**
-     * Returns information about current browser used
-     *
-     * @see Capabilities
-     * @return information about current browser used
-     */
-    protected Capabilities getCapabilities() {
-        WebDriver driver = getDriver();
-        if (driver instanceof HasCapabilities) {
-            return ((HasCapabilities) driver).getCapabilities();
-        } else {
-            return null;
-        }
+    // The names Selenium's Browser.CHROME and Browser.FIREFOX match
+    private boolean isBrowser(String... names) {
+        String browserName = getCommandExecutor() == null ? null
+                : getCommandExecutor().getBackend().getBrowserName();
+        return Arrays.asList(names).contains(browserName);
     }
 
     /**
@@ -136,9 +111,63 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
 
     }
 
-    @Override
-    public WebElement getWrappedElement() {
-        return wrappedElement;
+    /**
+     * The DOM node this element stands for, as the browser backend holds it.
+     * Cast it to reach the browser library itself, as an escape hatch whose
+     * calls do not wait for Vaadin:
+     *
+     * <pre>{@code
+     * WebElement webElement = ((SeleniumElementBackend) element
+     *         .getElementBackend()).getWebElement();
+     * }</pre>
+     */
+    public ElementBackend getElementBackend() {
+        return elementBackend;
+    }
+
+    /**
+     * This element: there is no Selenium element inside it any more. Kept so
+     * that {@code getWrappedElement().getCssValue(…)} and the like compile.
+     *
+     * @deprecated call the method on the element itself; for the browser
+     *             library's own element, use {@link #getElementBackend()}
+     */
+    @Deprecated
+    public TestBenchElement getWrappedElement() {
+        return this;
+    }
+
+    /**
+     * The browser this element lives in, as a test's {@code getDriver()} is:
+     * for {@code new Actions(getDriver())} in an element class, or a search of
+     * the whole page.
+     */
+    public BrowserDriver getDriver() {
+        return new TestBenchDriver(getCommandExecutor());
+    }
+
+    /**
+     * {@code element} itself, already a {@code TestBenchElement}.
+     *
+     * @deprecated use {@code element}, or {@code element.wrap(X.class)} for an
+     *             element class
+     */
+    @Deprecated
+    protected static TestBenchElement wrapElement(TestBenchElement element,
+            TestBenchCommandExecutor commandExecutor) {
+        return element;
+    }
+
+    /**
+     * {@code elements} themselves, already {@code TestBenchElement}s.
+     *
+     * @deprecated use {@code elements}
+     */
+    @Deprecated
+    protected static List<TestBenchElement> wrapElements(
+            List<? extends TestBenchElement> elements,
+            TestBenchCommandExecutor commandExecutor) {
+        return List.copyOf(elements);
     }
 
     protected void waitForVaadin() {
@@ -187,11 +216,11 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * @since 9.4
      */
     public boolean isFocused() {
-        return this.getWrappedElement()
-                .equals(getDriver().switchTo().activeElement());
+        return (boolean) getCommandExecutor().getBackend().executeScript(
+                "return arguments[0] === document.activeElement",
+                elementBackend);
     }
 
-    @Override
     public void click() {
         // JS call to click does not focus element, hence ensure focus
         focus();
@@ -208,35 +237,31 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
             // SVG elements and maybe others do not have a 'click' method
             ensureVisible();
             waitForVaadin();
-            wrappedElement.click();
+            elementBackend.click();
         }
     }
 
-    @Override
     public void submit() {
         click();
     }
 
-    @Override
     public void sendKeys(CharSequence... keysToSend) {
         // Viewport check: some drivers need the element in viewport for
         // reliable text entry.
         ensureInteractable();
         waitForVaadin();
-        wrappedElement.sendKeys(keysToSend);
+        elementBackend.sendKeys(keysToSend);
     }
 
-    @Override
     public void clear() {
         ensureVisible();
         waitForVaadin();
-        wrappedElement.clear();
+        elementBackend.clear();
     }
 
-    @Override
     public String getTagName() {
         waitForVaadin();
-        return wrappedElement.getTagName();
+        return elementBackend.getTagName();
     }
 
     /**
@@ -245,22 +270,19 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * @return The attribute/ property's current value or null if the value is
      *         not set.
      */
-    @Override
     public String getAttribute(String name) {
         waitForVaadin();
-        return wrappedElement.getAttribute(name);
+        return elementBackend.getAttribute(name);
     }
 
-    @Override
     public @Nullable String getDomAttribute(String name) {
         waitForVaadin();
-        return wrappedElement.getDomAttribute(name);
+        return elementBackend.getDomAttribute(name);
     }
 
-    @Override
     public @Nullable String getDomProperty(String name) {
         waitForVaadin();
-        return wrappedElement.getDomProperty(name);
+        return elementBackend.getDomProperty(name);
     }
 
     /**
@@ -275,11 +297,10 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         return (boolean) callFunction("hasAttribute", attribute);
     }
 
-    @Override
     public boolean isSelected() {
         ensureVisible();
         waitForVaadin();
-        return wrappedElement.isSelected();
+        return elementBackend.isSelected();
     }
 
     /**
@@ -288,11 +309,10 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      *
      * @return true if the component is enabled.
      */
-    @Override
     public boolean isEnabled() {
         waitForVaadin();
         return !hasClassName("v-disabled") && !hasAttribute("disabled")
-                && wrappedElement.isEnabled();
+                && elementBackend.isEnabled();
     }
 
     /**
@@ -307,77 +327,83 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         return hasAttribute("readonly");
     }
 
-    @Override
+    /**
+     * The element's text, as Selenium gives it: only what a user can see, with
+     * shadow DOM text included, a hidden element giving {@code ""}.
+     */
     public String getText() {
         ensureVisible();
         waitForVaadin();
-        return wrappedElement.getText();
+        return elementBackend.getText();
     }
 
-    @Override
-    public List<WebElement> findElements(By by) {
-        return (List) TestBenchElement.wrapElements(
-                wrappedElement.findElements(by), getCommandExecutor());
+    /**
+     * The descendants {@code by} matches, in the light DOM only: unlike
+     * {@code $}, this never looks inside a shadow root.
+     */
+    public List<TestBenchElement> findElements(By by) {
+        waitForVaadin();
+        return By.find(by, getCommandExecutor(), this);
     }
 
-    @Override
+    /**
+     * The first descendant {@code by} matches, in the light DOM only: unlike
+     * {@code $}, this never looks inside a shadow root.
+     *
+     * @throws NoSuchElementException
+     *             if nothing matches
+     */
     public TestBenchElement findElement(By by) {
         waitForVaadin();
-        return wrapElement(wrappedElement.findElement(by),
-                getCommandExecutor());
+        List<TestBenchElement> found = By.find(by, getCommandExecutor(), this);
+        if (found.isEmpty()) {
+            throw new NoSuchElementException(
+                    "Unable to locate an element with " + by);
+        }
+        return found.get(0);
     }
 
-    @Override
     public boolean isDisplayed() {
         waitForVaadin();
-        return wrappedElement.isDisplayed();
+        return elementBackend.isDisplayed();
     }
 
-    @Override
     public Point getLocation() {
         waitForVaadin();
-        return wrappedElement.getLocation();
+        ElementBackend.Rect rect = elementBackend.getRect();
+        return new Point(rect.x(), rect.y());
     }
 
-    @Override
     public Dimension getSize() {
         waitForVaadin();
-        return wrappedElement.getSize();
+        ElementBackend.Rect rect = elementBackend.getRect();
+        return new Dimension(rect.width(), rect.height());
     }
 
-    @Override
     public String getCssValue(String propertyName) {
         waitForVaadin();
-        return wrappedElement.getCssValue(propertyName);
+        return elementBackend.getCssValue(propertyName);
     }
 
+    /**
+     * Clicks at an offset from the element's centre, holding the modifiers.
+     */
     public void click(int x, int y, Keys... modifiers) {
         ensureInteractable();
         waitForVaadin();
-        Actions actions = new Actions(getDriver());
-        actions.moveToElement(wrappedElement, x, y);
-        // Press any modifier keys
-        for (Keys modifier : modifiers) {
-            actions.keyDown(modifier);
-        }
-        actions.click();
-        // Release any modifier keys
-        for (Keys modifier : modifiers) {
-            actions.keyUp(modifier);
-        }
-        actions.build().perform();
+        elementBackend.click(x, y, modifiers);
     }
 
     public void doubleClick() {
         ensureInteractable();
         waitForVaadin();
-        new Actions(getDriver()).doubleClick(wrappedElement).build().perform();
+        elementBackend.doubleClick();
     }
 
     public void contextClick() {
         ensureInteractable();
         waitForVaadin();
-        new Actions(getDriver()).contextClick(wrappedElement).build().perform();
+        elementBackend.contextClick();
     }
 
     public <T extends TestBenchElement> T wrap(Class<T> elementType) {
@@ -389,18 +415,23 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         return commandExecutor;
     }
 
-    @Override
-    public WebDriver getDriver() {
-        return getCommandExecutor().getDriver();
+    /**
+     * The element {@code $} searches inside: this one, unless a component keeps
+     * its content in another element, as a notification does in its card.
+     */
+    public TestBenchElement getContext() {
+        return this;
     }
 
-    /**
-     * Returns this TestBenchElement cast to a SearchContext. Method provided
-     * for compatibility and consistency.
-     */
     @Override
-    public SearchContext getContext() {
-        return this;
+    public <T extends TestBenchElement> ElementQuery<T> $(Class<T> clazz) {
+        return new ElementQuery<>(clazz).context(getContext());
+    }
+
+    @Override
+    public ElementQuery<TestBenchElement> $(String tagName) {
+        return new ElementQuery<>(TestBenchElement.class, tagName)
+                .context(getContext());
     }
 
     /**
@@ -411,38 +442,10 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         getCommandExecutor().focusElement(this);
     }
 
-    protected static List<TestBenchElement> wrapElements(
-            List<WebElement> elements,
-            TestBenchCommandExecutor commandExecutor) {
-        List<TestBenchElement> wrappedList = new ArrayList<>();
-
-        for (WebElement e : elements) {
-            wrappedList.add(wrapElement(e, commandExecutor));
-        }
-
-        return wrappedList;
-    }
-
-    protected static TestBenchElement wrapElement(WebElement element,
-            TestBenchCommandExecutor commandExecutor) {
-        if (element instanceof TestBenchElement) {
-            return (TestBenchElement) element;
-        } else {
-            return TestBench.createElement(element, commandExecutor);
-        }
-    }
-
-    @Override
-    public <X> X getScreenshotAs(OutputType<X> target)
-            throws WebDriverException {
-        waitForVaadin();
-        return wrappedElement.getScreenshotAs(target);
-    }
-
-    @Override
     public Rectangle getRect() {
         waitForVaadin();
-        return wrappedElement.getRect();
+        ElementBackend.Rect rect = elementBackend.getRect();
+        return new Rectangle(rect.x(), rect.y(), rect.height(), rect.width());
     }
 
     /**
@@ -486,43 +489,48 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
 
     @Override
     public boolean equals(Object obj) {
-        if (wrappedElement == null) {
+        if (elementBackend == null) {
             return false;
         }
-        return wrappedElement.equals(obj);
+        if (obj instanceof TestBenchElement other) {
+            return elementBackend.equals(other.elementBackend);
+        }
+        return elementBackend.equals(obj);
     }
 
     @Override
     public int hashCode() {
-        if (wrappedElement == null) {
+        if (elementBackend == null) {
             return 32;
         }
 
-        return wrappedElement.hashCode();
+        return elementBackend.hashCode();
     }
 
     @Override
     public boolean compareScreen(String referenceId) throws IOException {
+        waitForVaadin();
         return ScreenshotComparator.compareScreen(referenceId,
                 getCommandExecutor().getReferenceNameGenerator(),
-                getCommandExecutor().getImageComparison(), this,
-                (HasCapabilities) getDriver());
+                getCommandExecutor().getImageComparison(),
+                getCommandExecutor().getBackend(), elementBackend);
     }
 
     @Override
     public boolean compareScreen(File reference) throws IOException {
+        waitForVaadin();
         return ScreenshotComparator.compareScreen(reference,
                 getCommandExecutor().getImageComparison(),
-                (TakesScreenshot) this, (HasCapabilities) getDriver());
-
+                getCommandExecutor().getBackend(), elementBackend);
     }
 
     @Override
     public boolean compareScreen(BufferedImage reference, String referenceName)
             throws IOException {
+        waitForVaadin();
         return ScreenshotComparator.compareScreen(reference, referenceName,
                 getCommandExecutor().getImageComparison(),
-                (TakesScreenshot) this, (HasCapabilities) getDriver());
+                getCommandExecutor().getBackend(), elementBackend);
     }
 
     /***
@@ -581,7 +589,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     private void ensureVisible() {
         try {
             if (getCommandExecutor().isAutoScrollIntoView()) {
-                if (!wrappedElement.isDisplayed()) {
+                if (!elementBackend.isDisplayed()) {
                     scrollIntoView();
                 }
             }
@@ -628,61 +636,37 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     }
 
     /**
-     * Waits the given number of seconds for the given condition to become
-     * neither null nor false. {@link NotFoundException}s are ignored by
-     * default.
-     * <p>
-     * Use e.g. as
-     * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by), 10);</code>
+     * Waits up to {@code timeoutInSeconds} for the condition to return neither
+     * {@code null} nor {@code false}, polling as {@link Wait} does:
      *
-     * @param <T>
-     *            The return type of the {@link ExpectedCondition} and this
-     *            method
-     * @param condition
-     *            Models a condition that might reasonably be expected to
-     *            eventually evaluate to something that is neither null nor
-     *            false.
-     * @param timeoutInSeconds
-     *            The timeout in seconds for the wait.
-     * @return The condition's return value if it returned something different
-     *         from null or false before the timeout expired.
+     * <pre>{@code
+     * waitUntil(driver -> !getPropertyBoolean("loading"), 30);
+     * }</pre>
      *
+     * @return the condition's first value that is neither {@code null} nor
+     *         {@code false}
      * @throws TimeoutException
-     *             If the timeout expires.
-     *
-     * @see FluentWait#until
-     * @see ExpectedCondition
+     *             if the time runs out
      */
-    protected <T> T waitUntil(ExpectedCondition<T> condition,
+    protected <T> T waitUntil(WaitCondition<T> condition,
             long timeoutInSeconds) {
-        return new WebDriverWait(getDriver(),
-                Duration.ofSeconds(timeoutInSeconds)).until(condition);
+        return Wait.until(new Supplier<>() {
+            @Override
+            public T get() {
+                return condition.apply(getCommandExecutor());
+            }
+
+            @Override
+            public String toString() {
+                return condition.toString();
+            }
+        }, Duration.ofSeconds(timeoutInSeconds));
     }
 
     /**
-     * Waits up to 10 seconds for the given condition to become neither null nor
-     * false. {@link NotFoundException}s are ignored by default.
-     * <p>
-     * Use e.g. as
-     * <code>waitUntil(ExpectedConditions.presenceOfElementLocated(by));</code>
-     *
-     * @param <T>
-     *            The return type of the {@link ExpectedCondition} and this
-     *            method
-     * @param condition
-     *            Models a condition that might reasonably be expected to
-     *            eventually evaluate to something that is neither null nor
-     *            false.
-     * @return The condition's return value if it returned something different
-     *         from null or false before the timeout expired.
-     *
-     * @throws TimeoutException
-     *             If 10 seconds passed.
-     *
-     * @see FluentWait#until
-     * @see ExpectedCondition
+     * Waits up to 10 seconds, as {@link #waitUntil(WaitCondition, long)}.
      */
-    protected <T> T waitUntil(ExpectedCondition<T> condition) {
+    protected <T> T waitUntil(WaitCondition<T> condition) {
         return waitUntil(condition, 10);
     }
 
@@ -808,22 +792,15 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * Executes the given JavaScript in the context of the currently selected
      * frame or window. The script fragment provided will be executed as the
      * body of an anonymous function.
-     * <p>
-     * This method wraps any returned {@link WebElement} as
-     * {@link TestBenchElement}.
      *
      * @param script
      *            the script to execute
      * @param args
      *            the arguments, available in the script as
      *            {@code arguments[0]...arguments[N]}
-     * @return whatever
-     *         {@link JavascriptExecutor#executeScript(String, Object...)}
-     *         returns
-     * @throws UnsupportedOperationException
-     *             if the underlying driver does not support JavaScript
-     *             execution
-     * @see JavascriptExecutor#executeScript(String, Object...)
+     * @return as
+     *         {@link TestBenchCommandExecutor#executeScript(String, Object...)}
+     *         returns it: DOM nodes as {@link TestBenchElement}s
      */
     protected Object executeScript(String script, Object... args) {
         return getCommandExecutor().executeScript(script, args);
@@ -885,31 +862,6 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     }
 
     /**
-     * Not implemented. This method is not supported for the
-     * {@link TestBenchElement}. Use {@code $} instead to find elements in the
-     * shadow root.
-     *
-     * Example usage:
-     *
-     * <pre>
-     * {@code
-     * TestBenchElement element = ...;
-     * TestBenchElement child = element.$(TestBenchElement.class).id("elementid");
-     * }
-     * </pre>
-     *
-     * @return the {@link SearchContext} representing the shadow root.
-     * @deprecated This method is deprecated. Use {@code $} instead to find
-     *             elements in the shadow root.
-     * @since 9.4
-     */
-    @Override
-    @Deprecated
-    public SearchContext getShadowRoot() {
-        throw new UnsupportedOperationException("getShadowRoot");
-    }
-
-    /**
      * Get list of immediate children of this element.
      *
      * @return List of TestBenchElements
@@ -929,7 +881,6 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     public void hover() {
         ensureInteractable();
         waitForVaadin();
-        Actions action = new Actions(getDriver());
-        action.moveToElement(this).perform();
+        elementBackend.hover();
     }
 }

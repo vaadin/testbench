@@ -13,35 +13,36 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.HasCapabilities;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.HttpCommandExecutor;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vaadin.testbench.HasDriver;
-import com.vaadin.testbench.TestBenchDriverProxy;
+import com.vaadin.testbench.BrowserDriver;
+import com.vaadin.testbench.Dimension;
+import com.vaadin.testbench.Point;
+import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
+import com.vaadin.testbench.spi.BrowserBackend;
+import com.vaadin.testbench.spi.ElementBackend;
 
 /**
  * Provides actual implementation of TestBenchCommands
  */
-public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
+public class TestBenchCommandExecutor implements TestBenchCommands {
 
     private static Logger getLogger() {
         return LoggerFactory.getLogger(TestBenchCommandExecutor.class);
     }
 
-    private TestBenchDriverProxy driver;
+    private BrowserBackend backend;
     private final ImageComparison imageComparison;
     private final ReferenceNameGenerator referenceNameGenerator;
 
@@ -76,25 +77,42 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
         this.referenceNameGenerator = referenceNameGenerator;
     }
 
-    public void setDriver(TestBenchDriverProxy driver) {
-        this.driver = driver;
+    /**
+     * @param backend
+     *            the browser to drive, as {@code TestBench.createDriver} sets
+     *            it
+     */
+    public void setBackend(BrowserBackend backend) {
+        this.backend = backend;
+    }
+
+    /**
+     * The browser this executor drives, below TestBench: nothing called on it
+     * waits for Vaadin. Cast it to reach the browser library itself, as an
+     * escape hatch:
+     *
+     * <pre>{@code
+     * WebDriver driver = ((SeleniumBackend) getCommandExecutor().getBackend())
+     *         .getDriver();
+     * }</pre>
+     */
+    public BrowserBackend getBackend() {
+        return backend;
+    }
+
+    /**
+     * The browser this executor drives, as a test's {@code getDriver()}: for
+     * {@code getCommandExecutor().getDriver().executeScript(…)} and the like.
+     */
+    public BrowserDriver getDriver() {
+        return TestBench.createDriver(backend, this);
     }
 
     @Override
     public String getRemoteControlName() {
         InetAddress ia = null;
         try {
-            WebDriver realDriver = driver.getWrappedDriver();
-            if (realDriver instanceof RemoteWebDriver) {
-                RemoteWebDriver rwd = (RemoteWebDriver) realDriver;
-                if (rwd.getCommandExecutor() instanceof HttpCommandExecutor) {
-                    ia = InetAddress.getByName(
-                            ((HttpCommandExecutor) rwd.getCommandExecutor())
-                                    .getAddressOfRemoteServer().getHost());
-                }
-            } else {
-                ia = InetAddress.getLocalHost();
-            }
+            ia = getBackend().getRemoteAddress();
         } catch (UnknownHostException e) {
             getLogger().warn("Could not find name of remote control", e);
             return "unknown";
@@ -122,10 +140,8 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
             if (waitForVaadinLoopHook != null) {
                 waitForVaadinLoopHook.run();
             }
-            // Must use the wrapped driver here to avoid calling waitForVaadin
-            // again
-            finished = (Boolean) ((JavascriptExecutor) getDriver()
-                    .getWrappedDriver()).executeScript(WAIT_FOR_VAADIN_SCRIPT);
+            finished = (Boolean) getBackend()
+                    .executeScript(WAIT_FOR_VAADIN_SCRIPT);
             if (finished == null) {
                 // This should never happen but according to
                 // https://dev.vaadin.com/ticket/19703, it happens
@@ -138,25 +154,25 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
 
     @Override
     public boolean compareScreen(String referenceId) throws IOException {
+        waitForVaadin();
         return ScreenshotComparator.compareScreen(referenceId,
-                referenceNameGenerator, imageComparison, driver, getDriver());
+                referenceNameGenerator, imageComparison, getBackend(), null);
     }
 
     @Override
     public boolean compareScreen(File reference) throws IOException {
-        WebDriver driver = getDriver();
+        waitForVaadin();
         return ScreenshotComparator.compareScreen(reference, imageComparison,
-                (TakesScreenshot) driver, (HasCapabilities) driver);
+                getBackend(), null);
 
     }
 
     @Override
     public boolean compareScreen(BufferedImage reference, String referenceName)
             throws IOException {
-        WebDriver driver = getDriver();
+        waitForVaadin();
         return ScreenshotComparator.compareScreen(reference, referenceName,
-                imageComparison, (TakesScreenshot) driver,
-                (HasCapabilities) driver);
+                imageComparison, getBackend(), null);
 
     }
 
@@ -256,23 +272,86 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
         this.autoScrollIntoView = autoScrollIntoView;
     }
 
+    /**
+     * Waits for Vaadin, then runs {@code script} as the body of a function.
+     *
+     * @param args
+     *            available as {@code arguments[0]...arguments[N]}; may hold
+     *            {@link TestBenchElement}s, also inside lists and maps
+     * @return the script's result, DOM nodes wrapped as
+     *         {@link TestBenchElement}s, also inside lists
+     */
     public Object executeScript(String script, Object... args) {
-        return getDriver().executeScript(script, args);
-    }
-
-    protected Object executeAsyncScript(String script, Object... args) {
-        return getDriver().executeAsyncScript(script, args);
+        waitForVaadin();
+        return fromBackend(
+                getBackend().executeScript(script, toBackendArgs(args)));
     }
 
     /**
-     * Return a reference to the {@link WebDriver} instance associated with this
-     * {@link TestBenchCommandExecutor}
+     * Waits for Vaadin, then runs {@code script} until it calls back, Selenium
+     * style:
      *
-     * @return a WebDriver instance
+     * <pre>{@code
+     * executeAsyncScript(
+     *         "var done = arguments[arguments.length - 1];"
+     *                 + "setTimeout(() => done(arguments[0].value), 100);",
+     *         field);
+     * }</pre>
+     *
+     * @return what the callback is called with, converted as
+     *         {@link #executeScript(String, Object...)} converts a result
      */
-    @Override
-    public TestBenchDriverProxy getDriver() {
-        return driver;
+    public Object executeAsyncScript(String script, Object... args) {
+        waitForVaadin();
+        return fromBackend(
+                getBackend().executeAsyncScript(script, toBackendArgs(args)));
+    }
+
+    private static Object[] toBackendArgs(Object[] args) {
+        Object[] backendArgs = new Object[args.length];
+        for (int i = 0; i < args.length; i++) {
+            backendArgs[i] = toBackend(args[i]);
+        }
+        return backendArgs;
+    }
+
+    private static Object toBackend(Object value) {
+        if (value instanceof TestBenchElement element) {
+            return element.getElementBackend();
+        }
+        if (value instanceof Collection<?> collection) {
+            List<Object> list = new ArrayList<>(collection.size());
+            for (Object item : collection) {
+                list.add(toBackend(item));
+            }
+            return list;
+        }
+        // An array of elements, as GridTRElement.getCells passes; a script
+        // sees a list as the same array
+        if (value instanceof Object[] array) {
+            return toBackend(Arrays.asList(array));
+        }
+        if (value instanceof Map<?, ?> map) {
+            Map<Object, Object> copy = new LinkedHashMap<>();
+            map.forEach((key, item) -> copy.put(key, toBackend(item)));
+            return copy;
+        }
+        return value;
+    }
+
+    private Object fromBackend(Object value) {
+        if (value instanceof ElementBackend element) {
+            return TestBench.createElement(TestBenchElement.class, element,
+                    this);
+        }
+        if (value instanceof List<?> list) {
+            List<Object> converted = new ArrayList<>(list.size());
+            for (Object item : list) {
+                converted.add(fromBackend(item));
+            }
+            return converted;
+        }
+        return value;
     }
 
     @Override
@@ -280,11 +359,11 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
             final int desiredHeight) throws UnsupportedOperationException {
         final int MAX_RESIZE_ATTEMPTS = 5;
         try {
-            getDriver().manage().window().setPosition(new Point(0, 0));
+            getBackend().setWindowPosition(new Point(0, 0));
             // Start with the desired dimensions; the loop will adjust for
             // browser chrome (title bar, borders, etc.)
-            getDriver().manage().window()
-                    .setSize(new Dimension(desiredWidth, desiredHeight));
+            getBackend()
+                    .setWindowSize(new Dimension(desiredWidth, desiredHeight));
 
             for (int attempt = 0; attempt < MAX_RESIZE_ATTEMPTS; attempt++) {
                 int actualWidth = detectViewportWidth();
@@ -297,13 +376,13 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
 
                 int diffW = desiredWidth - actualWidth;
                 int diffH = desiredHeight - actualHeight;
-                Dimension currentSize = getDriver().manage().window().getSize();
+                Dimension currentSize = getBackend().getWindowSize();
                 getLogger().debug(
                         "resizeViewPortTo: attempt {}, desired={}x{}, actual={}x{}, adjusting by {}x{}",
                         attempt + 1, desiredWidth, desiredHeight, actualWidth,
                         actualHeight, diffW, diffH);
-                getDriver().manage().window()
-                        .setSize(new Dimension(currentSize.getWidth() + diffW,
+                getBackend().setWindowSize(
+                        new Dimension(currentSize.getWidth() + diffW,
                                 currentSize.getHeight() + diffH));
             }
 

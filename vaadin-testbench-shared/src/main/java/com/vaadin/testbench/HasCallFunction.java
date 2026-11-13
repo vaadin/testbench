@@ -8,9 +8,7 @@
  */
 package com.vaadin.testbench;
 
-import org.openqa.selenium.WebElement;
-
-public interface HasCallFunction extends WebElement {
+public interface HasCallFunction {
 
     /**
      * Invoke the given method on this element using the given arguments as

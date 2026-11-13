@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.mockito.Mockito;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.BrowserTest;
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.DriverSupplier;
 import com.vaadin.testbench.Parameters;
 
@@ -42,8 +42,7 @@ public class ExtensionWithoutBrowserConfigurationTest
 
     @BrowserTest
     public void withoutBrowsersConfiguration(BrowserTestInfo browserTestInfo) {
-        DesiredCapabilities caps = CapabilitiesUtil.getDefaultCapabilities()
-                .get(0);
+        Capabilities caps = CapabilitiesUtil.getDefaultCapabilities().get(0);
         Assertions.assertEquals(caps.getBrowserName(),
                 browserTestInfo.capabilities().getBrowserName());
         Assertions.assertEquals(caps.getBrowserVersion(),

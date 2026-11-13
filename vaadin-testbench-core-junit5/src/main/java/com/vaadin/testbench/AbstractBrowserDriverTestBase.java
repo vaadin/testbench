@@ -8,41 +8,43 @@
  */
 package com.vaadin.testbench;
 
-import org.openqa.selenium.WebDriver;
-
 /**
- * Base class for tests using {@link WebDriver}. Provides wrapping for
- * {@link TestBenchDriverProxy}.
+ * Base class for tests using the browser driver: holds the test's
+ * {@link BrowserDriver}.
  *
  * @since 9.0
  */
 public abstract class AbstractBrowserDriverTestBase
         extends AbstractBrowserTestBase {
 
-    private WebDriver driver;
+    private BrowserDriver driver;
 
-    /**
-     * Returns the {@link WebDriver} instance or (if the previously provided
-     * WebDriver instance was not already a {@link TestBenchDriverProxy}
-     * instance) a {@link TestBenchDriverProxy} that wraps that driver.
-     *
-     * @return the active WebDriver instance
-     */
     @Override
-    public WebDriver getDriver() {
+    public BrowserDriver getDriver() {
         return driver;
     }
 
+    public void setDriver(BrowserDriver driver) {
+        this.driver = driver;
+    }
+
     /**
-     * Sets the active {@link WebDriver} that is used by this test case
+     * Sets a driver this test built with a backend's library, as TestBench's
+     * {@link BrowserDriver}, on that backend:
+     *
+     * <pre>{@code
+     * setDriver(new ChromeDriver());
+     * }</pre>
      *
      * @param driver
-     *            The WebDriver instance to set.
+     *            a Selenium {@code WebDriver}, a Playwright {@code Browser},
+     *            {@code BrowserContext} or {@code Page}, or a
+     *            {@link BrowserDriver}
+     * @see TestBench#createDriver(Object)
      */
-    public void setDriver(WebDriver driver) {
-        if (driver != null && !(driver instanceof TestBenchDriverProxy)) {
-            driver = TestBench.createDriver(driver);
-        }
-        this.driver = driver;
+    public void setDriver(Object driver) {
+        setDriver(driver == null || driver instanceof BrowserDriver
+                ? (BrowserDriver) driver
+                : TestBench.createDriver(driver));
     }
 }

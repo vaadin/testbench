@@ -18,14 +18,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import com.vaadin.testbench.ElementQuery.AttributeMatch;
 import com.vaadin.testbench.annotations.Attribute;
+import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.elementsbase.Element;
+import com.vaadin.testbench.testutils.SeleniumElements;
 
 import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.CONTAINS_WORD;
 import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.EXISTS;
@@ -43,7 +43,7 @@ public class ElementQueryTest {
     private static final String SINGLE_RESULT_QUERY_SUFFIX = ";return result";
     private static final String FIRST_RESULT_QUERY_SUFFIX = ";return result[0]";
 
-    private TestBenchDriverProxy mockDriver;
+    private BrowserDriver mockDriver;
     private TestBenchElement exampleElement;
     private ExampleElement mockElement;
 
@@ -61,8 +61,7 @@ public class ElementQueryTest {
     public void setup() {
         mockDriver = TestBench
                 .createDriver(Mockito.mock(WebDriverWithJS.class));
-        exampleElement = TestBenchElement.wrapElement(
-                Mockito.mock(WebElement.class),
+        exampleElement = SeleniumElements.wrap(Mockito.mock(WebElement.class),
                 mockDriver.getCommandExecutor());
 
         mockElement = Mockito.mock(ExampleElement.class);
@@ -89,14 +88,19 @@ public class ElementQueryTest {
         }
 
         @Override
-        public TestElementQuery<T> context(SearchContext searchContext) {
-            return (TestElementQuery<T>) super.context(searchContext);
+        public TestElementQuery<T> onPage(TestBenchCommandExecutor browser) {
+            return (TestElementQuery<T>) super.onPage(browser);
+        }
+
+        @Override
+        public TestElementQuery<T> context(TestBenchElement element) {
+            return (TestElementQuery<T>) super.context(element);
         }
 
         @Override
         protected List<T> executeSearchScript(String script, Object context,
                 String tagName, String attributePairs,
-                JavascriptExecutor executor) {
+                TestBenchCommandExecutor executor) {
             if (executed) {
                 throw new IllegalStateException(
                         "Query was already executed once");
@@ -122,7 +126,8 @@ public class ElementQueryTest {
     }
 
     private TestElementQuery<ExampleElement> createExampleDocumentQuery() {
-        return new TestElementQuery<>(ExampleElement.class).context(mockDriver);
+        return new TestElementQuery<>(ExampleElement.class)
+                .onPage(mockDriver.getCommandExecutor());
     }
 
     /**
@@ -860,7 +865,7 @@ public class ElementQueryTest {
         @Override
         protected List<T> executeSearchScript(String script, Object context,
                 String tagName, String attributePairs,
-                JavascriptExecutor executor) {
+                TestBenchCommandExecutor executor) {
             return results.get(Math.min(executionCount++, results.size() - 1));
         }
     }
@@ -868,7 +873,7 @@ public class ElementQueryTest {
     private ScriptedElementQuery<ExampleElement> createScriptedQuery(
             List<List<ExampleElement>> results) {
         var query = new ScriptedElementQuery<>(ExampleElement.class, results);
-        query.context(mockDriver);
+        query.onPage(mockDriver.getCommandExecutor());
         return query;
     }
 

@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.http.ClientConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,8 +62,9 @@ public class Parameters {
         testbenchGridBrowsers = getSystemPropertyString("gridBrowsers",
                 System.getenv("TESTBENCH_GRID_BROWSERS"));
         headless = getSystemPropertyBoolean("headless", false);
-        readTimeout = getSystemPropertyInt("readTimeout",
-                (int) ClientConfig.defaultConfig().readTimeout().toSeconds());
+        // Selenium's own default, ClientConfig.defaultConfig().readTimeout()
+        readTimeout = getSystemPropertyInt("readTimeout", Integer.parseInt(
+                System.getProperty("webdriver.httpclient.readTimeout", "180")));
         hubPort = getSystemPropertyInt("hubPort", 4444);
         setChromeOptions(getSystemPropertyString("chromeOptions", null));
     }
@@ -148,6 +147,35 @@ public class Parameters {
 
     private static String getQualifiedParameter(String unqualifiedName) {
         return Parameters.class.getName() + "." + unqualifiedName;
+    }
+
+    /** The backends {@link #getBackend()} knows. */
+    public static final String PLAYWRIGHT = "playwright", SELENIUM = "selenium";
+
+    /**
+     * The backend the JUnit integration starts its browser on: the
+     * {@code backend} system property, {@code playwright} or {@code selenium}
+     * (any case). A test that hands TestBench a Selenium driver itself runs on
+     * Selenium whatever this says.
+     *
+     * @return {@code null} when unset, which means Playwright if
+     *         {@code vaadin-testbench-backend-playwright} is on the classpath,
+     *         Selenium otherwise
+     * @throws IllegalArgumentException
+     *             if the property names no backend
+     */
+    public static String getBackend() {
+        String value = getSystemPropertyString("backend", null);
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        String backend = value.trim().toLowerCase(Locale.ROOT);
+        if (!backend.equals(PLAYWRIGHT) && !backend.equals(SELENIUM)) {
+            throw new IllegalArgumentException("'" + value + "' is not a "
+                    + getQualifiedParameter("backend")
+                    + ": use playwright or selenium");
+        }
+        return backend;
     }
 
     /**
@@ -455,24 +483,23 @@ public class Parameters {
     }
 
     /**
-     * Parses the grid browsers string and returns a new List of
-     * DesiredCapabilities
+     * Parses the grid browsers string and returns a new List of Capabilities
      *
-     * @return a list of DesiredCapabilities based on getGridBrowsersString.
-     *         Empty list if nothing configured.
+     * @return a list of Capabilities based on getGridBrowsersString. Empty list
+     *         if nothing configured.
      */
-    public static List<DesiredCapabilities> getGridBrowsers() {
+    public static List<Capabilities> getGridBrowsers() {
         String browsers = testbenchGridBrowsers;
-        List<DesiredCapabilities> finalList = new ArrayList<>();
+        List<Capabilities> finalList = new ArrayList<>();
         if (browsers != null && !browsers.isEmpty()) {
             for (String browserStr : browsers.split(",")) {
                 String[] browserStrSplit = browserStr.split("-");
                 Browser browser = Browser.valueOf(
                         browserStrSplit[0].toUpperCase(Locale.ENGLISH).trim());
-                DesiredCapabilities capabilities = browser
-                        .getDesiredCapabilities();
+                Capabilities capabilities = browser.getDesiredCapabilities();
                 if (browserStrSplit.length > 1) {
-                    capabilities.setVersion(browserStrSplit[1].trim());
+                    capabilities.setCapability(Capabilities.BROWSER_VERSION,
+                            browserStrSplit[1].trim());
                 }
                 finalList.add(capabilities);
             }

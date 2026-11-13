@@ -11,8 +11,8 @@ package com.vaadin.testbench.browser;
 import java.util.List;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.RunOnHub;
 import com.vaadin.testbench.parallel.BrowserUtil;
@@ -30,12 +30,12 @@ class ParameterizedBrowserTestDisabledOnMultipleBrowsersTest
         extends ParameterizedBrowserTestTest.Support {
 
     @BrowserConfiguration
-    public List<DesiredCapabilities> getBrowserConfiguration() {
+    public List<Capabilities> getBrowserConfiguration() {
         return List.of(BrowserUtil.firefox(), BrowserUtil.firefox(),
                 BrowserUtil.chrome());
     }
 
     public ParameterizedBrowserTestDisabledOnMultipleBrowsersTest() {
-        super((DesiredCapabilities) null);
+        super((Capabilities) null);
     }
 }

@@ -22,15 +22,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
 import com.vaadin.testbench.annotations.Attribute;
+import com.vaadin.testbench.commands.TestBenchCommandExecutor;
 import com.vaadin.testbench.elementsbase.Element;
 import com.vaadin.testbench.internal.SharedUtil;
 
@@ -46,15 +39,15 @@ import static com.vaadin.testbench.ElementQuery.AttributeMatch.Comparison.NOT_MA
 /**
  * Query class used for finding a given element inside a given search context.
  * <p>
- * The search context is either a {@link WebDriver} instance which searches
- * starting from the root of the current document, or a {@link WebElement}
- * instance, which searches both in the light DOM and inside the shadow root of
- * the given element.
+ * The search context is either the page, searched from the root of the current
+ * document ({@link #onPage()}), or a {@link TestBenchElement}, searched both in
+ * its light DOM and inside its shadow root
+ * ({@link #context(TestBenchElement)}).
  * <p>
- * When the search context is a {@link WebElement}, the shadow root is searched
- * first. E.g. when searching by ID and the same ID is used by a light DOM child
- * of the element and also inside its shadow root, the element from the shadow
- * root is returned.
+ * When the search context is an element, the shadow root is searched first.
+ * E.g. when searching by ID and the same ID is used by a light DOM child of the
+ * element and also inside its shadow root, the element from the shadow root is
+ * returned.
  * <p>
  * The element class specified in the constructor defines the tag name which is
  * searched for and also the type of element returned.
@@ -327,7 +320,8 @@ public class ElementQuery<T extends TestBenchElement> {
     private final String tagName;
     private final Set<AttributeMatch> attributes;
     private final List<Predicate<T>> conditions;
-    private SearchContext searchContext;
+    private TestBenchElement elementContext;
+    private TestBenchCommandExecutor pageContext;
 
     /**
      * Instantiate a new ElementQuery to look for the given type of element.
@@ -1156,15 +1150,11 @@ public class ElementQuery<T extends TestBenchElement> {
     }
 
     /**
-     * Sets the context to search inside.
-     *
-     * @param searchContext
-     *            a {@link SearchContext}; either a {@link TestBenchElement} or
-     *            {@link WebDriver} (to search from the root) instance
-     * @return this element query instance for chaining
+     * Sets the element to search inside: its shadow root, then its light DOM.
      */
-    public ElementQuery<T> context(SearchContext searchContext) {
-        this.searchContext = searchContext;
+    public ElementQuery<T> context(TestBenchElement element) {
+        elementContext = element;
+        pageContext = null;
         return this;
     }
 
@@ -1173,18 +1163,35 @@ public class ElementQuery<T extends TestBenchElement> {
      * in practice from the {@code <body>} tag.
      *
      * @return this element query instance for chaining
+     * @throws IllegalStateException
+     *             if the query has no element or page to search yet; a test
+     *             base uses {@link #onPage(TestBenchCommandExecutor)}
      */
     public ElementQuery<T> onPage() {
-        return context(getDriver());
+        if (pageContext != null) {
+            return this;
+        }
+        if (elementContext == null) {
+            throw new IllegalStateException(
+                    "No browser to search the page of; use onPage(TestBenchCommandExecutor)");
+        }
+        return onPage(elementContext.getCommandExecutor());
     }
 
     /**
-     * Returns the context (element or driver) to search inside.
+     * Searches the page of the given browser, from the root of the document:
      *
-     * @return a {@link SearchContext} instance
+     * <pre>{@code
+     * new ElementQuery<>(ButtonElement.class).onPage(getCommandExecutor())
+     *         .id("save");
+     * }</pre>
+     *
+     * @return this element query instance for chaining
      */
-    protected SearchContext getContext() {
-        return searchContext;
+    public ElementQuery<T> onPage(TestBenchCommandExecutor browser) {
+        pageContext = Objects.requireNonNull(browser);
+        elementContext = null;
+        return this;
     }
 
     /**
@@ -1295,16 +1302,15 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     public T waitForSingle(long timeoutInSeconds) {
         try {
-            return new WebDriverWait(getDriver(),
-                    Duration.ofSeconds(timeoutInSeconds))
-                    .until(driver -> single());
+            return Wait.until(this::single,
+                    Duration.ofSeconds(timeoutInSeconds));
         } catch (TimeoutException timeout) {
             // The NoSuchElementException thrown by single() is ignored while
             // waiting and reported as the cause of the timeout. Rethrow it as
             // a NoSuchElementException so that both the exception type and the
             // reason for the failure match single().
             if (timeout.getCause() instanceof NoSuchElementException cause) {
-                throw new NoSuchElementException(cause.getRawMessage()
+                throw new NoSuchElementException(cause.getMessage()
                         + " Timed out after " + timeoutInSeconds + "s.", cause);
             }
             throw timeout;
@@ -1390,14 +1396,13 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     @Deprecated(since = "10.0", forRemoval = true)
     public T waitForFirst(long timeOutInSeconds) {
-        T result = new WebDriverWait(getDriver(),
-                Duration.ofSeconds(timeOutInSeconds)).until(driver -> {
-                    try {
-                        return first();
-                    } catch (NoSuchElementException e) {
-                        return null;
-                    }
-                });
+        T result = Wait.until(() -> {
+            try {
+                return first();
+            } catch (NoSuchElementException e) {
+                return null;
+            }
+        }, Duration.ofSeconds(timeOutInSeconds));
         if (result == null) {
             throw new NoSuchElementException(getNoSuchElementMessage(null));
         } else {
@@ -1492,15 +1497,6 @@ public class ElementQuery<T extends TestBenchElement> {
         return executeSearch(null);
     }
 
-    private WebDriver getDriver() {
-        var context = getContext();
-        if (context instanceof WebDriver webDriver) {
-            return webDriver;
-        } else {
-            return ((TestBenchElement) context).getDriver();
-        }
-    }
-
     /**
      * Executes the search operation with the given conditions and returns a
      * list of matching elements.
@@ -1513,11 +1509,9 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     private List<T> executeSearch(Integer index) {
         StringBuilder script = new StringBuilder();
-        TestBenchElement elementContext;
-        JavascriptExecutor executor;
+        TestBenchCommandExecutor executor;
 
-        var context = getContext();
-        if (context instanceof TestBenchElement testBenchElement) {
+        if (elementContext != null) {
             script.append("var result = [];" //
                     + "if (arguments[0].shadowRoot) {" //
                     + "  var shadow = arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2]);" //
@@ -1527,23 +1521,16 @@ public class ElementQuery<T extends TestBenchElement> {
                     + "result = result.concat(Array.prototype.slice.call(light));" //
                     + "return result" //
             );
-            elementContext = testBenchElement;
-            executor = elementContext.getCommandExecutor().getDriver();
-        } else if (context instanceof WebDriver webDriver) {
+            executor = elementContext.getCommandExecutor();
+        } else if (pageContext != null) {
             // Search the whole document
             script.append("var result = [];" //
                     + "const queryResult = document.querySelectorAll(arguments[1]+arguments[2]);"
                     + "result = result.concat(Array.prototype.slice.call(queryResult));"
                     + "return result");
-            elementContext = null;
-            executor = (JavascriptExecutor) webDriver;
+            executor = pageContext;
         } else {
-            if (context == null) {
-                throw new IllegalStateException("Context cannot be null");
-            } else {
-                throw new IllegalStateException("Unknown context type: "
-                        + context.getClass().getName());
-            }
+            throw new IllegalStateException("Context cannot be null");
         }
 
         if (index != null) {
@@ -1639,7 +1626,7 @@ public class ElementQuery<T extends TestBenchElement> {
      */
     @SuppressWarnings("unchecked")
     List<T> executeSearchScript(String script, Object context, String tagName,
-            String attributePairs, JavascriptExecutor executor) {
+            String attributePairs, TestBenchCommandExecutor executor) {
         Object result = executor.executeScript(script, context, tagName,
                 attributePairs);
         if (result == null) {

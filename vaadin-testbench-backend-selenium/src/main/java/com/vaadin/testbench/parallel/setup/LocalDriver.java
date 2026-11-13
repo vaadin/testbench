@@ -17,11 +17,10 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
 
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.Parameters;
-import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.parallel.BrowserUtil;
 
 public class LocalDriver {
@@ -48,8 +47,7 @@ public class LocalDriver {
      *            the capabilities to use for the driver
      * @return a driver instance
      */
-    static public WebDriver createDriver(
-            DesiredCapabilities desiredCapabilities) {
+    static public WebDriver createDriver(Capabilities desiredCapabilities) {
         WebDriver driver;
         if (BrowserUtil.isFirefox(desiredCapabilities)) {
             String firefoxPath = System.getProperty("firefox.path");
@@ -94,6 +92,6 @@ public class LocalDriver {
                             + desiredCapabilities.getBrowserName());
         }
 
-        return TestBench.createDriver(driver);
+        return driver;
     }
 }

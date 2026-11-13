@@ -16,8 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openqa.selenium.Capabilities;
-
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.Parameters;
 
 public class ImageFileUtil {
