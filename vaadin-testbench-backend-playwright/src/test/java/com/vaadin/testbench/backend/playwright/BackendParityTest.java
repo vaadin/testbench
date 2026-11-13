@@ -532,6 +532,16 @@ class BackendParityTest {
                         "return Array.from(arguments[0].files).map(f => f.name + ':' + f.size)",
                         input);
             });
+            same("a path typed into a hidden file input", b -> {
+                ElementBackend input = (ElementBackend) b.executeScript(
+                        "const i = document.createElement('input');"
+                                + "i.type = 'file'; i.hidden = true;"
+                                + "document.body.appendChild(i); return i;");
+                input.sendKeys(file.toString());
+                return b.executeScript(
+                        "return Array.from(arguments[0].files).map(f => f.name + ':' + f.size)",
+                        input);
+            });
         } finally {
             Files.delete(file);
         }

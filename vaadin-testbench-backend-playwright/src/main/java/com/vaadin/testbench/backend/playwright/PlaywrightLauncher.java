@@ -52,7 +52,6 @@ import com.vaadin.testbench.spi.BrowserBackend;
  * <li>{@code com.vaadin.testbench.Parameters.headless}: headless unless
  * {@code false}.</li>
  * </ul>
- * Temporary names, until browser setup has an API of its own.
  */
 public class PlaywrightLauncher implements BrowserLauncher {
 

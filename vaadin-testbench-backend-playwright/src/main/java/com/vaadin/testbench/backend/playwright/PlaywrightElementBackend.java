@@ -9,6 +9,7 @@
 package com.vaadin.testbench.backend.playwright;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -106,12 +107,24 @@ public class PlaywrightElementBackend implements ElementBackend {
 
     @Override
     public void sendKeys(CharSequence... keys) {
+        // WebDriver's Element Send Keys on a file input: the text is the
+        // files' paths, one per line, and the input may be hidden. They
+        // replace the chosen files, where chromedriver adds to a multiple
+        // input's
+        if (Boolean.TRUE.equals(script(IS_FILE_INPUT))) {
+            setInputFiles(Arrays.stream(String.join("", keys).split("\n"))
+                    .map(File::new).toList());
+            return;
+        }
         act(() -> handle.waitForElementState(ElementState.VISIBLE,
                 new ElementHandle.WaitForElementStateOptions()
                         .setTimeout(timeout())));
         script(FOCUS_FOR_TYPING);
         act(() -> new KeyInput(backend.getPage().keyboard()).send(keys));
     }
+
+    private static final String IS_FILE_INPUT = "return arguments[0] instanceof HTMLInputElement"
+            + " && arguments[0].type === 'file'";
 
     // WebDriver's Element Send Keys: focus the element unless the focus is in
     // it, through its own focus(), which a Vaadin field hands to its input;

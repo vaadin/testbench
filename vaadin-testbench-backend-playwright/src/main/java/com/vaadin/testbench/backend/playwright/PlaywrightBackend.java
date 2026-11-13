@@ -113,8 +113,7 @@ public class PlaywrightBackend implements BrowserBackend {
 
     /**
      * WebDriver's name for the browser: {@code "chrome"} for Chromium,
-     * {@code "firefox"}; WebKit, which WebDriver does not drive, is
-     * {@code "webkit"}.
+     * {@code "firefox"}, {@code "safari"} for WebKit.
      */
     @Override
     public @Nullable String getBrowserName() {
@@ -122,8 +121,11 @@ public class PlaywrightBackend implements BrowserBackend {
         if (browser == null) {
             return null;
         }
-        String name = browser.browserType().name();
-        return "chromium".equals(name) ? "chrome" : name;
+        return switch (browser.browserType().name()) {
+        case "chromium" -> "chrome";
+        case "webkit" -> "safari";
+        default -> browser.browserType().name();
+        };
     }
 
     /**
