@@ -78,12 +78,19 @@ public class OwnSeleniumLookalikesTest {
                         org.openqa.selenium.By.className("x").toString() },
                 { By.tagName("x").toString(),
                         org.openqa.selenium.By.tagName("x").toString() },
-                { By.cssSelector("x").toString(), org.openqa.selenium.By
-                        .cssSelector("x").toString() } }) {
+                { By.cssSelector("x").toString(),
+                        org.openqa.selenium.By.cssSelector("x").toString() },
+                { By.xpath("//x").toString(),
+                        org.openqa.selenium.By.xpath("//x").toString() } }) {
             Assert.assertEquals(Arrays.toString(pair), pair[1], pair[0]);
         }
         Assert.assertEquals(By.id("x"), By.id("x"));
         Assert.assertNotEquals(By.id("x"), By.className("x"));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void anXPathHasNoCssForm() {
+        By.xpath("..").toCssSelector();
     }
 
     @Test(expected = IllegalArgumentException.class)
