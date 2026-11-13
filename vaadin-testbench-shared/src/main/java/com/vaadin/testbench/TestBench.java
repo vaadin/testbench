@@ -78,8 +78,12 @@ public class TestBench {
 
     public static <T extends TestBenchElement> T wrap(TestBenchElement element,
             Class<T> elementType) {
-        return createElement(elementType, element.getElementBackend(),
+        T wrapped = createElement(elementType, element.getElementBackend(),
                 element.getCommandExecutor());
+        if (wrapped != null) {
+            wrapped.copyRefind(element);
+        }
+        return wrapped;
     }
 
     /**

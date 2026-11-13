@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -46,6 +48,7 @@ public class TestBenchElement
 
     private ElementBackend elementBackend = null;
     private TestBenchCommandExecutor commandExecutor = null;
+    private @Nullable Supplier<@Nullable ElementBackend> refind;
 
     protected TestBenchElement() {
 
@@ -116,6 +119,76 @@ public class TestBenchElement
         return elementBackend;
     }
 
+    /**
+     * Lets a stale node be found again ({@code D_element_resolution}): set by
+     * the query that found this element, to run that query again.
+     */
+    void setRefind(Supplier<@Nullable ElementBackend> refind) {
+        this.refind = refind;
+    }
+
+    /**
+     * Swaps a node that is no longer in the page for what this element's query
+     * finds now at the same place.
+     *
+     * @return {@code true} if there is a new node; {@code false} if this
+     *         element came from no query, or the query no longer finds one
+     */
+    boolean refind() {
+        if (refind == null) {
+            return false;
+        }
+        ElementBackend fresh;
+        try {
+            fresh = refind.get();
+        } catch (NoSuchElementException | StaleElementReferenceException e) {
+            return false;
+        }
+        if (fresh == null || fresh.equals(elementBackend)) {
+            return false;
+        }
+        elementBackend = fresh;
+        return true;
+    }
+
+    void copyRefind(TestBenchElement from) {
+        refind = from.refind;
+    }
+
+    boolean canRefind() {
+        return refind != null;
+    }
+
+    /** Whether the node is gone; asks the browser. */
+    boolean isStale() {
+        try {
+            getCommandExecutor().getBackend().executeScript("return null",
+                    elementBackend);
+            return false;
+        } catch (StaleElementReferenceException e) {
+            return true;
+        }
+    }
+
+    // A call on the node, made once more on a fresh node when it is stale
+    private <R> R onNode(Function<ElementBackend, R> call) {
+        try {
+            return call.apply(elementBackend);
+        } catch (StaleElementReferenceException stale) {
+            if (!refind()) {
+                throw stale;
+            }
+            return call.apply(elementBackend);
+        }
+    }
+
+    private void doOnNode(Consumer<ElementBackend> call) {
+        onNode(node -> {
+            call.accept(node);
+            return null;
+        });
+    }
+
     protected void waitForVaadin() {
         if (getCommandExecutor() != null) {
             getCommandExecutor().waitForVaadin();
@@ -162,9 +235,9 @@ public class TestBenchElement
      * @since 9.4
      */
     public boolean isFocused() {
-        return (boolean) getCommandExecutor().getBackend().executeScript(
-                "return arguments[0] === document.activeElement",
-                elementBackend);
+        return (boolean) onNode(node -> getCommandExecutor().getBackend()
+                .executeScript("return arguments[0] === document.activeElement",
+                        node));
     }
 
     public void click() {
@@ -183,7 +256,7 @@ public class TestBenchElement
             // SVG elements and maybe others do not have a 'click' method
             ensureVisible();
             waitForVaadin();
-            elementBackend.click();
+            doOnNode(ElementBackend::click);
         }
     }
 
@@ -196,18 +269,18 @@ public class TestBenchElement
         // reliable text entry.
         ensureInteractable();
         waitForVaadin();
-        elementBackend.sendKeys(keysToSend);
+        doOnNode(node -> node.sendKeys(keysToSend));
     }
 
     public void clear() {
         ensureVisible();
         waitForVaadin();
-        elementBackend.clear();
+        doOnNode(ElementBackend::clear);
     }
 
     public String getTagName() {
         waitForVaadin();
-        return elementBackend.getTagName();
+        return onNode(ElementBackend::getTagName);
     }
 
     /**
@@ -218,17 +291,17 @@ public class TestBenchElement
      */
     public String getAttribute(String name) {
         waitForVaadin();
-        return elementBackend.getAttribute(name);
+        return onNode(node -> node.getAttribute(name));
     }
 
     public @Nullable String getDomAttribute(String name) {
         waitForVaadin();
-        return elementBackend.getDomAttribute(name);
+        return onNode(node -> node.getDomAttribute(name));
     }
 
     public @Nullable String getDomProperty(String name) {
         waitForVaadin();
-        return elementBackend.getDomProperty(name);
+        return onNode(node -> node.getDomProperty(name));
     }
 
     /**
@@ -246,7 +319,7 @@ public class TestBenchElement
     public boolean isSelected() {
         ensureVisible();
         waitForVaadin();
-        return elementBackend.isSelected();
+        return onNode(ElementBackend::isSelected);
     }
 
     /**
@@ -258,7 +331,7 @@ public class TestBenchElement
     public boolean isEnabled() {
         waitForVaadin();
         return !hasClassName("v-disabled") && !hasAttribute("disabled")
-                && elementBackend.isEnabled();
+                && onNode(ElementBackend::isEnabled);
     }
 
     /**
@@ -280,7 +353,7 @@ public class TestBenchElement
     public String getText() {
         ensureVisible();
         waitForVaadin();
-        return elementBackend.getText();
+        return onNode(ElementBackend::getText);
     }
 
     /**
@@ -290,7 +363,7 @@ public class TestBenchElement
     @SuppressWarnings("deprecation")
     public List<TestBenchElement> findElements(By by) {
         waitForVaadin();
-        return elementBackend.findElements(by.toCssSelector()).stream()
+        return onNode(node -> node.findElements(by.toCssSelector())).stream()
                 .map(found -> TestBench.createElement(TestBenchElement.class,
                         found, getCommandExecutor()))
                 .toList();
@@ -306,8 +379,8 @@ public class TestBenchElement
     @SuppressWarnings("deprecation")
     public TestBenchElement findElement(By by) {
         waitForVaadin();
-        List<ElementBackend> found = elementBackend
-                .findElements(by.toCssSelector());
+        List<ElementBackend> found = onNode(
+                node -> node.findElements(by.toCssSelector()));
         if (found.isEmpty()) {
             throw new NoSuchElementException(
                     "Unable to locate an element with " + by);
@@ -318,24 +391,24 @@ public class TestBenchElement
 
     public boolean isDisplayed() {
         waitForVaadin();
-        return elementBackend.isDisplayed();
+        return onNode(ElementBackend::isDisplayed);
     }
 
     public Point getLocation() {
         waitForVaadin();
-        ElementBackend.Rect rect = elementBackend.getRect();
+        ElementBackend.Rect rect = onNode(ElementBackend::getRect);
         return new Point(rect.x(), rect.y());
     }
 
     public Dimension getSize() {
         waitForVaadin();
-        ElementBackend.Rect rect = elementBackend.getRect();
+        ElementBackend.Rect rect = onNode(ElementBackend::getRect);
         return new Dimension(rect.width(), rect.height());
     }
 
     public String getCssValue(String propertyName) {
         waitForVaadin();
-        return elementBackend.getCssValue(propertyName);
+        return onNode(node -> node.getCssValue(propertyName));
     }
 
     /**
@@ -344,19 +417,19 @@ public class TestBenchElement
     public void click(int x, int y, Keys... modifiers) {
         ensureInteractable();
         waitForVaadin();
-        elementBackend.click(x, y, modifiers);
+        doOnNode(node -> node.click(x, y, modifiers));
     }
 
     public void doubleClick() {
         ensureInteractable();
         waitForVaadin();
-        elementBackend.doubleClick();
+        doOnNode(ElementBackend::doubleClick);
     }
 
     public void contextClick() {
         ensureInteractable();
         waitForVaadin();
-        elementBackend.contextClick();
+        doOnNode(ElementBackend::contextClick);
     }
 
     public <T extends TestBenchElement> T wrap(Class<T> elementType) {
@@ -392,12 +465,15 @@ public class TestBenchElement
      */
     public void focus() {
         waitForVaadin();
-        getCommandExecutor().focusElement(this);
+        Refind.onStale(() -> {
+            getCommandExecutor().focusElement(this);
+            return null;
+        }, this);
     }
 
     public Rectangle getRect() {
         waitForVaadin();
-        ElementBackend.Rect rect = elementBackend.getRect();
+        ElementBackend.Rect rect = onNode(ElementBackend::getRect);
         return new Rectangle(rect.x(), rect.y(), rect.height(), rect.width());
     }
 
@@ -542,7 +618,7 @@ public class TestBenchElement
     private void ensureVisible() {
         try {
             if (getCommandExecutor().isAutoScrollIntoView()) {
-                if (!elementBackend.isDisplayed()) {
+                if (!onNode(ElementBackend::isDisplayed)) {
                     scrollIntoView();
                 }
             }
@@ -756,7 +832,8 @@ public class TestBenchElement
      *         returns it: DOM nodes as {@link TestBenchElement}s
      */
     protected Object executeScript(String script, Object... args) {
-        return getCommandExecutor().executeScript(script, args);
+        return Refind.onStale(
+                () -> getCommandExecutor().executeScript(script, args), args);
     }
 
     @Override
@@ -834,7 +911,7 @@ public class TestBenchElement
     public void hover() {
         ensureInteractable();
         waitForVaadin();
-        elementBackend.hover();
+        doOnNode(ElementBackend::hover);
     }
 
     /**
@@ -852,11 +929,16 @@ public class TestBenchElement
     public void dragTo(TestBenchElement target) {
         ensureInteractable();
         waitForVaadin();
-        getCommandExecutor().getBackend().perform(List.of(
-                new Input.MoveToElement(elementBackend, 0, 0),
-                new Input.MouseDown(Input.Button.LEFT),
-                new Input.MoveToElement(target.getElementBackend(), 0, 0),
-                new Input.MouseUp(Input.Button.LEFT)));
+        Refind.onStale(() -> {
+            getCommandExecutor().getBackend()
+                    .perform(List.of(
+                            new Input.MoveToElement(elementBackend, 0, 0),
+                            new Input.MouseDown(Input.Button.LEFT),
+                            new Input.MoveToElement(target.getElementBackend(),
+                                    0, 0),
+                            new Input.MouseUp(Input.Button.LEFT)));
+            return null;
+        }, this, target);
     }
 
     /**
@@ -872,10 +954,10 @@ public class TestBenchElement
     public void dragBy(int x, int y) {
         ensureInteractable();
         waitForVaadin();
-        getCommandExecutor().getBackend()
-                .perform(List.of(new Input.MoveToElement(elementBackend, 0, 0),
+        doOnNode(node -> getCommandExecutor().getBackend()
+                .perform(List.of(new Input.MoveToElement(node, 0, 0),
                         new Input.MouseDown(Input.Button.LEFT),
                         new Input.MoveBy(x, y),
-                        new Input.MouseUp(Input.Button.LEFT)));
+                        new Input.MouseUp(Input.Button.LEFT))));
     }
 }

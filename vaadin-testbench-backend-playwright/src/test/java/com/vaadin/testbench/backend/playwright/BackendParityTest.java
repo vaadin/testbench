@@ -707,9 +707,9 @@ class BackendParityTest {
         }
     }
 
-    /** Selenium's staleness, through TestBench's own element and query. */
+    /** D_element_resolution, through TestBench's own element and query. */
     @Test
-    void aReplacedNodeIsStale() {
+    void aReplacedNodeIsFoundAgain() {
         for (BrowserBackend b : List.of(selenium, pw)) {
             TestBenchCommandExecutor executor = new TestBenchCommandExecutor(
                     null, null);
@@ -720,10 +720,11 @@ class BackendParityTest {
                     + " var fresh = document.createElement('div');"
                     + " fresh.id = 'gone'; fresh.textContent = 'again';"
                     + " old.replaceWith(fresh);");
-            assertThrows(StaleElementReferenceException.class, gone::getText,
+            assertEquals("again", gone.getText(), b.getClass().getSimpleName());
+            assertEquals("again", gone.getPropertyString("textContent"),
                     b.getClass().getSimpleName());
-            assertThrows(StaleElementReferenceException.class,
-                    () -> gone.getPropertyString("textContent"),
+            b.executeScript("document.getElementById('gone').remove()");
+            assertThrows(StaleElementReferenceException.class, gone::getText,
                     b.getClass().getSimpleName());
         }
     }

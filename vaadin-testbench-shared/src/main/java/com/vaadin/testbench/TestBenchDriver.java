@@ -116,7 +116,8 @@ final class TestBenchDriver implements BrowserDriver {
     @Override
     public @Nullable Object executeScript(String script,
             @Nullable Object... args) {
-        return commandExecutor.executeScript(script, args);
+        return Refind.onStale(() -> commandExecutor.executeScript(script, args),
+                args);
     }
 
     @Override
