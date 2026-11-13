@@ -2,84 +2,6 @@ package com.vaadin.testbench.unit.internal
 
 import com.vaadin.flow.component.Component
 import com.vaadin.flow.component.Key
-import com.vaadin.flow.component.ShortcutRegistration
-import com.vaadin.flow.internal.JacksonUtils
-import tools.jackson.databind.JsonNode
-import tools.jackson.databind.node.BooleanNode
-import tools.jackson.databind.node.ObjectNode
-
-/**
- * Take a look at `DomEventListenerWrapper.matchesFilter()` to see why this is necessary.
- * If this stuff stops working, place a breakpoint into the [getBoolean]/[hasKey] function,
- * to see what kind of keys you're receiving and whether it matches [filter].
- */
-private class MockFilterJsonObject(val key: Key, val modifiers: Set<Key>) : ObjectNode(
-    JacksonUtils.getMapper().nodeFactory
-) {
-    val filter: String
-    init {
-
-        // compute the filter
-        filter = mgenerateEventKeyFilter.invoke(null, key).toString() + " && " +
-                // we call the private method with Hashable keys implementations as the ShortcutRegistration class is
-                // called by these objects/classes in regular cases.
-                mgenerateEventModifierFilter.invoke(null, modifiers.map { getHashableKey(it)}).toString()
-
-        // populate the json object so that KeyDownEvent can be created from it
-        put("event.key", key.keys.first())
-    }
-
-    /**
-     * Returns a HashableKey instance for the given key modifier.
-     * @param keyModifier the key modifier
-     * @return the HashableKey instance
-     *
-      */
-    private fun getHashableKey(keyModifier: Key): Any? {
-        return chashableKey.newInstance(keyModifier)
-    }
-
-    override fun has(key: String): Boolean {
-        // the "key" is a JavaScript expression which matches the key pressed.
-        // we need to match it against the 'filter'
-        if (!key.startsWith("([")) {
-            // not a filter
-            return super.get(key) != null
-        }
-        return matchesFilter(key)
-    }
-
-    private fun matchesFilter(key: String): Boolean {
-        // the "key" is a JavaScript expression which matches the key pressed.
-        // we need to match it against the 'filter'
-        val probeFilter = key.removeSuffix(" && (event.stopPropagation() || true)")
-            .removeSuffix(" && (event.preventDefault() || true)")
-        return probeFilter.startsWith(filter)
-    }
-
-    override fun get(keyString: String): JsonNode? {
-        if (keyString.startsWith("([")) {
-            // Flow reads the value the client sent for the filter and checks
-            // whether it is truthy, so return the result of the match itself
-            return BooleanNode.valueOf(matchesFilter(keyString))
-        }
-        return super.get(keyString)
-    }
-
-    companion object {
-        private val mgenerateEventKeyFilter = ShortcutRegistration::class.java.getDeclaredMethod("generateEventKeyFilter", Key::class.java)
-        private val mgenerateEventModifierFilter = ShortcutRegistration::class.java.getDeclaredMethod("generateEventModifierFilter", Collection::class.java)
-        private val chashableKey = ShortcutRegistration::class.java
-            .classLoader
-            .loadClass("com.vaadin.flow.component.ShortcutRegistration\$HashableKey")
-            .declaredConstructors[0]
-        init {
-            mgenerateEventKeyFilter.isAccessible = true
-            mgenerateEventModifierFilter.isAccessible = true
-            chashableKey.isAccessible = true
-        }
-    }
-}
 
 /**
  * Fires a shortcut event with given [key] and [modifiers] in the current UI.
@@ -97,21 +19,12 @@ public fun fireShortcut(key: Key, vararg modifiers: Key) {
  * Use the global `fireShortcut()` function unless you know what you're doing!
  */
 public fun Component._fireShortcut(key: Key, vararg modifiers: Key) {
-    // all shortcut registration carry a filter with them, in order to filter out
-    // pressed keys. All the filters are then transferred to the server-side
-    // and compared against DomEventListenerWrapper.filter in
-    // DomEventListenerWrapper.matchesFilter()
-
-    // The `matchesFilter()` function is peculiar: it simply checks whether the data
-    // contains a boolean value with key 'filter'. We need to fake the json object
-    // as if it contained all filters (otherwise `matchesFilter()` would NPE on missing key)
-    // and respond true only to the matching filter.
-    val data = MockFilterJsonObject(key, modifiers.toSet())
-
     // the shortcut registration is only updated in [UI.beforeClientResponse]; run the registration code now.
     MockVaadin.clientRoundtrip()
 
-    // this will fire the "keydown" DOM event, which in turn fires KeyDownEvent event,
-    // which in turn invokes the ShortcutListener.
-    _fireDomEvent("keydown", data)
+    // Every shortcut listens for "keydown" with a filter that matches its key
+    // and modifiers. Dispatching the keydown runs the filters the way the
+    // browser does, so that only the listeners of matching shortcuts are
+    // notified with a KeyDownEvent, which in turn invokes the ShortcutListener.
+    ClientDomEvent.dispatchKeyDown(element, key, modifiers.toList()).fire()
 }

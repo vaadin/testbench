@@ -27,7 +27,7 @@ public class SideNavTester<T extends SideNav> extends ComponentTester<T> {
     // The native event properties of a plain left click, matching the data
     // Clickable.click() sends
     private static final Map<String, Object> LEFT_CLICK = Map.of("button", 0,
-            "detail", 0, "screenX", 0, "screenY", 0, "clientX", 0, "clientY", 0,
+            "detail", 1, "screenX", 0, "screenY", 0, "clientX", 0, "clientY", 0,
             "ctrlKey", false, "shiftKey", false, "altKey", false, "metaKey",
             false);
 
