@@ -138,14 +138,14 @@ jobs:
 
   integration-tests:
     # Each IT module on both backends in both modes (D_pluggable_backends, D_modes in
-    # testbench-next). Selenium in compat is today's run and gates; the other three
-    # count what breaks, so they may fail without failing the run.
+    # testbench-next). compat gates on both backends; modern counts what breaks, so it
+    # may fail without failing the run.
     name: Integration Tests (${{ matrix.junit.name }}, ${{ matrix.backend }}, ${{ matrix.mode }})
     needs: build
     if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-26.04
     timeout-minutes: 45
-    continue-on-error: ${{ matrix.backend != 'selenium' || matrix.mode != 'compat' }}
+    continue-on-error: ${{ matrix.mode != 'compat' }}
     services:
       selenium:
         # Playwright drives a local browser and fails on a hub; an empty image starts no service.
@@ -270,8 +270,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v5
         with:
-          # Only the gating run goes into the published "Test Results"; the others are counts.
-          name: ${{ (matrix.backend == 'selenium' && matrix.mode == 'compat') && 'integration-test-results' || 'count-results' }}-${{ matrix.junit.name }}-${{ matrix.backend }}-${{ matrix.mode }}
+          # Only the gating runs go into the published "Test Results"; the others are counts.
+          name: ${{ matrix.mode == 'compat' && 'integration-test-results' || 'count-results' }}-${{ matrix.junit.name }}-${{ matrix.backend }}-${{ matrix.mode }}
           path: |
             **/target/failsafe-reports/TEST-*.xml
           retention-days: 7
