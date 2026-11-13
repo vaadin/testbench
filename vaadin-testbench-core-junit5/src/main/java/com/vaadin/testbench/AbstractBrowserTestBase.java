@@ -53,13 +53,11 @@ public abstract class AbstractBrowserTestBase
     public abstract BrowserDriver getDriver();
 
     /** As {@link BrowserDriver#findElement(By)}. */
-    @SuppressWarnings("deprecation")
     public TestBenchElement findElement(By by) {
         return getDriver().findElement(by);
     }
 
     /** As {@link BrowserDriver#findElements(By)}. */
-    @SuppressWarnings("deprecation")
     public List<TestBenchElement> findElements(By by) {
         return getDriver().findElements(by);
     }
@@ -200,7 +198,6 @@ public abstract class AbstractBrowserTestBase
      *            the selector used to find element
      * @return true if the element can be found
      */
-    @SuppressWarnings("deprecation")
     public boolean isElementPresent(By by) {
         try {
             return getDriver().findElement(by) != null;
@@ -267,18 +264,15 @@ public abstract class AbstractBrowserTestBase
         }, timeoutInSeconds);
     }
 
-    @SuppressWarnings("deprecation")
     protected void waitForElementPresent(final By by) {
         waitUntil(driver -> driver.findElement(by));
     }
 
-    @SuppressWarnings("deprecation")
     protected void waitForElementNotPresent(final By by) {
         waitUntil(driver -> driver.findElements(by).isEmpty());
     }
 
     // As Selenium's ExpectedConditions.visibilityOfElementLocated
-    @SuppressWarnings("deprecation")
     protected void waitForElementVisible(final By by) {
         waitUntil(driver -> {
             try {
@@ -422,7 +416,7 @@ public abstract class AbstractBrowserTestBase
     /**
      * Gets the log entries from the browser that have the given logging level
      * or higher. Selenium only, so far: elsewhere it throws
-     * {@link NotYetImplementedException}.
+     * {@link UnsupportedOperationException}.
      *
      * @param level
      *            the minimum severity of logs included

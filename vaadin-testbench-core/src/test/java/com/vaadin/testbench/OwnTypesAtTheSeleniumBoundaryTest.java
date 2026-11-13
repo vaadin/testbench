@@ -25,7 +25,6 @@ import com.vaadin.testbench.testutils.SeleniumElements;
  * An element speaks TestBench's own types; the Selenium backend turns them into
  * Selenium's.
  */
-@SuppressWarnings("deprecation")
 public class OwnTypesAtTheSeleniumBoundaryTest {
 
     private final ElementBackend node = Mockito.mock(ElementBackend.class);

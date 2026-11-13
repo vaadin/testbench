@@ -75,7 +75,6 @@ public class TestBenchDriverTest {
     }
 
     @Test
-    @SuppressWarnings("deprecation")
     public void findElementGivesATestBenchElement() {
         WebElement found = Mockito.mock(WebElement.class);
         Mockito.when(selenium.executeScript(contains("querySelectorAll"),

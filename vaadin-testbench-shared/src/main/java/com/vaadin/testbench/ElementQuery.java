@@ -344,8 +344,8 @@ public class ElementQuery<T extends TestBenchElement> {
      *            the type of element to return
      * @param tagName
      *            the tag name of the element to find, such as
-     *            {@code "vaadin-button"}, or {@code "*"} for any; not a CSS
-     *            selector, which throws on any backend but Selenium
+     *            {@code "vaadin-button"}, or {@code "*"} for any; a CSS
+     *            selector searches as before, with a warning
      */
     public ElementQuery(Class<T> elementClass, String tagName) {
         this.elementClass = elementClass;
@@ -1539,7 +1539,7 @@ public class ElementQuery<T extends TestBenchElement> {
             throw new IllegalStateException("Context cannot be null");
         }
 
-        checkTagName(executor);
+        checkTagName();
         if (index != null) {
             script.append("[").append(index).append("]");
         }
@@ -1559,27 +1559,17 @@ public class ElementQuery<T extends TestBenchElement> {
     /**
      * The search script pastes the tag name before the attribute filters, so a
      * CSS selector happens to work, and a filter then applies to its last part
-     * only (vaadin/testbench#2394). The Selenium backend keeps allowing it,
-     * with a warning, until that issue is decided.
+     * only (vaadin/testbench#2394). It keeps working, on every backend, with a
+     * warning, until that issue is decided.
      */
-    private void checkTagName(TestBenchCommandExecutor executor) {
-        if (TAG_NAME.matcher(tagName).matches()) {
-            return;
+    private void checkTagName() {
+        if (!TAG_NAME.matcher(tagName).matches()
+                && WARNED_TAG_NAMES.add(tagName)) {
+            LoggerFactory.getLogger(ElementQuery.class).warn("'" + tagName
+                    + "' is not a tag name. Use a tag name or \"*\", and"
+                    + " filters such as withClassName() or withAttribute()"
+                    + " for the rest");
         }
-        String message = "'" + tagName + "' is not a tag name. Use a tag "
-                + "name or \"*\", and filters such as withClassName() or "
-                + "withAttribute() for the rest";
-        // Temporary: remove when vaadin/testbench#2394 is decided. By name,
-        // since shared cannot see the Selenium module
-        if (executor.getBackend().getClass().getName().equals(
-                "com.vaadin.testbench.backend.selenium.SeleniumBackend")) {
-            if (WARNED_TAG_NAMES.add(tagName)) {
-                LoggerFactory.getLogger(ElementQuery.class).warn(
-                        message + "; it works on the Selenium backend only");
-            }
-            return;
-        }
-        throw new IllegalArgumentException(message);
     }
 
     private boolean satisfiesAllConditions(T element) {

@@ -35,7 +35,6 @@ import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.Dimension;
 import com.vaadin.testbench.LogEntry;
 import com.vaadin.testbench.NoSuchElementException;
-import com.vaadin.testbench.NotYetImplementedException;
 import com.vaadin.testbench.Platform;
 import com.vaadin.testbench.Point;
 import com.vaadin.testbench.StaleElementReferenceException;
@@ -161,8 +160,8 @@ public class PlaywrightBackend implements BrowserBackend {
 
     @Override
     public List<LogEntry> getLogEntries() {
-        throw NotYetImplementedException
-                .notYetImplemented("getLogEntries on Playwright");
+        throw new UnsupportedOperationException(
+                "The browser log is read on the Selenium backend only");
     }
 
     @Override

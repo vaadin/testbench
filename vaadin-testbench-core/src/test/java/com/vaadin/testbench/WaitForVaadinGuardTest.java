@@ -30,10 +30,10 @@ import com.vaadin.testbench.spi.BrowserBackend;
 import com.vaadin.testbench.spi.ElementBackend;
 
 /**
- * Fails when a public element, driver, keyboard or {@code Actions} method
- * reaches the browser without waiting for Vaadin first: with the proxies gone,
- * each method calls {@code waitForVaadin()} itself, and this is what notices a
- * forgotten one.
+ * Fails when a public element, driver or {@code Actions} method reaches the
+ * browser without waiting for Vaadin first: with the proxies gone, each method
+ * calls {@code waitForVaadin()} itself, and this is what notices a forgotten
+ * one.
  * <p>
  * It calls every method against a fake browser that records each call, and
  * checks that a wait comes before the method's last browser call, the one doing
@@ -52,7 +52,7 @@ public class WaitForVaadinGuardTest {
     /** As the javassist proxy's list had it. */
     private static final Set<String> DRIVER_METHODS_NOT_WAITING = Set.of(
             "close", "get", "manage", "navigate", "quit", "switchTo",
-            "getCommandExecutor", "getKeyboard");
+            "getCommandExecutor");
 
     public static class AllMixinsElement extends TestBenchElement
             implements HasLabel, HasPlaceholder, HasHelper, HasValidation,
@@ -128,19 +128,11 @@ public class WaitForVaadinGuardTest {
         Assert.assertTrue("activeElement() waits", waitsBeforeLastBrowserCall(
                 driver.switchTo(),
                 method(BrowserDriver.TargetLocator.class, "activeElement")));
-        for (Method method : Keyboard.class.getMethods()) {
-            if (method.getDeclaringClass() == Keyboard.class
-                    && !waitsBeforeLastBrowserCall(driver.getKeyboard(),
-                            method)) {
-                notWaiting.add("Keyboard." + describe(method));
-            }
-        }
         Assert.assertEquals("Driver methods reaching the browser without "
                 + "waiting for Vaadin", Set.of(), notWaiting);
     }
 
     @Test
-    @SuppressWarnings("deprecation")
     public void actionsWaitBeforeTheyPerform() {
         Actions actions = new Actions(driver).click(sampleElement)
                 .sendKeys("x");

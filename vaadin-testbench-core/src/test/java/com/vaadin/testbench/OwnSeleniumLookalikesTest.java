@@ -23,7 +23,6 @@ import org.junit.Test;
  * and {@code Rectangle} stand in for Selenium's, so a test ports by an import
  * change: each must say what Selenium's says.
  */
-@SuppressWarnings("deprecation")
 public class OwnSeleniumLookalikesTest {
 
     /** Left out on purpose: Chrome receives them as the left-hand keys. */

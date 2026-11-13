@@ -45,7 +45,6 @@ import com.vaadin.testbench.Actions;
 import com.vaadin.testbench.BrowserDriver;
 import com.vaadin.testbench.Dimension;
 import com.vaadin.testbench.ElementQuery;
-import com.vaadin.testbench.Keyboard;
 import com.vaadin.testbench.Keys;
 import com.vaadin.testbench.Point;
 import com.vaadin.testbench.StaleElementReferenceException;
@@ -555,40 +554,43 @@ class BackendParityTest {
             + " JSON.stringify(window.keyLog.map(e => e.key + '/' + e.mods)),"
             + " document.activeElement.id]";
 
+    /**
+     * Key sequences into the focused element, through {@code Actions}. None
+     * holds {@code Keys.NULL}, which {@code Keys.chord} ends with: in
+     * {@code Actions} chromedriver sends an "Unidentified" keydown for it,
+     * which Playwright cannot (R_pw_keys).
+     */
     @Test
-    void keyboard() {
+    void keysThroughActions() {
         List<CharSequence[]> sequences = List.of(new CharSequence[] { "abc" },
                 new CharSequence[] { Keys.SHIFT, "ab" },
-                new CharSequence[] { "a", Keys.SHIFT, "b", Keys.NULL, "c" },
                 new CharSequence[] { "ab", Keys.BACK_SPACE, "c" },
                 new CharSequence[] { "x", Keys.ARROW_LEFT, "y", Keys.END, "z" },
                 new CharSequence[] { "a1", Keys.SHIFT, "2" },
                 new CharSequence[] { Keys.NUMPAD1, Keys.ADD, Keys.DECIMAL },
-                new CharSequence[] { "hello", Keys.chord(Keys.CONTROL, "a"),
-                        "bye" },
                 new CharSequence[] { "tab", Keys.TAB });
         for (CharSequence[] keys : sequences) {
             String what = Arrays.toString(keys).replaceAll("[\\uE000-\\uE05D]",
                     "<key>");
             same("keyboard " + what, b -> {
                 b.executeScript(FOCUS_KEYS);
-                driverOn(b).getKeyboard().sendKeys(keys);
+                new Actions(driverOn(b)).sendKeys(keys).perform();
                 return b.executeScript(KEYS_RESULT);
             });
         }
         same("keyboard holds a key across calls", b -> {
             b.executeScript(FOCUS_KEYS);
-            Keyboard keyboard = driverOn(b).getKeyboard();
-            keyboard.keyDown(Keys.SHIFT);
-            keyboard.sendKeys("a");
-            keyboard.sendKeys("b");
-            keyboard.keyUp(Keys.SHIFT);
-            keyboard.sendKeys("c");
+            Actions actions = new Actions(driverOn(b));
+            actions.keyDown(Keys.SHIFT).perform();
+            actions.sendKeys("a").perform();
+            actions.sendKeys("b").perform();
+            actions.keyUp(Keys.SHIFT).perform();
+            actions.sendKeys("c").perform();
             return b.executeScript(KEYS_RESULT);
         });
         same("keyboard non-ASCII", b -> {
             b.executeScript(FOCUS_KEYS);
-            driverOn(b).getKeyboard().sendKeys("é漢😀");
+            new Actions(driverOn(b)).sendKeys("é漢😀").perform();
             return b.executeScript(
                     "return document.getElementById('keys').value");
         });
@@ -596,7 +598,6 @@ class BackendParityTest {
     }
 
     @Test
-    @SuppressWarnings("deprecation")
     void actionsKeys() {
         Map<String, Consumer<BrowserDriver>> cases = new LinkedHashMap<>();
         cases.put("sendKeys",
@@ -638,7 +639,6 @@ class BackendParityTest {
     }
 
     @Test
-    @SuppressWarnings("deprecation")
     void drags() {
         Map<String, Consumer<BrowserDriver>> cases = new LinkedHashMap<>();
         cases.put("dragTo", d -> element(d, "drag").dragTo(element(d, "drop")));

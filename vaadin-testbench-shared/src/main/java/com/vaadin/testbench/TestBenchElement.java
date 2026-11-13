@@ -287,7 +287,6 @@ public class TestBenchElement
      * The descendants {@code by} matches, in the light DOM only: unlike
      * {@code $}, this never looks inside a shadow root.
      */
-    @SuppressWarnings("deprecation")
     public List<TestBenchElement> findElements(By by) {
         waitForVaadin();
         return elementBackend.findElements(by.toCssSelector()).stream()
@@ -303,7 +302,6 @@ public class TestBenchElement
      * @throws NoSuchElementException
      *             if nothing matches
      */
-    @SuppressWarnings("deprecation")
     public TestBenchElement findElement(By by) {
         waitForVaadin();
         List<ElementBackend> found = elementBackend

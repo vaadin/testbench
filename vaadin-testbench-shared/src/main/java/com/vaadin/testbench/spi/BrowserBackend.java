@@ -113,8 +113,8 @@ public interface BrowserBackend {
     /**
      * The browser console's entries since the last call.
      *
-     * @throws com.vaadin.testbench.NotYetImplementedException
-     *             on a backend that cannot read them yet
+     * @throws UnsupportedOperationException
+     *             on a backend that cannot read them
      */
     List<LogEntry> getLogEntries();
 
