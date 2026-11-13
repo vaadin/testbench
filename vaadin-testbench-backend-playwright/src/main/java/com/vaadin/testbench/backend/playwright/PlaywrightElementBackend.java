@@ -26,8 +26,9 @@ import com.vaadin.testbench.spi.ElementBackend;
  * Selenium's own atoms or the script WebDriver specifies, through
  * {@link PlaywrightBackend#executeScript}, which also throws
  * {@link StaleElementReferenceException} once the node is detached. Actions use
- * Playwright's, which wait until the element can take them, up to
- * {@link com.vaadin.testbench.Parameters#getActionTimeout()}.
+ * Playwright's, whose own checks hold them until the element can take them, up
+ * to {@code com.vaadin.testbench.playwright.actionTimeout}; Selenium's fail at
+ * once.
  */
 public class PlaywrightElementBackend implements ElementBackend {
 

@@ -1544,24 +1544,9 @@ public class ElementQuery<T extends TestBenchElement> {
             script.append("[").append(index).append("]");
         }
 
-        TestBenchElement context = elementContext;
-        List<T> found = Refind
-                .onStale(
-                        () -> executeSearchScript(script.toString(), context,
-                                tagName, getAttributePairs(), executor),
-                        context)
-                .stream().filter(this::satisfiesAllConditions).toList();
-        for (int i = 0; i < found.size(); i++) {
-            // get(index) without conditions searched for that index alone
-            int position = index != null && conditions.isEmpty() ? index : i;
-            found.get(i).setRefind(() -> {
-                List<T> again = all();
-                return position < again.size()
-                        ? again.get(position).getElementBackend()
-                        : null;
-            });
-        }
-        return found;
+        return executeSearchScript(script.toString(), elementContext, tagName,
+                getAttributePairs(), executor).stream()
+                .filter(this::satisfiesAllConditions).toList();
     }
 
     // A tag, as HTML, custom elements and SVG (foreignObject) name them. No
