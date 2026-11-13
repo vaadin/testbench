@@ -149,5 +149,21 @@ public class ExpectedConditionsTest {
         Assert.assertEquals(List.of(element),
                 TestBenchElement.wrapElements(List.of(element), executor));
         Assert.assertSame(executor, element.getDriver().getCommandExecutor());
+        TestBenchCommandExecutor real = new TestBenchCommandExecutor(null,
+                null);
+        real.setBackend(Mockito.mock(BrowserBackend.class));
+        Assert.assertSame(real, real.getDriver().getCommandExecutor());
+        Converted converted = new Converted(element, executor);
+        Assert.assertSame(element.getElementBackend(),
+                converted.getElementBackend());
+        Assert.assertSame(executor, converted.getCommandExecutor());
+    }
+
+    /** As flow-components' SelectElement.ItemElement converts an element. */
+    static class Converted extends TestBenchElement {
+        Converted(TestBenchElement element,
+                TestBenchCommandExecutor commandExecutor) {
+            super(element, commandExecutor);
+        }
     }
 }

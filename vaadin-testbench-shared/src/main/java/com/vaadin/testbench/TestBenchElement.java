@@ -51,6 +51,16 @@ public class TestBenchElement
     }
 
     /**
+     * An element of this class for the node {@code element} stands for, as
+     * {@code element.wrap(X.class)} makes one: for an element class whose
+     * constructor takes the element it converts.
+     */
+    protected TestBenchElement(TestBenchElement element,
+            TestBenchCommandExecutor commandExecutor) {
+        init(element.getElementBackend(), commandExecutor);
+    }
+
+    /**
      * Initializes an element built by its no-argument constructor. A subclass
      * that needs initialization code overrides {@link #init()}, not this.
      *
