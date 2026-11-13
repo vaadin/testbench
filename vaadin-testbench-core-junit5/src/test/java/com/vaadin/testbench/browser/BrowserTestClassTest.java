@@ -17,10 +17,10 @@ import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestTemplate;
 import org.mockito.Mockito;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.BrowserTest;
 import com.vaadin.testbench.BrowserTestClass;
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.DriverSupplier;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.parallel.Browser;
@@ -53,7 +53,7 @@ public class BrowserTestClassTest implements DriverSupplier {
 
     private void assertCapabilities(TestInfo testInfo,
             BrowserTestInfo browserTestInfo) {
-        DesiredCapabilities desiredCapabilities = new DesiredCapabilities(
+        Capabilities desiredCapabilities = new Capabilities(
                 browserTestInfo.capabilities());
         Assertions.assertEquals("bar", SauceLabsIntegration
                 .getSauceLabsOption(desiredCapabilities, "foo"));
@@ -68,10 +68,10 @@ public class BrowserTestClassTest implements DriverSupplier {
     }
 
     @BrowserConfiguration
-    public List<DesiredCapabilities> getBrowsers() {
-        List<DesiredCapabilities> caps = Arrays
+    public List<Capabilities> getBrowsers() {
+        List<Capabilities> caps = Arrays
                 .asList(Browser.CHROME.getDesiredCapabilities());
-        for (DesiredCapabilities cap : caps) {
+        for (Capabilities cap : caps) {
             SauceLabsIntegration.setSauceLabsOption(cap, "foo", "bar");
         }
         return caps;

@@ -14,9 +14,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInfo;
 import org.mockito.Mockito;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
 import com.vaadin.testbench.BrowserTest;
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.DriverSupplier;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.parallel.Browser;
@@ -45,9 +45,9 @@ public class ExtensionWithBrowserConfigurationInParametersTest
     @BrowserTest
     public void withBrowsersConfigurationInParameters(TestInfo testInfo,
             BrowserTestInfo browserTestInfo) {
-        DesiredCapabilities caps1 = Browser.FIREFOX.getDesiredCapabilities();
-        DesiredCapabilities caps2 = Browser.SAFARI.getDesiredCapabilities();
-        caps2.setVersion("9");
+        Capabilities caps1 = Browser.FIREFOX.getDesiredCapabilities();
+        Capabilities caps2 = Browser.SAFARI.getDesiredCapabilities();
+        caps2.setCapability(Capabilities.BROWSER_VERSION, "9");
         if (testInfo.getDisplayName().contains("Firefox")) {
             Assertions.assertEquals(caps1.getBrowserName(),
                     browserTestInfo.capabilities().getBrowserName());

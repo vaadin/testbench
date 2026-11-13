@@ -13,11 +13,15 @@ import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIf;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
 
 @DisabledIf("isConfiguredForHub")
+// Its own ChromeDriver runs on Selenium only, which a run configured for
+// Playwright refuses
+@DisabledIfSystemProperty(named = "com.vaadin.testbench.Parameters.backend", matches = "playwright")
 public class SeleniumLocalPageObjectIT extends AbstractSeleniumChromeTB9Test {
 
     @Override

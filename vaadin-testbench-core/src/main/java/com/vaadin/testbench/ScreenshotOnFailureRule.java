@@ -16,15 +16,11 @@ import java.io.File;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WrapsDriver;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.screenshot.ImageFileUtil;
+import com.vaadin.testbench.spi.BrowserBackend;
 
 /**
  * This JUnit {@link org.junit.Rule} grabs a screenshot when a test fails.
@@ -105,12 +101,9 @@ public class ScreenshotOnFailureRule extends TestWatcher {
             return;
         }
 
-        WebDriver realDriver = driverHolder.getDriver();
-        while (realDriver instanceof WrapsDriver) {
-            realDriver = ((WrapsDriver) realDriver).getWrappedDriver();
-        }
-        if (realDriver instanceof RemoteWebDriver
-                && ((RemoteWebDriver) realDriver).getSessionId() == null) {
+        BrowserBackend backend = driverHolder.getDriver().getCommandExecutor()
+                .getBackend();
+        if (backend.isSessionGone()) {
             getLogger().warn(
                     "Unable capture failure screenshot: web driver is no longer available");
             return;
@@ -119,9 +112,7 @@ public class ScreenshotOnFailureRule extends TestWatcher {
         // Grab a screenshot when a test fails
         try {
             BufferedImage screenshotImage = ImageIO
-                    .read(new ByteArrayInputStream(
-                            ((TakesScreenshot) driverHolder.getDriver())
-                                    .getScreenshotAs(OutputType.BYTES)));
+                    .read(new ByteArrayInputStream(backend.getScreenshot()));
             // Store the screenshot in the errors directory
             ImageFileUtil.createScreenshotDirectoriesIfNeeded();
             final File errorScreenshotFile = getErrorScreenshotFile(

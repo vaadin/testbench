@@ -14,7 +14,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Collection;
 
-import org.openqa.selenium.remote.DesiredCapabilities;
+import com.vaadin.testbench.Capabilities;
 
 /**
  * <p>
@@ -25,7 +25,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  *
  * <p>
  * Methods annotated with BrowserConfiguration annotation should return a <b>
- * {@link Collection}&lt;{@link DesiredCapabilities}&gt;</b>
+ * {@link Collection}&lt;{@link Capabilities}&gt;</b>, or on the Selenium
+ * backend a collection of Selenium's {@code DesiredCapabilities}
  * </p>
  *
  * <p>
@@ -34,8 +35,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  *
  * <pre>
  * &#064;BrowserConfiguration
- * public List&lt;DesiredCapabilities&gt; firefoxAndChromeConfiguration() {
- *     List&lt;DesiredCapabilities&gt; list = new ArrayList&lt;DesiredCapabilities&gt;();
+ * public List&lt;Capabilities&gt; firefoxAndChromeConfiguration() {
+ *     List&lt;Capabilities&gt; list = new ArrayList&lt;Capabilities&gt;();
  *     list.add(Browser.FIREFOX.getDesiredCapabilities());
  *     list.add(Browser.CHROME.getDesiredCapabilities());
  *     return list;

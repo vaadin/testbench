@@ -13,10 +13,10 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.Dimension;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.MoveTargetOutOfBoundsView;
+import com.vaadin.testbench.Dimension;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.tests.AbstractTB6Test;
 

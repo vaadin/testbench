@@ -18,7 +18,6 @@ public interface HasStringValueProperty extends HasPropertySettersGetters {
         setProperty("value", string);
     }
 
-    @Override
     default public void clear() {
         setValue("");
     }

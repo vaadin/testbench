@@ -12,7 +12,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.openqa.selenium.WebDriver;
+
+import com.vaadin.testbench.BrowserDriver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -94,9 +95,9 @@ class LoadTestItHelperTest {
 
     @Test
     void openWithProxy_proxyUnset_navigatesExistingDriver() {
-        WebDriver driver = Mockito.mock(WebDriver.class);
+        BrowserDriver driver = Mockito.mock(BrowserDriver.class);
 
-        WebDriver result = LoadTestItHelper.openWithProxy(driver,
+        BrowserDriver result = LoadTestItHelper.openWithProxy(driver,
                 "http://example.com");
 
         assertSame(driver, result);
@@ -107,9 +108,9 @@ class LoadTestItHelperTest {
     @Test
     void openWithProxy_proxyUnsetWithEmptyValue_navigatesExistingDriver() {
         System.setProperty("k6.proxy.host", "");
-        WebDriver driver = Mockito.mock(WebDriver.class);
+        BrowserDriver driver = Mockito.mock(BrowserDriver.class);
 
-        WebDriver result = LoadTestItHelper.openWithProxy(driver,
+        BrowserDriver result = LoadTestItHelper.openWithProxy(driver,
                 "http://example.com");
 
         assertSame(driver, result);

@@ -11,8 +11,7 @@ package com.vaadin.testbench.browser;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openqa.selenium.remote.DesiredCapabilities;
-
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.RunOnHub;
 import com.vaadin.testbench.parallel.Browser;
@@ -23,8 +22,8 @@ class ParameterizedBrowserTestSingleBrowserFromBrowserConfigurationTest
         extends ParameterizedBrowserTestTest.Support {
 
     @BrowserConfiguration
-    public List<DesiredCapabilities> getBrowserConfiguration() {
-        ArrayList<DesiredCapabilities> capabilities = new ArrayList<>();
+    public List<Capabilities> getBrowserConfiguration() {
+        ArrayList<Capabilities> capabilities = new ArrayList<>();
         capabilities.add(BrowserUtil.chrome());
         return capabilities;
     }

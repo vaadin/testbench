@@ -8,7 +8,7 @@
  */
 package com.vaadin.testbench.parallel;
 
-import org.openqa.selenium.remote.DesiredCapabilities;
+import com.vaadin.testbench.Capabilities;
 
 import com.vaadin.testbench.annotations.RunLocally;
 
@@ -22,7 +22,7 @@ public enum Browser {
     private Browser() {
     }
 
-    public DesiredCapabilities getDesiredCapabilities() {
+    public Capabilities getDesiredCapabilities() {
         switch (this) {
         case CHROME:
             return BrowserUtil.chrome();

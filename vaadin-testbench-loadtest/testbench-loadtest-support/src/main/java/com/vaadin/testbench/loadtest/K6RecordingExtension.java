@@ -12,8 +12,8 @@ import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.openqa.selenium.WebDriver;
 
+import com.vaadin.testbench.BrowserDriver;
 import com.vaadin.testbench.HasDriver;
 
 /**
@@ -72,7 +72,7 @@ public class K6RecordingExtension
         }
 
         HasDriver testBase = (HasDriver) testInstance;
-        WebDriver driver = testBase.getDriver();
+        BrowserDriver driver = testBase.getDriver();
         if (driver != null) {
             try {
                 driver.quit();

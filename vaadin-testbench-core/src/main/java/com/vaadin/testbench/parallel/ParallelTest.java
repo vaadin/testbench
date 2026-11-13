@@ -14,23 +14,25 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.ScreenshotOnFailureRule;
+import com.vaadin.testbench.TestBench;
 import com.vaadin.testbench.TestBenchTestCase;
 import com.vaadin.testbench.annotations.BrowserConfiguration;
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
+import com.vaadin.testbench.backend.BackendChoice;
 import com.vaadin.testbench.parallel.setup.SetupDriver;
+import com.vaadin.testbench.spi.BrowserBackend;
 
 /**
  * Unit tests should extend {@link ParallelTest} if they are to be run in
- * several browser configurations. For each browser configuration, a
- * {@link WebDriver} is properly created with the desired configuration.
+ * several browser configurations. For each browser configuration, a the browser
+ * driver is properly created with the desired configuration.
  * <p>
  * You can configure your tests to be run in Sauce Labs. See details at
  * <a href="https://wiki.saucelabs.com">https://wiki.saucelabs.com</a> and
@@ -54,7 +56,7 @@ public class ParallelTest extends TestBenchTestCase {
     /**
      * <p>
      * Returns the complete URL of the hub where the tests will be run on. Used
-     * by {@link #setup()}, for the creation of the {@link WebDriver}.
+     * by {@link #setup()}, for the creation of the the browser driver.
      * </p>
      * <p>
      * This method uses {@link #getHubHostname()} to build the complete address
@@ -68,7 +70,7 @@ public class ParallelTest extends TestBenchTestCase {
      * </p>
      *
      * @return the complete URL of the hub where the tests will be run on. Used
-     *         by {@link #setup()}, for the creation of the {@link WebDriver}.
+     *         by {@link #setup()}, for the creation of the the browser driver.
      */
     protected String getHubURL() {
         if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
@@ -124,35 +126,32 @@ public class ParallelTest extends TestBenchTestCase {
      * </p>
      *
      * @throws Exception
-     *             if unable to instantiate {@link WebDriver}
+     *             if unable to start the browser
      */
     @Before
     public void setup() throws Exception {
+        BrowserBackend backend;
         // Always give priority to @RunLocally annotation
         if ((getRunLocallyBrowser() != null)) {
-            WebDriver driver = driverConfiguration.setupLocalDriver(
+            backend = driverConfiguration.setupLocalDriver(
                     getRunLocallyBrowser(), getRunLocallyBrowserVersion());
-            setDriver(driver);
         } else if (Parameters.isLocalWebDriverUsed()) {
-            WebDriver driver = driverConfiguration.setupLocalDriver();
-            setDriver(driver);
+            backend = driverConfiguration.setupLocalDriver();
         } else if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
-            WebDriver driver = driverConfiguration
-                    .setupRemoteDriver(getHubURL());
-            setDriver(driver);
-
+            backend = driverConfiguration.setupRemoteDriver(getHubURL());
         } else if (getRunOnHub(getClass()) != null
                 || Parameters.getHubHostname() != null) {
-            WebDriver driver = driverConfiguration
-                    .setupRemoteDriver(getHubURL());
-            setDriver(driver);
+            backend = driverConfiguration.setupRemoteDriver(getHubURL());
         } else {
-            getLogger().info(
-                    "Did not find a configuration to run locally, on Sauce Labs or on other test grid. Falling back to running locally on Chrome.");
-            WebDriver driver = driverConfiguration
-                    .setupLocalDriver(Browser.CHROME);
-            setDriver(driver);
+            // Playwright never needs a grid, so only Selenium says so
+            if (Parameters.SELENIUM
+                    .equals(BackendChoice.chosen().getBackendName())) {
+                getLogger().info(
+                        "Did not find a configuration to run locally, on Sauce Labs or on other test grid. Falling back to running locally on Chrome.");
+            }
+            backend = driverConfiguration.setupLocalDriver(Browser.CHROME);
         }
+        setDriver(TestBench.createDriver(backend));
     }
 
     /**
@@ -189,19 +188,18 @@ public class ParallelTest extends TestBenchTestCase {
      * @return default capabilities, used if no {@link BrowserConfiguration}
      *         method was found
      */
-    public static List<DesiredCapabilities> getDefaultCapabilities() {
+    public static List<Capabilities> getDefaultCapabilities() {
         return Collections.singletonList(BrowserUtil.chrome());
     }
 
     /**
-     * Sets the requested {@link DesiredCapabilities} (usually browser name and
+     * Sets the requested {@link Capabilities} (usually browser name and
      * version)
      *
      * @param desiredCapabilities
      *            to be set
      */
-    public void setDesiredCapabilities(
-            DesiredCapabilities desiredCapabilities) {
+    public void setDesiredCapabilities(Capabilities desiredCapabilities) {
         if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
             SauceLabsIntegration.setDesiredCapabilities(desiredCapabilities);
         }
@@ -209,7 +207,7 @@ public class ParallelTest extends TestBenchTestCase {
     }
 
     @BrowserConfiguration
-    List<DesiredCapabilities> getBrowserConfigurationFromParameterOrDefault() {
+    List<Capabilities> getBrowserConfigurationFromParameterOrDefault() {
         if (Parameters.getGridBrowsers().isEmpty()) {
             return getDefaultCapabilities();
         } else {
@@ -218,11 +216,11 @@ public class ParallelTest extends TestBenchTestCase {
     }
 
     /**
-     * Gets the {@link DesiredCapabilities} (usually browser name and version)
+     * Gets the {@link Capabilities} (usually browser name and version)
      *
-     * @return the {@link DesiredCapabilities}
+     * @return the {@link Capabilities}
      */
-    protected DesiredCapabilities getDesiredCapabilities() {
+    protected Capabilities getDesiredCapabilities() {
         return driverConfiguration.getDesiredCapabilities();
     }
 }

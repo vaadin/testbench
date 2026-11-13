@@ -9,10 +9,10 @@
 package com.vaadin.testbench.loadtest;
 
 import org.openqa.selenium.Proxy;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
+import com.vaadin.testbench.BrowserDriver;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBench;
 
@@ -44,15 +44,15 @@ public final class LoadTestItHelper {
      * </pre>
      *
      * @param currentDriver
-     *            the current WebDriver instance
+     *            the test's current driver
      * @param viewUrl
      *            the full URL to navigate to
      * @return the driver to use (either the original or a new proxy-configured
      *         one)
      */
-    public static WebDriver openWithProxy(WebDriver currentDriver,
+    public static BrowserDriver openWithProxy(BrowserDriver currentDriver,
             String viewUrl) {
-        WebDriver driver = setupProxy(currentDriver);
+        BrowserDriver driver = setupProxy(currentDriver);
         driver.get(viewUrl);
         return driver;
     }
@@ -69,13 +69,13 @@ public final class LoadTestItHelper {
      * </pre>
      *
      * @param currentDriver
-     *            the current WebDriver instance
+     *            the test's current driver
      * @return the driver to use (either the original or a new proxy-configured
      *         one)
      */
-    public static WebDriver setupProxy(WebDriver currentDriver) {
+    public static BrowserDriver setupProxy(BrowserDriver currentDriver) {
         String proxyHost = System.getProperty(PROXY_HOST_PROPERTY);
-        WebDriver driver = currentDriver;
+        BrowserDriver driver = currentDriver;
         if (proxyHost != null && !proxyHost.isEmpty()) {
             if (currentDriver != null) {
                 currentDriver.quit();
@@ -88,7 +88,7 @@ public final class LoadTestItHelper {
     /**
      * Creates a ChromeDriver configured with proxy settings for k6 recording.
      */
-    private static WebDriver createProxyDriver(String proxyHost) {
+    private static BrowserDriver createProxyDriver(String proxyHost) {
         ChromeOptions options = new ChromeOptions();
 
         Proxy proxy = new Proxy();

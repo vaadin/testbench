@@ -11,11 +11,11 @@ package com.vaadin.tests;
 import io.github.bonigarcia.seljup.DriverCapabilities;
 import io.github.bonigarcia.seljup.DriverUrl;
 import org.junit.jupiter.api.BeforeEach;
-import org.openqa.selenium.Platform;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.backend.selenium.SeleniumCapabilities;
 import com.vaadin.testbench.parallel.BrowserUtil;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 
@@ -49,14 +49,16 @@ public abstract class AbstractSeleniumSauceTB9Test
                 Parameters.getHubPort());
     }
 
+    // selenium-jupiter takes Selenium's capabilities; TestBench builds ours
     private static DesiredCapabilities createCapabilities() {
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        capabilities.merge(BrowserUtil.chrome());
+        com.vaadin.testbench.Capabilities capabilities = BrowserUtil.chrome();
         if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
-            capabilities.setPlatform(Platform.WIN10);
+            capabilities.setCapability(
+                    com.vaadin.testbench.Capabilities.PLATFORM_NAME,
+                    com.vaadin.testbench.Platform.WIN10);
             SauceLabsIntegration.setDesiredCapabilities(capabilities);
         }
-        return capabilities;
+        return SeleniumCapabilities.toSelenium(capabilities);
     }
 
 }

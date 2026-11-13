@@ -17,8 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.mockito.Mockito;
-import org.openqa.selenium.WebDriver;
 
+import com.vaadin.testbench.BrowserDriver;
 import com.vaadin.testbench.HasDriver;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -139,7 +139,7 @@ class K6RecordingExtensionTest {
 
     @Test
     void driverQuitCalled_whenAfterEachCompletes() throws Exception {
-        WebDriver driver = Mockito.mock(WebDriver.class);
+        BrowserDriver driver = Mockito.mock(BrowserDriver.class);
         HasDriverFake fake = new HasDriverFake(driver);
         ExtensionContext context = Mockito.mock(ExtensionContext.class);
         Mockito.when(context.getRequiredTestInstance()).thenReturn(fake);
@@ -152,7 +152,7 @@ class K6RecordingExtensionTest {
 
     @Test
     void driverQuitThrows_noExceptionFromAfterEach() throws Exception {
-        WebDriver driver = Mockito.mock(WebDriver.class);
+        BrowserDriver driver = Mockito.mock(BrowserDriver.class);
         Mockito.doThrow(new RuntimeException("already closed")).when(driver)
                 .quit();
         HasDriverFake fake = new HasDriverFake(driver);
@@ -164,16 +164,16 @@ class K6RecordingExtensionTest {
         Mockito.verify(driver).quit();
     }
 
-    /** Test double that exposes a WebDriver. */
+    /** Test double that exposes a driver. */
     private static class HasDriverFake implements HasDriver {
-        private final WebDriver driver;
+        private final BrowserDriver driver;
 
-        HasDriverFake(WebDriver driver) {
+        HasDriverFake(BrowserDriver driver) {
             this.driver = driver;
         }
 
         @Override
-        public WebDriver getDriver() {
+        public BrowserDriver getDriver() {
             return driver;
         }
     }

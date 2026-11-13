@@ -11,7 +11,6 @@ package com.vaadin.tests;
 import java.lang.reflect.Field;
 
 import org.junit.jupiter.api.Assertions;
-import org.openqa.selenium.JavascriptExecutor;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.PageObjectView;
@@ -129,8 +128,9 @@ public class WaitForVaadinIT extends AbstractBrowserTB9Test {
         setWaitForVaadinLoopHook(() -> {
             if (System.currentTimeMillis()
                     - systemCurrentTimeMillis > timeout) {
-                ((JavascriptExecutor) getCommandExecutor().getDriver()
-                        .getWrappedDriver())
+                // The backend's, not the executor's: that one would wait for
+                // Vaadin from inside this wait
+                getCommandExecutor().getBackend()
                         .executeScript(scriptToRunAfterTimeout);
                 setWaitForVaadinLoopHook(null);
             }

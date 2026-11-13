@@ -11,7 +11,10 @@ package com.vaadin.testbench.commands;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,14 +27,18 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBench;
-import com.vaadin.testbench.TestBenchDriverProxy;
+import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.screenshot.ImageComparison;
 import com.vaadin.testbench.screenshot.ImageComparisonTest;
 import com.vaadin.testbench.screenshot.ReferenceNameGenerator;
+import com.vaadin.testbench.spi.BrowserBackend;
+import com.vaadin.testbench.spi.ElementBackend;
 import com.vaadin.testbench.testutils.ImageLoader;
+import com.vaadin.testbench.testutils.ScriptOnlyBackend;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 public class TestBenchCommandExecutorTest {
@@ -44,11 +51,48 @@ public class TestBenchCommandExecutorTest {
     }
 
     @Test
+    public void elementsInsideScriptArgumentsReachTheBackendAsItsNodes() {
+        List<Object[]> scriptArgs = new ArrayList<>();
+        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(null,
+                null);
+        tbce.setBackend(new ScriptOnlyBackend() {
+            @Override
+            public Object executeScript(String script, Object... args) {
+                scriptArgs.add(args);
+                return true;
+            }
+
+            @Override
+            public Object executeAsyncScript(String script, Object... args) {
+                return null;
+            }
+
+            @Override
+            public String getBrowserName() {
+                return "chrome";
+            }
+        });
+        ElementBackend node = Mockito.mock(ElementBackend.class);
+        TestBenchElement element = TestBench
+                .createElement(TestBenchElement.class, node, tbce);
+
+        tbce.executeScript("script", element,
+                new TestBenchElement[] { element }, List.of(element),
+                Map.of("key", element));
+
+        Object[] args = scriptArgs.get(scriptArgs.size() - 1);
+        assertSame(node, args[0]);
+        assertEquals(List.of(node), args[1]);
+        assertEquals(List.of(node), args[2]);
+        assertEquals(Map.of("key", node), args[3]);
+    }
+
+    @Test
     public void testTestBenchCommandExecutorIsATestBenchCommands() {
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(
                 Mockito.mock(ImageComparison.class),
                 Mockito.mock(ReferenceNameGenerator.class));
-        tbce.setDriver(Mockito.mock(TestBenchDriverProxy.class));
+        tbce.setBackend(Mockito.mock(BrowserBackend.class));
         assertTrue(tbce instanceof TestBenchCommands);
     }
 
@@ -62,7 +106,7 @@ public class TestBenchCommandExecutorTest {
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
                 rngMock);
-        tbce.setDriver(TestBench.createDriver(driver, tbce));
+        TestBench.createDriver(driver, tbce);
         assertTrue(tbce.compareScreen("foo"));
     }
 
@@ -76,7 +120,7 @@ public class TestBenchCommandExecutorTest {
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
                 rngMock);
-        tbce.setDriver(TestBench.createDriver(driver, tbce));
+        TestBench.createDriver(driver, tbce);
         assertTrue(tbce.compareScreen("foo"));
 
     }
@@ -91,7 +135,7 @@ public class TestBenchCommandExecutorTest {
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
                 rngMock);
-        tbce.setDriver(TestBench.createDriver(driver, tbce));
+        TestBench.createDriver(driver, tbce);
         assertFalse(tbce.compareScreen("foo"));
 
     }
@@ -109,7 +153,7 @@ public class TestBenchCommandExecutorTest {
 
             TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
                     rngMock);
-            tbce.setDriver(TestBench.createDriver(driver, tbce));
+            TestBench.createDriver(driver, tbce);
             assertFalse(tbce.compareScreen("foo"));
 
         } finally {
@@ -134,7 +178,7 @@ public class TestBenchCommandExecutorTest {
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
                 null);
-        tbce.setDriver(TestBench.createDriver(driver, tbce));
+        TestBench.createDriver(driver, tbce);
         assertTrue(tbce.compareScreen(referenceFile));
 
     }
@@ -157,7 +201,7 @@ public class TestBenchCommandExecutorTest {
 
             TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
                     null);
-            tbce.setDriver(TestBench.createDriver(driver, tbce));
+            TestBench.createDriver(driver, tbce);
             assertFalse(tbce.compareScreen(referenceFile));
 
         } finally {
@@ -179,7 +223,7 @@ public class TestBenchCommandExecutorTest {
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
                 null);
-        tbce.setDriver(TestBench.createDriver(driver, tbce));
+        TestBench.createDriver(driver, tbce);
         assertTrue(tbce.compareScreen(mockImg, "bar name"));
 
     }
@@ -201,7 +245,7 @@ public class TestBenchCommandExecutorTest {
 
             TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(icMock,
                     null);
-            tbce.setDriver(TestBench.createDriver(driver, tbce));
+            TestBench.createDriver(driver, tbce);
             assertFalse(tbce.compareScreen(mockImg, "bar name"));
 
         } finally {
@@ -223,6 +267,8 @@ public class TestBenchCommandExecutorTest {
             Capabilities mockedCapabilities = Mockito.mock(Capabilities.class);
             Mockito.when(mockedCapabilities.getBrowserName())
                     .thenReturn("Firefox");
+            Mockito.when(mockedCapabilities.asMap())
+                    .thenReturn(Map.of("browserName", "Firefox"));
             Mockito.when(driver.getCapabilities())
                     .thenReturn(mockedCapabilities);
         }
@@ -234,7 +280,8 @@ public class TestBenchCommandExecutorTest {
         ReferenceNameGenerator rngMock = Mockito
                 .mock(ReferenceNameGenerator.class);
         Mockito.when(rngMock.generateName(Mockito.eq(refId),
-                Mockito.any(Capabilities.class))).thenReturn(expected);
+                Mockito.any(com.vaadin.testbench.Capabilities.class)))
+                .thenReturn(expected);
         return rngMock;
     }
 
@@ -244,7 +291,8 @@ public class TestBenchCommandExecutorTest {
         Mockito.when(icMock.imageEqualToReference(
                 Mockito.any(BufferedImage.class), Mockito.eq(referenceName),
                 Mockito.eq(Parameters.getScreenshotComparisonTolerance()),
-                Mockito.any(Capabilities.class))).thenReturn(expected);
+                Mockito.any(com.vaadin.testbench.Capabilities.class)))
+                .thenReturn(expected);
         return icMock;
     }
 
@@ -254,7 +302,7 @@ public class TestBenchCommandExecutorTest {
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(null,
                 null);
-        tbce.setDriver(TestBench.createDriver(jse, tbce));
+        TestBench.createDriver(jse, tbce);
         long milliseconds = tbce.timeSpentRenderingLastRequest();
         assertEquals(1000, milliseconds);
 
@@ -266,7 +314,7 @@ public class TestBenchCommandExecutorTest {
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(null,
                 null);
-        tbce.setDriver(TestBench.createDriver(jse, tbce));
+        TestBench.createDriver(jse, tbce);
         long milliseconds = tbce.totalTimeSpentRendering();
         assertEquals(2000, milliseconds);
 
@@ -278,7 +326,7 @@ public class TestBenchCommandExecutorTest {
 
         TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(null,
                 null);
-        tbce.setDriver(TestBench.createDriver(jse, tbce));
+        TestBench.createDriver(jse, tbce);
         long milliseconds = tbce.totalTimeSpentServicingRequests();
         assertEquals(3000, milliseconds);
 

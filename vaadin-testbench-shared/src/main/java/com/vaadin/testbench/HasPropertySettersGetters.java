@@ -10,9 +10,7 @@ package com.vaadin.testbench;
 
 import java.util.List;
 
-import org.openqa.selenium.WebElement;
-
-public interface HasPropertySettersGetters extends WebElement {
+public interface HasPropertySettersGetters {
     /**
      * Sets a JavaScript property of the given element.
      *

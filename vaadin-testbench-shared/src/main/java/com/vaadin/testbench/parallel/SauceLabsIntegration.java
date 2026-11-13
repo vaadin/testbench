@@ -13,9 +13,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.vaadin.testbench.Capabilities;
 
 /**
  * Integration methods for Sauce Labs testing.
@@ -51,7 +52,7 @@ public class SauceLabsIntegration {
      * @since 8.1
      */
     public static void setDesiredCapabilities(
-            DesiredCapabilities desiredCapabilities) {
+            Capabilities desiredCapabilities) {
 
         String username = getSauceUser();
         String accessKey = getSauceAccessKey();
@@ -92,8 +93,8 @@ public class SauceLabsIntegration {
      *            the option value
      * @since 8.1
      */
-    public static void setSauceLabsOption(
-            DesiredCapabilities desiredCapabilities, String key, Object value) {
+    public static void setSauceLabsOption(Capabilities desiredCapabilities,
+            String key, Object value) {
         // We always make a copy of the options because all clone/merge
         // operations in
         // DesiredCapability do a shallow clone
@@ -109,7 +110,7 @@ public class SauceLabsIntegration {
     }
 
     private static Map<String, Object> getSauceLabsOptions(
-            DesiredCapabilities desiredCapabilities) {
+            Capabilities desiredCapabilities) {
         return (Map<String, Object>) desiredCapabilities
                 .getCapability("sauce:options");
     }
@@ -127,8 +128,8 @@ public class SauceLabsIntegration {
      * @return the option value that was set or null
      * @since 8.1
      */
-    public static Object getSauceLabsOption(
-            DesiredCapabilities desiredCapabilities, String key) {
+    public static Object getSauceLabsOption(Capabilities desiredCapabilities,
+            String key) {
         Map<String, Object> sauceOptions = getSauceLabsOptions(
                 desiredCapabilities);
         if (sauceOptions == null) {

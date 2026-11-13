@@ -16,29 +16,28 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
-import org.openqa.selenium.Capabilities;
-import org.openqa.selenium.ImmutableCapabilities;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.testbench.BrowserDriver;
+import com.vaadin.testbench.Capabilities;
 import com.vaadin.testbench.DriverSupplier;
 import com.vaadin.testbench.HasDriver;
 import com.vaadin.testbench.ParameterizedBrowserTest;
 import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBench;
-import com.vaadin.testbench.TestBenchDriverProxy;
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
+import com.vaadin.testbench.backend.BackendChoice;
 import com.vaadin.testbench.parallel.Browser;
 import com.vaadin.testbench.parallel.SauceLabsIntegration;
 import com.vaadin.testbench.parallel.setup.SetupDriver;
+import com.vaadin.testbench.spi.BrowserBackend;
 
 /**
  * <p>
- * TestBench {@link Extension} that provides {@link WebDriver} configuration and
- * startup according to given test configuration and desired capabilities.
+ * TestBench {@link Extension} that provides the browser driver configuration
+ * and startup according to given test configuration and desired capabilities.
  * </p>
  * <p>
  * See {@link #beforeEach(ExtensionContext)} for more detailed information about
@@ -60,12 +59,18 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
 
     private final SetupDriver driverConfiguration = new SetupDriver();
 
-    private final DesiredCapabilities desiredCapabilities;
+    private final Capabilities desiredCapabilities;
 
-    protected WebDriver driver;
+    protected BrowserDriver driver;
 
+    /**
+     * @param capabilities
+     *            copied; {@code null} for none, as Selenium's
+     *            {@code DesiredCapabilities} took it
+     */
     public BrowserExtension(Capabilities capabilities) {
-        desiredCapabilities = new DesiredCapabilities(capabilities);
+        desiredCapabilities = capabilities == null ? new Capabilities()
+                : new Capabilities(capabilities);
         if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
             SauceLabsIntegration.setDesiredCapabilities(desiredCapabilities);
         }
@@ -74,29 +79,15 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
     }
 
     public BrowserExtension() {
-        this(new DesiredCapabilities());
+        this(new Capabilities());
     }
 
-    /**
-     * Sets the active {@link WebDriver} that is used by this test case
-     *
-     * @param driver
-     *            The WebDriver instance to set.
-     */
-    public void setDriver(WebDriver driver) {
-        if (driver != null && !(driver instanceof TestBenchDriverProxy)) {
-            driver = TestBench.createDriver(driver);
-        }
+    public void setDriver(BrowserDriver driver) {
         this.driver = driver;
     }
 
-    /**
-     * Returns active {@link WebDriver} that used by this test case.
-     *
-     * @return currently used {@link WebDriver}
-     */
     @Override
-    public WebDriver getDriver() {
+    public BrowserDriver getDriver() {
         return driver;
     }
 
@@ -109,8 +100,8 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
     /**
      * <p>
      * Returns the complete URL of the hub where the tests will be run on. Used
-     * by {@link #beforeEach(ExtensionContext)} ()}, for the creation of the
-     * {@link WebDriver}.
+     * by {@link #beforeEach(ExtensionContext)} ()}, for the creation of the the
+     * browser driver.
      * </p>
      * <p>
      * This method uses {@link #getHubHostname(Class)} to build the complete
@@ -126,7 +117,7 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
      *
      * @return the complete URL of the hub where the tests will be run on. Used
      *         by {@link #beforeEach(ExtensionContext)} ()}, for the creation of
-     *         the {@link WebDriver}.
+     *         the the browser driver.
      */
     protected String getHubURL(Class<?> testClass) {
         if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
@@ -169,10 +160,9 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
 
     /**
      * <p>
-     * Sets test name while using SauceLabs integration, injects
-     * {@link WebDriver} and {@link Capabilities} references and sets the driver
-     * for this test instance. Uses
-     * {@link SetupDriver#setupRemoteDriver(String)} or
+     * Sets test name while using SauceLabs integration, injects the driver and
+     * {@link Capabilities} references and sets the driver for this test
+     * instance. Uses {@link SetupDriver#setupRemoteDriver(String)} or
      * {@link SetupDriver#setupLocalDriver(Browser)} according to the
      * annotations found in current test case.
      * </p>
@@ -185,7 +175,7 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
      * </p>
      *
      * @throws Exception
-     *             if unable to instantiate {@link WebDriver}
+     *             if unable to instantiate the browser driver
      */
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
@@ -212,40 +202,42 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
         setDriver(createDriver(context, driverConfiguration));
     }
 
-    private WebDriver createDriver(ExtensionContext context,
+    private BrowserDriver createDriver(ExtensionContext context,
             SetupDriver driverConfig) throws Exception {
-
         Object testInstance = context.getRequiredTestInstance();
-
-        WebDriver webDriver;
-
-        // use WebDriver provided by test instance
+        // use the driver provided by the test instance
         if (testInstance instanceof DriverSupplier supplier) {
-            webDriver = supplier.createDriver();
-            if (webDriver != null) {
-                return webDriver;
+            Object driver = supplier.createDriver();
+            if (driver != null) {
+                return TestBench.createDriver(driver);
             }
         }
+        return TestBench.createDriver(launch(context, driverConfig));
+    }
 
+    private BrowserBackend launch(ExtensionContext context,
+            SetupDriver driverConfig) throws Exception {
         Class<?> testClass = context.getRequiredTestClass();
         // Always give priority to @RunLocally annotation
         if ((getRunLocallyBrowser(testClass) != null)) {
-            webDriver = driverConfig.setupLocalDriver(
+            return driverConfig.setupLocalDriver(
                     getRunLocallyBrowser(testClass),
                     getRunLocallyBrowserVersion(testClass));
         } else if (Parameters.isLocalWebDriverUsed()) {
-            webDriver = driverConfig.setupLocalDriver();
+            return driverConfig.setupLocalDriver();
         } else if (SauceLabsIntegration.isConfiguredForSauceLabs()) {
-            webDriver = driverConfig.setupRemoteDriver(getHubURL(testClass));
+            return driverConfig.setupRemoteDriver(getHubURL(testClass));
         } else if (getRunOnHub(testClass) != null
                 || Parameters.getHubHostname() != null) {
-            webDriver = driverConfig.setupRemoteDriver(getHubURL(testClass));
-        } else {
+            return driverConfig.setupRemoteDriver(getHubURL(testClass));
+        }
+        // Playwright never needs a grid, so only Selenium says so
+        if (Parameters.SELENIUM
+                .equals(BackendChoice.chosen().getBackendName())) {
             getLogger().info(
                     "Did not find a configuration to run locally, on Sauce Labs or on other test grid. Falling back to running locally on Chrome.");
-            webDriver = driverConfig.setupLocalDriver(Browser.CHROME);
         }
-        return webDriver;
+        return driverConfig.setupLocalDriver(Browser.CHROME);
     }
 
     /**
@@ -279,9 +271,9 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
     }
 
     /**
-     * @return Current instance of {@link DesiredCapabilities}.
+     * @return Current instance of {@link Capabilities}.
      */
-    public DesiredCapabilities getDesiredCapabilities() {
+    public Capabilities getDesiredCapabilities() {
         return desiredCapabilities;
     }
 
@@ -306,14 +298,14 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
         }
         Class<?> testClass = extensionContext.getRequiredTestClass();
         return new BrowserTestInfo(driver,
-                new ImmutableCapabilities(desiredCapabilities),
+                new Capabilities(desiredCapabilities),
                 getHubHostname(testClass), getRunLocallyBrowser(testClass),
                 getRunLocallyBrowserVersion(testClass));
     }
 
     private BrowserTestInfo createTestInfoForParameterizedTest(
             ExtensionContext context) {
-        DesiredCapabilities capabilities = CapabilitiesUtil
+        Capabilities capabilities = CapabilitiesUtil
                 .getDesiredCapabilities(context).stream().findFirst()
                 .orElseThrow(() -> new ParameterResolutionException(
                         "Cannot get capabilities"));
@@ -324,7 +316,7 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
                 SauceLabsIntegration.CapabilityType.NAME,
                 context.getDisplayName());
 
-        WebDriver webDriver;
+        BrowserDriver webDriver;
         try {
             SetupDriver driverConfig = new SetupDriver();
             driverConfig.setDesiredCapabilities(capabilities);
@@ -335,8 +327,7 @@ public class BrowserExtension implements Extension, BeforeEachCallback,
         }
 
         Class<?> testClass = context.getRequiredTestClass();
-        return new BrowserTestInfo(webDriver,
-                new ImmutableCapabilities(capabilities),
+        return new BrowserTestInfo(webDriver, new Capabilities(capabilities),
                 getHubHostname(testClass), getRunLocallyBrowser(testClass),
                 getRunLocallyBrowserVersion(testClass));
     }
