@@ -9,17 +9,28 @@
 package com.vaadin.testbench.unit.internal;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import tools.jackson.databind.node.ObjectNode;
 
+import com.vaadin.flow.component.ClickNotifier.ClickFiltersJs;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.KeyModifier;
+import com.vaadin.flow.component.ShortcutRegistration.ShortcutFilterJs;
 import com.vaadin.flow.dom.DomEvent;
 import com.vaadin.flow.dom.Element;
 import com.vaadin.flow.internal.JacksonUtils;
+import com.vaadin.flow.internal.JavaScriptSemantics;
 import com.vaadin.flow.internal.nodefeature.ElementListenerMap;
+import com.vaadin.flow.internal.nodefeature.ElementListenerMap.SnippetEntry;
+import com.vaadin.flow.js.JsCall;
 import com.vaadin.flow.shared.JsonConstants;
 
 /**
@@ -35,28 +46,56 @@ import com.vaadin.flow.shared.JsonConstants;
  * default action is known when the event is dispatched, as in the browser.
  * <p>
  * Only the subset of JavaScript that such expressions use is supported:
- * property reads and the {@code preventDefault()} and {@code stopPropagation()}
- * calls on {@code event}, literals, {@code !}, {@code &&}, {@code ||},
- * comparisons and parentheses. An expression outside that subset is left out of
- * the event data, as if it were undefined, unless it calls
- * {@code preventDefault()}: then the outcome of the event cannot be known and
- * dispatching fails.
+ * property reads and the {@code preventDefault()}, {@code stopPropagation()}
+ * and {@code getModifierState()} calls on {@code event}, literals, {@code !},
+ * {@code &&}, {@code ||}, comparisons and parentheses. An expression outside
+ * that subset is left out of the event data, as if it were undefined, unless it
+ * calls {@code preventDefault()}: then whether the default action was prevented
+ * cannot be known, and {@link #isDefaultPrevented()} fails. The event can still
+ * be fired, for callers that don't need to know.
+ * <p>
+ * Filters and event data declared as JavaScript functions of the bundle, rather
+ * than as expressions, are run by a {@link DeclaredFunctionSimulation} of the
+ * declared function, registered by its {@code @JsDefinition} interface. Event
+ * data declared by a function without a simulation is left out, like an
+ * unsupported expression. A filter declared by a function without a simulation
+ * does not match, and as its body cannot be inspected, whether it prevented the
+ * default action cannot be known: {@link #isDefaultPrevented()} fails.
  * <p>
  * For internal use only.
  */
 public final class ClientDomEvent {
 
+    /**
+     * The simulations of declared functions, by the {@code @JsDefinition}
+     * interface that declares them.
+     */
+    private static final Map<Class<?>, Function<ClientDomEvent, DeclaredFunctionSimulation>> SIMULATIONS = Map
+            .of(ShortcutFilterJs.class, KeydownFilterSimulation::new,
+                    ClickFiltersJs.class, ClickFilterSimulation::new);
+
+    /**
+     * The properties of the event object that report a modifier, by the name
+     * {@code getModifierState()} takes.
+     */
+    private static final Map<String, String> MODIFIER_PROPERTIES = Map.of(
+            "Control", "ctrlKey", "Shift", "shiftKey", "Alt", "altKey", "Meta",
+            "metaKey");
+
     private final Element element;
     private final String type;
     private final Map<String, Object> properties;
+    private final Set<String> modifierState;
     private final ObjectNode eventData = JacksonUtils.createObjectNode();
     private boolean defaultPrevented;
+    private String unknownPreventDefault;
 
     private ClientDomEvent(Element element, String type,
-            Map<String, Object> properties) {
+            Map<String, Object> properties, Set<String> modifierState) {
         this.element = element;
         this.type = type;
         this.properties = properties;
+        this.modifierState = modifierState;
     }
 
     /**
@@ -76,19 +115,57 @@ public final class ClientDomEvent {
      *            {@code button}; values are {@link Boolean}, {@link Number} or
      *            {@link String}
      * @return the dispatched event
-     * @throws IllegalStateException
-     *             if a registered expression that calls
-     *             {@code preventDefault()} uses JavaScript that cannot be
-     *             evaluated without a browser
      */
     public static ClientDomEvent dispatch(Element element, String type,
             Map<String, ?> properties) {
+        return dispatch(element, type, properties, Set.of());
+    }
+
+    /**
+     * Dispatches a {@code keydown} event of the given key on the given element,
+     * with the given modifiers pressed, the way the browser does when the user
+     * presses the keys. The event has both the {@code key} and the {@code code}
+     * of the key, see {@link KeyboardKey}. See
+     * {@link #dispatch(Element, String, Map)}.
+     *
+     * @param element
+     *            the element the event is dispatched on, not {@code null}
+     * @param key
+     *            the pressed key, not {@code null}
+     * @param modifiers
+     *            the modifiers held down while the key is pressed, not
+     *            {@code null}
+     * @return the dispatched event
+     */
+    public static ClientDomEvent dispatchKeyDown(Element element, Key key,
+            Collection<? extends Key> modifiers) {
+        Set<String> modifierState = modifiers.stream()
+                .map(modifier -> modifier.getKeys().getFirst())
+                .collect(Collectors.toUnmodifiableSet());
+        KeyboardKey keyboardKey = KeyboardKey.of(key);
+        Map<String, Object> properties = new LinkedHashMap<>();
+        properties.put("key", keyboardKey.key());
+        properties.put("code", keyboardKey.code());
+        properties.put("shiftKey",
+                modifierState.contains(KeyModifier.SHIFT.getKeys().getFirst()));
+        properties.put("ctrlKey", modifierState
+                .contains(KeyModifier.CONTROL.getKeys().getFirst()));
+        properties.put("altKey",
+                modifierState.contains(KeyModifier.ALT.getKeys().getFirst()));
+        properties.put("metaKey",
+                modifierState.contains(KeyModifier.META.getKeys().getFirst()));
+        return dispatch(element, "keydown", properties, modifierState);
+    }
+
+    private static ClientDomEvent dispatch(Element element, String type,
+            Map<String, ?> properties, Set<String> modifierState) {
         Map<String, Object> eventProperties = new LinkedHashMap<>(properties);
         eventProperties.putIfAbsent("type", type);
         ClientDomEvent event = new ClientDomEvent(element, type,
-                eventProperties);
-        for (String expression : element.getNode()
-                .getFeature(ElementListenerMap.class).getExpressions(type)) {
+                eventProperties, modifierState);
+        ElementListenerMap listeners = element.getNode()
+                .getFeature(ElementListenerMap.class);
+        for (String expression : listeners.getExpressions(type)) {
             // Property synchronization and event target mapping are resolved
             // by the client itself, they are not simulated
             if (!expression.startsWith(JsonConstants.SYNCHRONIZE_PROPERTY_TOKEN)
@@ -96,6 +173,9 @@ public final class ClientDomEvent {
                             JsonConstants.MAP_STATE_NODE_EVENT_DATA)) {
                 event.evaluate(expression);
             }
+        }
+        for (SnippetEntry snippet : listeners.getSnippetEntries(type)) {
+            event.run(snippet);
         }
         return event;
     }
@@ -105,8 +185,15 @@ public final class ClientDomEvent {
      * the event was dispatched.
      *
      * @return {@code true} if the default action of the event was prevented
+     * @throws IllegalStateException
+     *             if a registered expression that calls
+     *             {@code preventDefault()}, or a declared filter, cannot be run
+     *             without a browser
      */
     public boolean isDefaultPrevented() {
+        if (unknownPreventDefault != null) {
+            throw new IllegalStateException(unknownPreventDefault);
+        }
         return defaultPrevented;
     }
 
@@ -126,18 +213,92 @@ public final class ClientDomEvent {
         } catch (UnsupportedExpressionException e) {
             if (expression.contains("preventDefault")) {
                 // Whether the default action is prevented cannot be known
-                throw new IllegalStateException("Cannot evaluate the"
-                        + " expression '" + expression + "' of a DOM event"
+                unknownPreventDefault = ("Cannot evaluate the" + " expression '"
+                        + expression + "' of a DOM event"
                         + " listener without a browser. Only property reads"
-                        + " and preventDefault() or stopPropagation() calls"
+                        + " and preventDefault(), stopPropagation() or"
+                        + " getModifierState() calls"
                         + " on 'event', literals, '!', '&&', '||',"
                         + " comparisons and parentheses are supported.");
+                return;
             }
             // Event data that needs a browser to compute is left out, as an
             // undefined value would be
             return;
         }
         putEventData(expression, value);
+    }
+
+    private void run(SnippetEntry snippet) {
+        JsCall call = snippet.call();
+        Function<ClientDomEvent, DeclaredFunctionSimulation> simulationFactory = SIMULATIONS
+                .get(call.definitionType());
+        Object value;
+        if (simulationFactory != null) {
+            DeclaredFunctionSimulation simulation = simulationFactory
+                    .apply(this);
+            call.invokeOn(simulation);
+            value = simulation.value();
+        } else if (snippet.filter()) {
+            // The declared body may prevent the default action, also through
+            // a helper of the bundle, so whether it does cannot be known. A
+            // side effect of the filter, from preventDefault() on the
+            // registration, runs only when the filter passes, so the filter
+            // decides for it as well.
+            unknownPreventDefault = ("Cannot run the JavaScript"
+                    + " function declared by " + call.definitionType().getName()
+                    + "." + call.methodName() + "() for a DOM event listener"
+                    + " without a browser.");
+            return;
+        } else {
+            // Event data that needs a browser to compute is left out, as an
+            // undefined value would be
+            return;
+        }
+        putEventData(snippet.key(), value);
+        if (snippet.sideEffect() != null
+                && JavaScriptSemantics.isTrueish(value)) {
+            invoke(snippet.sideEffect(), snippet.key());
+        }
+    }
+
+    /**
+     * Gets a property of the native event object, as the declared function
+     * reads it: numbers are {@link Double}.
+     *
+     * @param name
+     *            the name of the property, e.g. {@code key}
+     * @return the value, or {@code null} if it is undefined
+     */
+    Object property(String name) {
+        return read(name);
+    }
+
+    /**
+     * Gets whether a modifier is pressed, as {@code event.getModifierState()}
+     * tells it: a modifier of the pressed keys, or one of the modifiers that
+     * the {@code ctrlKey}, {@code shiftKey}, {@code altKey} and {@code metaKey}
+     * properties report.
+     *
+     * @param name
+     *            the name of the modifier, e.g. {@code Control}
+     * @return {@code true} if the modifier is pressed
+     */
+    boolean isModifierPressed(String name) {
+        if (modifierState.contains(name)) {
+            return true;
+        }
+        String property = MODIFIER_PROPERTIES.get(name);
+        return property != null
+                && JavaScriptSemantics.isTrueish(read(property));
+    }
+
+    /**
+     * Prevents the default action of the event, as
+     * {@code event.preventDefault()} does.
+     */
+    void preventDefault() {
+        defaultPrevented = true;
     }
 
     private void putEventData(String expression, Object value) {
@@ -215,7 +376,8 @@ public final class ClientDomEvent {
         private Object or(boolean evaluate) {
             Object value = and(evaluate);
             while (accept("||")) {
-                boolean done = !evaluate || truthy(value);
+                boolean done = !evaluate
+                        || JavaScriptSemantics.isTrueish(value);
                 Object right = and(!done);
                 if (!done) {
                     value = right;
@@ -227,7 +389,8 @@ public final class ClientDomEvent {
         private Object and(boolean evaluate) {
             Object value = comparison(evaluate);
             while (accept("&&")) {
-                boolean done = !evaluate || !truthy(value);
+                boolean done = !evaluate
+                        || !JavaScriptSemantics.isTrueish(value);
                 Object right = comparison(!done);
                 if (!done) {
                     value = right;
@@ -251,7 +414,7 @@ public final class ClientDomEvent {
 
         private Object unary(boolean evaluate) {
             if (accept("!")) {
-                return !truthy(unary(evaluate));
+                return !JavaScriptSemantics.isTrueish(unary(evaluate));
             }
             return primary(evaluate);
         }
@@ -287,6 +450,15 @@ public final class ClientDomEvent {
             expect(".");
             String name = identifier();
             if (accept("(")) {
+                if ("getModifierState".equals(name)) {
+                    Object modifier = or(evaluate);
+                    expect(")");
+                    // A modifier that is not a string is never pressed
+                    return evaluate
+                            ? modifier instanceof String string
+                                    && event.isModifierPressed(string)
+                            : null;
+                }
                 expect(")");
                 return evaluate ? event.invoke(name, expression) : null;
             }
@@ -310,19 +482,6 @@ public final class ClientDomEvent {
                     default -> l >= r;
                     };
             };
-        }
-
-        private static boolean truthy(Object value) {
-            if (value instanceof Boolean bool) {
-                return bool;
-            }
-            if (value instanceof Double number) {
-                return number != 0 && !number.isNaN();
-            }
-            if (value instanceof String string) {
-                return !string.isEmpty();
-            }
-            return value != null;
         }
 
         private String identifier() {

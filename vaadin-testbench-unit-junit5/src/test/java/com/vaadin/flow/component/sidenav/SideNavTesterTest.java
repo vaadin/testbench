@@ -187,6 +187,19 @@ class SideNavTesterTest extends UIUnitTest {
     }
 
     @Test
+    void clickItem_singleMouseClick_clickCountIsOne() {
+        List<String> details = new ArrayList<>();
+        view.sideNav.getItems().get(0).getElement().addEventListener("click",
+                event -> details.add(
+                        event.getEventData().get("event.detail").toString()))
+                .addEventData("event.detail");
+
+        sideNav_.clickItem("Messages");
+
+        Assertions.assertEquals(List.of("1"), details);
+    }
+
+    @Test
     void clickItem_filteredListeners_evaluatedForLeftClick() {
         List<String> runs = new ArrayList<>();
         SideNavItem item = view.sideNav.getItems().get(0);
