@@ -8,11 +8,16 @@
  */
 package com.vaadin.testbench;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import org.jspecify.annotations.Nullable;
+
+import com.vaadin.testbench.commands.TestBenchCommandExecutor;
+
 /**
- * Selenium's {@code By}, the CSS kinds only, so that a test using
+ * Selenium's {@code By}, the CSS kinds and XPath, so that a test using
  * {@code findElement(By)} ports by changing its import:
  *
  * <pre>{@code
@@ -22,8 +27,7 @@ import java.util.regex.Pattern;
  *
  * The two search different places: {@code findElement(By)} searches the
  * element's light DOM only, {@code $} its shadow root and its light DOM. Each
- * factory names its {@code $} form. XPath has none and is not here; it is
- * Selenium-only.
+ * CSS factory names its {@code $} form; XPath has none.
  * <p>
  * Equal when {@link #toString()} is, as Selenium's are. Immutable.
  *
@@ -39,11 +43,31 @@ public final class By {
     private static final Pattern WHITESPACE = Pattern.compile("\\s");
 
     private final String description;
-    private final String cssSelector;
+    private final @Nullable String cssSelector;
+    private final @Nullable String xpath;
 
     private By(String description, String cssSelector) {
         this.description = description;
         this.cssSelector = cssSelector;
+        this.xpath = null;
+    }
+
+    private By(String xpath) {
+        this.description = "By.xpath: " + xpath;
+        this.cssSelector = null;
+        this.xpath = xpath;
+    }
+
+    /**
+     * Elements by an XPath expression, which the browser evaluates, from the
+     * element searched in or from the document, as Selenium's does: a
+     * {@code ".."} finds the parent, a {@code "//"} searches the whole page.
+     * Like CSS, it does not see inside shadow roots.
+     */
+    public static By xpath(String xpathExpression) {
+        Objects.requireNonNull(xpathExpression,
+                "Cannot find elements when the XPath is null.");
+        return new By(xpathExpression);
     }
 
     /**
@@ -112,8 +136,62 @@ public final class By {
      * }</pre>
      */
     public String toCssSelector() {
+        if (cssSelector == null) {
+            throw new UnsupportedOperationException(
+                    description + " has no CSS form");
+        }
         return cssSelector;
     }
+
+    /**
+     * What {@code by} finds from {@code context}, or the whole page when it is
+     * {@code null}: CSS through the backend, XPath through a script.
+     */
+    static List<TestBenchElement> find(By by, TestBenchCommandExecutor executor,
+            @Nullable TestBenchElement context) {
+        if (by.xpath == null) {
+            return context == null ? findCss(by.cssSelector, executor)
+                    : context.getElementBackend().findElements(by.cssSelector)
+                            .stream()
+                            .map(found -> TestBench.createElement(
+                                    TestBenchElement.class, found, executor))
+                            .toList();
+        }
+        Object found = executor.executeScript(XPATH_SCRIPT, by.xpath, context);
+        if (found instanceof String notAnElement) {
+            throw new IllegalArgumentException(
+                    "The result of the XPath " + by.xpath + " is: "
+                            + notAnElement + ". It should be an element.");
+        }
+        return castToElements(found);
+    }
+
+    private static List<TestBenchElement> findCss(String cssSelector,
+            TestBenchCommandExecutor executor) {
+        return castToElements(executor.executeScript(
+                "return Array.from(document.querySelectorAll(arguments[0]))",
+                cssSelector));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<TestBenchElement> castToElements(Object found) {
+        return (List<TestBenchElement>) found;
+    }
+
+    // WebDriver's XPath search: the nodes in document order, each an element
+    private static final String XPATH_SCRIPT = """
+            var result = document.evaluate(arguments[0], arguments[1] || document,
+                null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+            var found = [];
+            for (var i = 0; i < result.snapshotLength; i++) {
+              var node = result.snapshotItem(i);
+              if (node.nodeType !== Node.ELEMENT_NODE) {
+                return String(node);
+              }
+              found.push(node);
+            }
+            return found;
+            """;
 
     private static String cssEscape(String value) {
         String escaped = CSS_ESCAPE.matcher(value).replaceAll("\\\\$1");

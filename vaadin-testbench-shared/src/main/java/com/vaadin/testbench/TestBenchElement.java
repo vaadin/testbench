@@ -55,6 +55,16 @@ public class TestBenchElement
     }
 
     /**
+     * An element of this class for the node {@code element} stands for, as
+     * {@code element.wrap(X.class)} makes one: for an element class whose
+     * constructor takes the element it converts.
+     */
+    protected TestBenchElement(TestBenchElement element,
+            TestBenchCommandExecutor commandExecutor) {
+        init(element.getElementBackend(), commandExecutor);
+    }
+
+    /**
      * Initializes an element built by its no-argument constructor. A subclass
      * that needs initialization code overrides {@link #init()}, not this.
      *
@@ -187,6 +197,51 @@ public class TestBenchElement
             call.accept(node);
             return null;
         });
+    }
+
+    /**
+     * This element: there is no Selenium element inside it any more. Kept so
+     * that {@code getWrappedElement().getCssValue(…)} and the like compile.
+     *
+     * @deprecated call the method on the element itself; for the browser
+     *             library's own element, use {@link #getElementBackend()}
+     */
+    @Deprecated
+    public TestBenchElement getWrappedElement() {
+        return this;
+    }
+
+    /**
+     * The browser this element lives in, as a test's {@code getDriver()} is:
+     * for {@code new Actions(getDriver())} in an element class, or a search of
+     * the whole page.
+     */
+    public BrowserDriver getDriver() {
+        return new TestBenchDriver(getCommandExecutor());
+    }
+
+    /**
+     * {@code element} itself, already a {@code TestBenchElement}.
+     *
+     * @deprecated use {@code element}, or {@code element.wrap(X.class)} for an
+     *             element class
+     */
+    @Deprecated
+    protected static TestBenchElement wrapElement(TestBenchElement element,
+            TestBenchCommandExecutor commandExecutor) {
+        return element;
+    }
+
+    /**
+     * {@code elements} themselves, already {@code TestBenchElement}s.
+     *
+     * @deprecated use {@code elements}
+     */
+    @Deprecated
+    protected static List<TestBenchElement> wrapElements(
+            List<? extends TestBenchElement> elements,
+            TestBenchCommandExecutor commandExecutor) {
+        return List.copyOf(elements);
     }
 
     protected void waitForVaadin() {
@@ -386,10 +441,8 @@ public class TestBenchElement
     @SuppressWarnings("deprecation")
     public List<TestBenchElement> findElements(By by) {
         waitForVaadin();
-        return onNode(node -> node.findElements(by.toCssSelector())).stream()
-                .map(found -> TestBench.createElement(TestBenchElement.class,
-                        found, getCommandExecutor()))
-                .toList();
+        return Refind.onStale(() -> By.find(by, getCommandExecutor(), this),
+                this);
     }
 
     /**
@@ -402,14 +455,13 @@ public class TestBenchElement
     @SuppressWarnings("deprecation")
     public TestBenchElement findElement(By by) {
         waitForVaadin();
-        List<ElementBackend> found = onNode(
-                node -> node.findElements(by.toCssSelector()));
+        List<TestBenchElement> found = Refind
+                .onStale(() -> By.find(by, getCommandExecutor(), this), this);
         if (found.isEmpty()) {
             throw new NoSuchElementException(
                     "Unable to locate an element with " + by);
         }
-        return TestBench.createElement(TestBenchElement.class, found.get(0),
-                getCommandExecutor());
+        return found.get(0);
     }
 
     public boolean isDisplayed() {

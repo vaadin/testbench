@@ -23,6 +23,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.vaadin.testbench.BrowserDriver;
 import com.vaadin.testbench.Dimension;
 import com.vaadin.testbench.Point;
 import com.vaadin.testbench.TestBench;
@@ -97,6 +98,14 @@ public class TestBenchCommandExecutor implements TestBenchCommands {
      */
     public BrowserBackend getBackend() {
         return backend;
+    }
+
+    /**
+     * The browser this executor drives, as a test's {@code getDriver()}: for
+     * {@code getCommandExecutor().getDriver().executeScript(…)} and the like.
+     */
+    public BrowserDriver getDriver() {
+        return TestBench.createDriver(backend, this);
     }
 
     @Override

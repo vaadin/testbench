@@ -43,6 +43,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 
 import com.vaadin.testbench.Actions;
 import com.vaadin.testbench.BrowserDriver;
+import com.vaadin.testbench.By;
 import com.vaadin.testbench.Dimension;
 import com.vaadin.testbench.ElementQuery;
 import com.vaadin.testbench.Keyboard;
@@ -434,6 +435,34 @@ class BackendParityTest {
 
     private static BrowserDriver driverOn(BrowserBackend backend) {
         return TestBench.createDriver(backend);
+    }
+
+    /** By.xpath, from an element and from the page, as the corpus uses it. */
+    @Test
+    void xpath() {
+        Map<String, Function<BrowserDriver, Object>> cases = new LinkedHashMap<>();
+        cases.put("parent",
+                d -> ids(element(d, "t-one").findElements(By.xpath(".."))));
+        cases.put("children",
+                d -> ids(element(d, "t-select").findElements(By.xpath("./*"))));
+        cases.put("a child by attribute", d -> ids(element(d, "t-select")
+                .findElements(By.xpath("./*[@value='2']"))));
+        cases.put("the page from an element", d -> ids(element(d, "t-select")
+                .findElements(By.xpath("//*[@id='t-link']"))));
+        cases.put("by text",
+                d -> ids(d.findElements(By.xpath("//*[text()='two']"))));
+        cases.put("none", d -> ids(d.findElements(By.xpath("//nothing"))));
+        cases.put("findElement on none",
+                d -> d.findElement(By.xpath("//nothing")));
+        cases.put("not an element",
+                d -> d.findElements(By.xpath("//p[@id='t-br']/text()")));
+        cases.forEach((name, find) -> same("xpath " + name,
+                b -> find.apply(driverOn(b))));
+        assertNoMismatches();
+    }
+
+    private static List<String> ids(List<TestBenchElement> elements) {
+        return elements.stream().map(TestBenchElement::getId).toList();
     }
 
     private static TestBenchElement element(BrowserDriver driver, String id) {
