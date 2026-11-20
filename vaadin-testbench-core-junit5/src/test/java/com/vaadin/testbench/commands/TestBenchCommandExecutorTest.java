@@ -18,7 +18,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.openqa.selenium.Capabilities;
+import org.openqa.selenium.JavascriptException;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.ScriptTimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -213,8 +215,8 @@ public class TestBenchCommandExecutorTest {
                 "cursor-bottom-edge-off.png");
         Mockito.when(driver.getScreenshotAs(OutputType.BYTES))
                 .thenReturn(screenshotBytes);
-        Mockito.when(
-                driver.executeScript(Mockito.contains("window.Vaadin.Flow")))
+        Mockito.when(driver.executeAsyncScript(
+                Mockito.contains("window.Vaadin.Flow"), Mockito.any()))
                 .thenReturn(Boolean.TRUE);
         if (expectGetCapabilities) {
             Capabilities mockedCapabilities = Mockito.mock(Capabilities.class);
@@ -281,10 +283,66 @@ public class TestBenchCommandExecutorTest {
 
     }
 
+    @Test
+    public void waitForVaadin_idle_asksBrowserOnce() {
+        FirefoxDriver driver = Mockito.mock(FirefoxDriver.class);
+        Mockito.when(driver.executeAsyncScript(Mockito.contains("flow.ready("),
+                Mockito.any())).thenReturn(Boolean.TRUE);
+
+        newCommandExecutor(driver).waitForVaadin();
+
+        Mockito.verify(driver).executeAsyncScript(
+                Mockito.contains("flow.ready("),
+                // Flow's own timeout must end the call before the default
+                // WebDriver script timeout of 30s does
+                Mockito.longThat(timeout -> timeout > 0 && timeout < 30000));
+    }
+
+    @Test
+    public void waitForVaadin_notIdleOrInterrupted_asksAgain() {
+        FirefoxDriver driver = Mockito.mock(FirefoxDriver.class);
+        Mockito.when(
+                driver.executeAsyncScript(Mockito.anyString(), Mockito.any()))
+                .thenReturn(Boolean.FALSE)
+                .thenThrow(new ScriptTimeoutException("script timeout"),
+                        new JavascriptException("document unloaded"))
+                .thenReturn(Boolean.TRUE);
+
+        newCommandExecutor(driver).waitForVaadin();
+
+        Mockito.verify(driver, Mockito.times(4))
+                .executeAsyncScript(Mockito.anyString(), Mockito.any());
+    }
+
+    @Test
+    public void waitForVaadin_scriptError_isNotRetried() {
+        FirefoxDriver driver = Mockito.mock(FirefoxDriver.class);
+        JavascriptException error = new JavascriptException(
+                "TypeError: clients[client].isActive is not a function");
+        Mockito.when(
+                driver.executeAsyncScript(Mockito.anyString(), Mockito.any()))
+                .thenThrow(error);
+        TestBenchCommandExecutor tbce = newCommandExecutor(driver);
+
+        JavascriptException thrown = Assertions
+                .assertThrows(JavascriptException.class, tbce::waitForVaadin);
+
+        Assertions.assertSame(error, thrown);
+        Mockito.verify(driver).executeAsyncScript(Mockito.anyString(),
+                Mockito.any());
+    }
+
+    private TestBenchCommandExecutor newCommandExecutor(FirefoxDriver driver) {
+        TestBenchCommandExecutor tbce = new TestBenchCommandExecutor(null,
+                null);
+        tbce.setDriver(TestBench.createDriver(driver, tbce));
+        return tbce;
+    }
+
     private FirefoxDriver mockJSExecutor(boolean forcesSync) {
         FirefoxDriver jse = Mockito.mock(FirefoxDriver.class);
-        Mockito.when(jse
-                .executeScript(Mockito.contains("window.Vaadin.Flow.client")))
+        Mockito.when(jse.executeAsyncScript(
+                Mockito.contains("window.Vaadin.Flow"), Mockito.any()))
                 .thenReturn(Boolean.TRUE);
         Mockito.when(jse.executeScript(Mockito.contains("getProfilingData()")))
                 .thenReturn(Arrays.asList(1000L, 2000L, 3000L));

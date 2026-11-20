@@ -64,7 +64,8 @@ public class TestBenchDriverTest {
         mockDriver.quit();
 
         Mockito.when(((JavascriptExecutor) mockDriver)
-                .executeScript(Mockito.anyString())).thenReturn(true);
+                .executeAsyncScript(Mockito.anyString(), Mockito.any()))
+                .thenReturn(true);
         TargetLocator mockTargetLocator = Mockito.mock(TargetLocator.class);
         Mockito.when(mockDriver.switchTo()).thenReturn(mockTargetLocator);
 
@@ -103,8 +104,8 @@ public class TestBenchDriverTest {
 
         FirefoxDriver mockFF = Mockito.mock(FirefoxDriver.class);
         Mockito.when(mockFF.getCapabilities()).thenReturn(mockCapabilities);
-        Mockito.when(
-                mockFF.executeScript(contains("clients[client].isActive()")))
+        Mockito.when(mockFF.executeAsyncScript(
+                contains("clients[client].isActive()"), Mockito.any()))
                 .thenReturn(true);
         WebElement mockElement = Mockito.mock(WebElement.class);
         Mockito.when(mockFF.findElement(isA(By.class))).thenReturn(mockElement);
