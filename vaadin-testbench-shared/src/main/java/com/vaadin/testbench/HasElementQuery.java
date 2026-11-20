@@ -36,8 +36,14 @@ public interface HasElementQuery extends HasSearchContext {
      * it uses the element as its search context. Otherwise the search context
      * is the driver.
      *
+     * <p>
+     * The tag name may also be any CSS selector, such as
+     * {@code "button + vaadin-tooltip"} or {@code "a, b"}. Attribute filters
+     * added to the query, such as {@link ElementQuery#withId(String)}, apply to
+     * the whole selector.
+     *
      * @param tagName
-     *            the tag name of the element to find
+     *            the tag name or CSS selector of the elements to find
      * @return an appropriate {@link ElementQuery} instance
      */
     public default ElementQuery<TestBenchElement> $(String tagName) {

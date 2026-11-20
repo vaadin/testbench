@@ -342,10 +342,16 @@ public class ElementQuery<T extends TestBenchElement> {
     /**
      * Instantiate a new ElementQuery to look for the given type of element.
      *
+     * <p>
+     * The tag name may also be any CSS selector, such as
+     * {@code "button + vaadin-tooltip"} or {@code "a, b"}. Attribute filters
+     * added to the query, such as {@link #withId(String)}, apply to the whole
+     * selector.
+     *
      * @param elementClass
      *            the type of element to return
      * @param tagName
-     *            the tag name of the element to find
+     *            the tag name or CSS selector of the elements to find
      */
     public ElementQuery(Class<T> elementClass, String tagName) {
         this.elementClass = elementClass;
@@ -1456,7 +1462,7 @@ public class ElementQuery<T extends TestBenchElement> {
 
     private String getNoSuchElementMessage(Integer index, int foundCount) {
         String msg = (foundCount == 0 ? "No element"
-                : "Multiple elements (" + foundCount + ")") + " with tag <"
+                : "Multiple elements (" + foundCount + ")") + " matching <"
                 + tagName + "> found";
         String attrPairs = getAttributePairs();
         if (!attrPairs.isEmpty()) {
@@ -1512,7 +1518,14 @@ public class ElementQuery<T extends TestBenchElement> {
      *         found
      */
     private List<T> executeSearch(Integer index) {
-        StringBuilder script = new StringBuilder();
+        // Wrapping the selector makes the attribute filters apply to every
+        // selector of a selector list, not only to the last one. :not(:not())
+        // is used instead of :is() because :is() silently ignores an invalid
+        // selector, so a typo would match nothing instead of throwing.
+        StringBuilder script = new StringBuilder("var selector = arguments[1];" //
+                + "if (arguments[2]) {" //
+                + "  selector = ':not(:not(' + selector + '))' + arguments[2];" //
+                + "}");
         TestBenchElement elementContext;
         JavascriptExecutor executor;
 
@@ -1520,10 +1533,10 @@ public class ElementQuery<T extends TestBenchElement> {
         if (context instanceof TestBenchElement testBenchElement) {
             script.append("var result = [];" //
                     + "if (arguments[0].shadowRoot) {" //
-                    + "  var shadow = arguments[0].shadowRoot.querySelectorAll(arguments[1]+arguments[2]);" //
+                    + "  var shadow = arguments[0].shadowRoot.querySelectorAll(selector);" //
                     + "  result = result.concat(Array.prototype.slice.call(shadow));" //
                     + "}" //
-                    + "var light = arguments[0].querySelectorAll(arguments[1]+arguments[2]);" //
+                    + "var light = arguments[0].querySelectorAll(selector);" //
                     + "result = result.concat(Array.prototype.slice.call(light));" //
                     + "return result" //
             );
@@ -1532,7 +1545,7 @@ public class ElementQuery<T extends TestBenchElement> {
         } else if (context instanceof WebDriver webDriver) {
             // Search the whole document
             script.append("var result = [];" //
-                    + "const queryResult = document.querySelectorAll(arguments[1]+arguments[2]);"
+                    + "const queryResult = document.querySelectorAll(selector);"
                     + "result = result.concat(Array.prototype.slice.call(queryResult));"
                     + "return result");
             elementContext = null;
@@ -1631,7 +1644,7 @@ public class ElementQuery<T extends TestBenchElement> {
      *            the element to start the search from or <code>null</code> for
      *            a whole document search
      * @param tagName
-     *            the tag name to look for
+     *            the tag name or CSS selector to look for
      * @param attributePairs
      *            the attribute pairs to match
      * @return a list of matching elements of the type defined in the
