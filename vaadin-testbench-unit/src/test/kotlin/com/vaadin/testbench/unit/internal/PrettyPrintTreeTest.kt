@@ -60,7 +60,8 @@ internal fun DynaNodeGroup.prettyPrintTreeTest() {
         expect("Html[<b>foo bar baz <i>foobar</i></b>]") {
             Html("\n    <b>foo\nbar\n    baz\n<i>foobar</i></b>").toPrettyString()
         }
-        expect("HtmlSpan[innerHTML='aaa<b>bbbb</b>ccc']") {
+        // Element.getText() includes only the top-level text of the innerHTML, so the <b> content is left out
+        expect("HtmlSpan[text='aaaccc', innerHTML='aaa<b>bbbb</b>ccc']") {
             HtmlSpan("aaa<b>bbbb</b>ccc").toPrettyString()
         }
         expect("Div[@title='foobar']") {
@@ -346,7 +347,7 @@ private class HtmlSpan(@Language("html") innerHTML: String = "") : Span() {
     @get:Language("html")
     @set:Language("html")
     var innerHTML: String
-        get() = element.getProperty("innerHTML", "")
+        get() = element.getProperty("innerHTML", "") ?: ""
         set(value) {
             removeAll()
             element.setProperty("innerHTML", value)
