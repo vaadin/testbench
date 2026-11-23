@@ -30,7 +30,7 @@ public class ParametersTest {
         Assertions.assertEquals(false,
                 Parameters.isScreenshotComparisonCursorDetection());
         Assertions.assertFalse(Parameters.isHeadless());
-        Assertions.assertFalse(Parameters.isUseJavascriptClick());
+        Assertions.assertFalse(Parameters.isUseActionsClick());
         Assertions.assertEquals(
                 ClientConfig.defaultConfig().readTimeout().toSeconds(),
                 Parameters.getReadTimeout());

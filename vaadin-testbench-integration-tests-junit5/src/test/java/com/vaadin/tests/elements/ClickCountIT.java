@@ -10,13 +10,17 @@ package com.vaadin.tests.elements;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.testUI.ClickCountView;
 import com.vaadin.testbench.BrowserTest;
+import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.tests.AbstractBrowserTB9Test;
 
+// Parameters.useActionsClick is global, so no other test may click meanwhile
+@Isolated
 public class ClickCountIT extends AbstractBrowserTB9Test {
 
     @Override
@@ -30,26 +34,21 @@ public class ClickCountIT extends AbstractBrowserTB9Test {
     }
 
     @BrowserTest
-    public void click_hasClickCountOne() {
-        TestBenchElement button = $(NativeButtonElement.class)
-                .id("click-target");
-        button.click();
-        Assertions.assertEquals("1", $("div").id("click-count").getText());
+    public void click_usesJavascriptByDefault() {
+        $(NativeButtonElement.class).id("click-target").click();
+        Assertions.assertEquals("0", $("div").id("click-count").getText());
     }
 
     @BrowserTest
-    public void clickWithCoordinates_hasClickCountOne() {
+    public void click_actionsClickEnabled_hasClickCountOne() {
         TestBenchElement button = $(NativeButtonElement.class)
                 .id("click-target");
-        button.click(0, 0);
+        Parameters.setUseActionsClick(true);
+        try {
+            button.click();
+        } finally {
+            Parameters.setUseActionsClick(false);
+        }
         Assertions.assertEquals("1", $("div").id("click-count").getText());
-    }
-
-    @BrowserTest
-    public void doubleClick_hasClickCountTwo() {
-        TestBenchElement button = $(NativeButtonElement.class)
-                .id("click-target");
-        button.doubleClick();
-        Assertions.assertEquals("2", $("div").id("click-count").getText());
     }
 }

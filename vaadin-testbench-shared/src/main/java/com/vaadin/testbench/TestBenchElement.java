@@ -191,14 +191,22 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
                 .equals(getDriver().switchTo().activeElement());
     }
 
+    /**
+     * Clicks the element.
+     * <p>
+     * By default, the click is performed with JavaScript, see
+     * {@link #javascriptClick()}. If {@link Parameters#isUseActionsClick()} is
+     * enabled, the click is performed with Selenium Actions instead, which
+     * simulates a real user click in the browser.
+     */
     @Override
     public void click() {
-        if (Parameters.isUseJavascriptClick()) {
-            javascriptClick();
-        } else {
-            autoScrollIntoView();
+        if (Parameters.isUseActionsClick()) {
+            ensureInteractable();
             waitForVaadin();
             new Actions(getDriver()).click(wrappedElement).build().perform();
+        } else {
+            javascriptClick();
         }
     }
 
@@ -211,21 +219,22 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * the browser (e.g., browser event properties such as click count may be
      * missing or incorrect).
      * <p>
-     * Prefer {@link #click()} for normal use. Use this method only when you
-     * need to click an element that Selenium cannot reach directly.
-     * <p>
-     * To use this method globally as the default for {@link #click()}, set the
-     * system property
-     * {@code com.vaadin.testbench.Parameters.useJavascriptClick=true} or call
-     * {@link Parameters#setUseJavascriptClick(boolean)}.
+     * This is what {@link #click()} does unless
+     * {@link Parameters#isUseActionsClick()} is enabled. Use this method to
+     * click an element that Selenium cannot reach directly when Selenium
+     * Actions clicks are enabled.
      */
     public void javascriptClick() {
+        // JS call to click does not focus element, hence ensure focus
         focus();
         try {
+            // Avoid strange "element not clickable at point" problems
             callFunction("click");
         } catch (Exception e) {
             if (e.getMessage() != null && e.getMessage()
                     .contains("Inspected target navigated or closed")) {
+                // This happens with chromedriver although e.g. navigation
+                // succeeds
                 return;
             }
             // SVG elements and maybe others do not have a 'click' method

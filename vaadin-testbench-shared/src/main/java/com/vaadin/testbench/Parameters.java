@@ -37,7 +37,7 @@ public class Parameters {
     private static int readTimeout;
     private static int hubPort;
     private static String[] chromeOptions;
-    private static boolean useJavascriptClick;
+    private static boolean useActionsClick;
     static {
         isDebug = getSystemPropertyBoolean("debug", false);
 
@@ -69,8 +69,7 @@ public class Parameters {
                 (int) ClientConfig.defaultConfig().readTimeout().toSeconds());
         hubPort = getSystemPropertyInt("hubPort", 4444);
         setChromeOptions(getSystemPropertyString("chromeOptions", null));
-        useJavascriptClick = getSystemPropertyBoolean("useJavascriptClick",
-                false);
+        useActionsClick = getSystemPropertyBoolean("useActionsClick", false);
     }
 
     /**
@@ -577,33 +576,37 @@ public class Parameters {
     }
 
     /**
-     * Returns whether {@link TestBenchElement#click()} should use JavaScript
-     * instead of Selenium Actions.
+     * Returns whether {@link TestBenchElement#click()} uses Selenium Actions
+     * instead of JavaScript.
      * <p>
-     * JavaScript click avoids "element not clickable at point" issues but does
-     * not correctly simulate a real user interaction in the browser (e.g.,
-     * browser event properties such as click count may be missing or
-     * incorrect).
+     * Selenium Actions simulate a real user click in the browser, so browser
+     * event properties such as click count are set like for a real click. The
+     * element must however be reachable by the mouse: a click on an element
+     * that is covered by another element, such as an overlay, goes to the
+     * covering element or fails. The JavaScript click always reaches the
+     * element but does not fire the events a real user click fires.
      *
-     * @return {@code true} if JavaScript click is used by default,
-     *         {@code false} otherwise
+     * @return {@code true} if Selenium Actions are used for
+     *         {@link TestBenchElement#click()}, {@code false} if JavaScript is
+     *         used (the default)
      */
-    public static boolean isUseJavascriptClick() {
-        return useJavascriptClick;
+    public static boolean isUseActionsClick() {
+        return useActionsClick;
     }
 
     /**
-     * Sets whether {@link TestBenchElement#click()} should use JavaScript
-     * instead of Selenium Actions.
+     * Sets whether {@link TestBenchElement#click()} uses Selenium Actions
+     * instead of JavaScript.
      * <p>
      * Can also be set with the system property
-     * {@code com.vaadin.testbench.Parameters.useJavascriptClick=true}.
+     * {@code com.vaadin.testbench.Parameters.useActionsClick=true}.
      *
-     * @param useJavascriptClick
-     *            {@code true} to use JavaScript click, {@code false} to use
-     *            Selenium Actions
+     * @param useActionsClick
+     *            {@code true} to use Selenium Actions, {@code false} to use
+     *            JavaScript (the default)
+     * @see #isUseActionsClick()
      */
-    public static void setUseJavascriptClick(boolean useJavascriptClick) {
-        Parameters.useJavascriptClick = useJavascriptClick;
+    public static void setUseActionsClick(boolean useActionsClick) {
+        Parameters.useActionsClick = useActionsClick;
     }
 }
