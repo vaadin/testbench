@@ -51,17 +51,4 @@ public class ClickCountIT extends AbstractBrowserTB9Test {
         }
         Assertions.assertEquals("1", $("div").id("click-count").getText());
     }
-
-    @BrowserTest
-    public void javascriptClick_actionsClickEnabled_usesJavascript() {
-        TestBenchElement button = $(NativeButtonElement.class)
-                .id("click-target");
-        Parameters.setUseActionsClick(true);
-        try {
-            button.javascriptClick();
-        } finally {
-            Parameters.setUseActionsClick(false);
-        }
-        Assertions.assertEquals("0", $("div").id("click-count").getText());
-    }
 }

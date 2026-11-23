@@ -194,10 +194,16 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
     /**
      * Clicks the element.
      * <p>
-     * By default, the click is performed with JavaScript, see
-     * {@link #javascriptClick()}. If {@link Parameters#isUseActionsClick()} is
-     * enabled, the click is performed with Selenium Actions instead, which
-     * simulates a real user click in the browser.
+     * By default, the click is performed with JavaScript. This avoids "element
+     * not clickable at point" issues that can occur when the element is behind
+     * an overlay or otherwise not directly reachable by Selenium, but it does
+     * not correctly simulate a real user interaction in the browser (e.g.,
+     * browser event properties such as click count may be missing or
+     * incorrect).
+     * <p>
+     * If {@link Parameters#isUseActionsClick()} is enabled, the click is
+     * performed with Selenium Actions instead, which simulates a real user
+     * click in the browser.
      */
     @Override
     public void click() {
@@ -210,21 +216,7 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
         }
     }
 
-    /**
-     * Clicks the element using JavaScript rather than Selenium Actions.
-     * <p>
-     * This avoids "element not clickable at point" issues that can occur when
-     * the element is behind an overlay or otherwise not directly reachable by
-     * Selenium, but it does not correctly simulate a real user interaction in
-     * the browser (e.g., browser event properties such as click count may be
-     * missing or incorrect).
-     * <p>
-     * This is what {@link #click()} does unless
-     * {@link Parameters#isUseActionsClick()} is enabled. Use this method to
-     * click an element that Selenium cannot reach directly when Selenium
-     * Actions clicks are enabled.
-     */
-    public void javascriptClick() {
+    private void javascriptClick() {
         // JS call to click does not focus element, hence ensure focus
         focus();
         try {
