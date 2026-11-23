@@ -201,13 +201,13 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * browser event properties such as click count may be missing or
      * incorrect).
      * <p>
-     * If {@link Parameters#isUseActionsClick()} is enabled, the click is
+     * If {@link TestBenchCommands#isNativeClick()} is enabled, the click is
      * performed with Selenium Actions instead, which simulates a real user
      * click in the browser.
      */
     @Override
     public void click() {
-        if (Parameters.isUseActionsClick()) {
+        if (getCommandExecutor().isNativeClick()) {
             ensureInteractable();
             waitForVaadin();
             new Actions(getDriver()).click(wrappedElement).build().perform();

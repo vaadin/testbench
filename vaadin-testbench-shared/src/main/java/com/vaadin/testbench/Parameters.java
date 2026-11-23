@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
+import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.parallel.Browser;
 
 public class Parameters {
@@ -37,7 +38,7 @@ public class Parameters {
     private static int readTimeout;
     private static int hubPort;
     private static String[] chromeOptions;
-    private static boolean useActionsClick;
+    private static boolean nativeClick;
     static {
         isDebug = getSystemPropertyBoolean("debug", false);
 
@@ -69,7 +70,7 @@ public class Parameters {
                 (int) ClientConfig.defaultConfig().readTimeout().toSeconds());
         hubPort = getSystemPropertyInt("hubPort", 4444);
         setChromeOptions(getSystemPropertyString("chromeOptions", null));
-        useActionsClick = getSystemPropertyBoolean("useActionsClick", false);
+        nativeClick = getSystemPropertyBoolean("nativeClick", false);
     }
 
     /**
@@ -576,37 +577,36 @@ public class Parameters {
     }
 
     /**
-     * Returns whether {@link TestBenchElement#click()} uses Selenium Actions
-     * instead of JavaScript.
+     * Returns whether {@link TestBenchElement#click()} simulates a real user
+     * click by default instead of clicking with JavaScript.
      * <p>
-     * Selenium Actions simulate a real user click in the browser, so browser
-     * event properties such as click count are set like for a real click. The
-     * element must however be reachable by the mouse: a click on an element
-     * that is covered by another element, such as an overlay, goes to the
-     * covering element or fails. The JavaScript click always reaches the
-     * element but does not fire the events a real user click fires.
+     * This is the default for drivers created afterwards. It can be changed per
+     * driver with {@link TestBenchCommands#setNativeClick(boolean)}.
      *
-     * @return {@code true} if Selenium Actions are used for
-     *         {@link TestBenchElement#click()}, {@code false} if JavaScript is
-     *         used (the default)
+     * @return {@code true} if new drivers simulate a real user click,
+     *         {@code false} if they click with JavaScript (the default)
+     * @see TestBenchCommands#isNativeClick()
      */
-    public static boolean isUseActionsClick() {
-        return useActionsClick;
+    public static boolean isNativeClick() {
+        return nativeClick;
     }
 
     /**
-     * Sets whether {@link TestBenchElement#click()} uses Selenium Actions
-     * instead of JavaScript.
+     * Sets whether {@link TestBenchElement#click()} simulates a real user click
+     * by default instead of clicking with JavaScript.
+     * <p>
+     * This is the default for drivers created afterwards. It can be changed per
+     * driver with {@link TestBenchCommands#setNativeClick(boolean)}.
      * <p>
      * Can also be set with the system property
-     * {@code com.vaadin.testbench.Parameters.useActionsClick=true}.
+     * {@code com.vaadin.testbench.Parameters.nativeClick=true}.
      *
-     * @param useActionsClick
-     *            {@code true} to use Selenium Actions, {@code false} to use
-     *            JavaScript (the default)
-     * @see #isUseActionsClick()
+     * @param nativeClick
+     *            {@code true} to simulate a real user click, {@code false} to
+     *            click with JavaScript (the default)
+     * @see TestBenchCommands#isNativeClick()
      */
-    public static void setUseActionsClick(boolean useActionsClick) {
-        Parameters.useActionsClick = useActionsClick;
+    public static void setNativeClick(boolean nativeClick) {
+        Parameters.nativeClick = nativeClick;
     }
 }

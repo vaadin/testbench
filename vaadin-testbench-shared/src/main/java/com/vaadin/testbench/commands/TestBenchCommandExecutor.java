@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.HasDriver;
+import com.vaadin.testbench.Parameters;
 import com.vaadin.testbench.TestBenchDriverProxy;
 import com.vaadin.testbench.TestBenchElement;
 import com.vaadin.testbench.screenshot.ImageComparison;
@@ -47,6 +48,7 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
 
     private boolean enableWaitForVaadin = true;
     private boolean autoScrollIntoView = true;
+    private boolean nativeClick = Parameters.isNativeClick();
     // @formatter:off
     String WAIT_FOR_VAADIN_SCRIPT =
             "if (document.readyState != 'complete') {"
@@ -254,6 +256,22 @@ public class TestBenchCommandExecutor implements TestBenchCommands, HasDriver {
     @Override
     public void setAutoScrollIntoView(boolean autoScrollIntoView) {
         this.autoScrollIntoView = autoScrollIntoView;
+    }
+
+    /**
+     * {@inheritDoc}. The default is {@link Parameters#isNativeClick()}
+     */
+    @Override
+    public boolean isNativeClick() {
+        return nativeClick;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setNativeClick(boolean nativeClick) {
+        this.nativeClick = nativeClick;
     }
 
     public Object executeScript(String script, Object... args) {
