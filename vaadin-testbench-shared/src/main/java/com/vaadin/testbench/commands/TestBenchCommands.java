@@ -8,6 +8,9 @@
  */
 package com.vaadin.testbench.commands;
 
+import com.vaadin.testbench.Parameters;
+import com.vaadin.testbench.TestBenchElement;
+
 public interface TestBenchCommands extends CanCompareScreenshots {
 
     /**
@@ -123,6 +126,36 @@ public interface TestBenchCommands extends CanCompareScreenshots {
      *            {@code true} if elements should be scrolled
      */
     void setAutoScrollIntoView(boolean autoScrollIntoView);
+
+    /**
+     * Whether {@link TestBenchElement#click()} simulates a real user click in
+     * the browser instead of clicking with JavaScript.
+     * <p>
+     * A native click fires the events a real user click fires (e.g. pointer and
+     * mouse events with the right click count, and focus). The element must
+     * however be reachable by the mouse: a click on an element that is covered
+     * by another element, such as an overlay, goes to the covering element or
+     * fails. The JavaScript click always reaches the element but does not fire
+     * the events a real user click fires.
+     * <p>
+     * The default is taken from {@link Parameters#isNativeClick()} when the
+     * driver is created.
+     *
+     * @return {@code true} if {@link TestBenchElement#click()} simulates a real
+     *         user click, {@code false} if it clicks with JavaScript
+     */
+    boolean isNativeClick();
+
+    /**
+     * Sets whether {@link TestBenchElement#click()} simulates a real user click
+     * in the browser instead of clicking with JavaScript.
+     *
+     * @param nativeClick
+     *            {@code true} to simulate a real user click, {@code false} to
+     *            click with JavaScript
+     * @see #isNativeClick()
+     */
+    void setNativeClick(boolean nativeClick);
 
     /**
      * Tries to resize the browsers window so that the space available for

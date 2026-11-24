@@ -191,15 +191,39 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
                 .equals(getDriver().switchTo().activeElement());
     }
 
+    /**
+     * Clicks the element.
+     * <p>
+     * By default, the click is performed with JavaScript. This avoids "element
+     * not clickable at point" issues that can occur when the element is behind
+     * an overlay or otherwise not directly reachable by Selenium, but it does
+     * not correctly simulate a real user interaction in the browser (e.g.,
+     * browser event properties such as click count may be missing or
+     * incorrect).
+     * <p>
+     * If {@link TestBenchCommands#isNativeClick()} is enabled, the click is
+     * performed with Selenium Actions instead, which simulates a real user
+     * click in the browser.
+     */
     @Override
     public void click() {
+        if (getCommandExecutor().isNativeClick()) {
+            ensureInteractable();
+            waitForVaadin();
+            new Actions(getDriver()).click(wrappedElement).build().perform();
+        } else {
+            javascriptClick();
+        }
+    }
+
+    private void javascriptClick() {
         // JS call to click does not focus element, hence ensure focus
         focus();
         try {
             // Avoid strange "element not clickable at point" problems
             callFunction("click");
         } catch (Exception e) {
-            if (e.getMessage()
+            if (e.getMessage() != null && e.getMessage()
                     .contains("Inspected target navigated or closed")) {
                 // This happens with chromedriver although e.g. navigation
                 // succeeds

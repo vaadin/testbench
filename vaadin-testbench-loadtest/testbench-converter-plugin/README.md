@@ -5,7 +5,7 @@ A Maven plugin that converts Vaadin TestBench tests to k6 load tests. It automat
 ## Prerequisites
 
 - **Java 21+** - For running Maven and the plugin
-- **k6** - For running load tests (only needed for `k6:run` goal)
+- **k6** - For running load tests (only needed for `loadtest:run` goal)
 
 ## Installation
 
@@ -19,19 +19,19 @@ mvn install -pl testbench-converter-plugin
 
 | Goal | Description |
 |------|-------------|
-| `k6:convert` | Convert a HAR file to a k6 load test |
-| `k6:record` | Record a TestBench test and convert to k6 |
-| `k6:run` | Run a k6 load test |
-| `k6:help` | Display help information |
+| `loadtest:convert` | Convert a HAR file to a k6 load test |
+| `loadtest:record` | Record a TestBench test and convert to k6 |
+| `loadtest:run` | Run a k6 load test |
+| `loadtest:help` | Display help information |
 
 ## Usage
 
-### k6:convert - Convert HAR to k6
+### loadtest:convert - Convert HAR to k6
 
 Converts an existing HAR file to a Vaadin-compatible k6 test.
 
 ```bash
-mvn k6:convert -Dk6.harFile=recording.har
+mvn loadtest:convert -Dk6.harFile=recording.har
 ```
 
 **Parameters:**
@@ -44,12 +44,12 @@ mvn k6:convert -Dk6.harFile=recording.har
 | `k6.skipFilter` | `false` | Skip filtering external domains |
 | `k6.skipRefactor` | `false` | Skip Vaadin-specific refactoring |
 
-### k6:record - Record TestBench Test
+### loadtest:record - Record TestBench Test
 
 Records a TestBench test through a proxy and converts it to k6.
 
 ```bash
-mvn k6:record -Dk6.testClass=HelloWorldIT -Dk6.appPort=8080
+mvn loadtest:record -Dk6.testClass=HelloWorldIT -Dk6.appPort=8080
 ```
 
 **Parameters:**
@@ -67,12 +67,12 @@ mvn k6:record -Dk6.testClass=HelloWorldIT -Dk6.appPort=8080
 | `k6.thinkTime.pageReadDelay` | `2.0` | Base delay (seconds) after page load |
 | `k6.thinkTime.interactionDelay` | `0.5` | Base delay (seconds) after user interaction |
 
-### k6:run - Run k6 Load Test
+### loadtest:run - Run k6 Load Test
 
 Executes a k6 test file with configurable parameters.
 
 ```bash
-mvn k6:run -Dk6.testFile=target/k6/tests/hello-world.js -Dk6.vus=50 -Dk6.duration=1m
+mvn loadtest:run -Dk6.testFile=target/k6/tests/hello-world.js -Dk6.vus=50 -Dk6.duration=1m
 ```
 
 **Parameters:**

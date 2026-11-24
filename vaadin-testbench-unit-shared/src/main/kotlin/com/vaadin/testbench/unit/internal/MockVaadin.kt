@@ -428,13 +428,43 @@ private fun VaadinService.fireUIInit(ui: UI) {
     eventBus.fireEvent(UIInitEvent(ui, this), rethrowListenerFailure)
 }
 
-private class MockPage(ui: UI, private val uiFactory: UIFactory, private val session: VaadinSession) : Page(ui) {
+internal class MockPage(ui: UI, private val uiFactory: UIFactory, private val session: VaadinSession) : Page(ui) {
+
+    private companion object {
+        private val SELF_NAMES = setOf("_self", "_parent", "_top", "")
+    }
+
+    private val navigations: MutableMap<String, MutableList<String>> = mutableMapOf()
+
+    val lastExternalNavigationURL: String?
+        get() = navigations["_self"]?.lastOrNull()
+
+    fun getExternalNavigationURL(windowName: String): String? =
+        navigations[normalizeWindowName(windowName)]?.lastOrNull()
+
+    val openedWindows: Map<String, List<String>>
+        get() = navigations.filterKeys { it != "_self" }
+            .mapValues { (_, urls) -> urls.toList() }
+
+    override fun open(url: String, windowName: String) {
+        val normalized = normalizeWindowName(windowName)
+        if (normalized == "_blank") {
+            navigations.getOrPut(normalized) { mutableListOf() }.add(url)
+        } else {
+            navigations[normalized] = mutableListOf(url)
+        }
+        super.open(url, windowName)
+    }
+
     override fun reload() {
         // recreate the UI on reload(), to simulate browser's F5
         super.reload()
         MockVaadin.closeCurrentUI(true)
         MockVaadin.createUI(uiFactory, session)
     }
+
+    private fun normalizeWindowName(windowName: String?): String =
+        if (windowName == null || windowName in SELF_NAMES) "_self" else windowName
 }
 
 @Deprecated("Replace the vaadin-testbench-unit dependency with browserless-test-junit6 and use the corresponding class from the com.vaadin.browserless package instead. This class will be removed in a future version.")

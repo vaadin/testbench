@@ -52,6 +52,28 @@ public class TestBenchCommandExecutorTest {
     }
 
     @Test
+    public void nativeClick_defaultFromParametersAtCreation_changeablePerExecutor() {
+        Parameters.setNativeClick(true);
+        TestBenchCommandExecutor enabled;
+        try {
+            enabled = new TestBenchCommandExecutor(
+                    Mockito.mock(ImageComparison.class),
+                    Mockito.mock(ReferenceNameGenerator.class));
+        } finally {
+            Parameters.setNativeClick(false);
+        }
+        Assertions.assertTrue(enabled.isNativeClick());
+
+        TestBenchCommandExecutor disabled = new TestBenchCommandExecutor(
+                Mockito.mock(ImageComparison.class),
+                Mockito.mock(ReferenceNameGenerator.class));
+        Assertions.assertFalse(disabled.isNativeClick());
+
+        enabled.setNativeClick(false);
+        Assertions.assertFalse(enabled.isNativeClick());
+    }
+
+    @Test
     public void testCompareScreen_takesScreenshotAndComparesImages()
             throws IOException {
         WebDriver driver = mockScreenshotDriver(1, true);
