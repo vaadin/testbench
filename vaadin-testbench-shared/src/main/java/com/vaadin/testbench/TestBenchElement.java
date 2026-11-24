@@ -556,6 +556,13 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
      * Intended for methods that use the Selenium Actions API
      * ({@code moveToElement}, {@code doubleClick}, {@code contextClick}), which
      * require the element to be physically within the viewport.
+     * <p>
+     * After scrolling, waits for the browser to render a couple of animation
+     * frames, because components such as {@code vaadin-grid} reposition their
+     * content in a {@code requestAnimationFrame} callback triggered by the
+     * scroll event. Without the wait, the Actions API may read the element
+     * position before it has been updated and throw
+     * {@link org.openqa.selenium.interactions.MoveTargetOutOfBoundsException}.
      */
     private void ensureInteractable() {
         try {
@@ -563,10 +570,31 @@ public class TestBenchElement implements WrapsElement, WebElement, HasDriver,
                 if (!isElementVisibleInViewport()) {
                     scrollIntoView(
                             Map.of("block", "nearest", "inline", "nearest"));
+                    waitForAnimationFrames();
                 }
             }
         } catch (Exception e) {
         }
+    }
+
+    /**
+     * Waits until the browser has rendered two animation frames, so that
+     * {@code requestAnimationFrame} callbacks scheduled by scroll listeners
+     * have run, including any follow-up updates they schedule. Falls back to a
+     * short timeout in case the page does not render frames, e.g. when it is in
+     * a background tab.
+     */
+    private void waitForAnimationFrames() {
+        ((JavascriptExecutor) getDriver()).executeAsyncScript("""
+                var done = arguments[arguments.length - 1];
+                var timeout = setTimeout(done, 200);
+                requestAnimationFrame(function() {
+                  requestAnimationFrame(function() {
+                    clearTimeout(timeout);
+                    done();
+                  });
+                });
+                """);
     }
 
     /**
