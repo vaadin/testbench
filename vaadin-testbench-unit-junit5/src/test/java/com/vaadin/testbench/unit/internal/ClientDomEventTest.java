@@ -8,7 +8,6 @@
  */
 package com.vaadin.testbench.unit.internal;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -328,7 +327,7 @@ class ClientDomEventTest {
     }
 
     @JsDefinition
-    public interface CustomFilterJs extends Serializable {
+    public interface CustomFilterJs extends JsSnippets {
         // The helper may prevent the default action without the body saying so
         @JsExpression("return window.app.isPrimaryClick(event);")
         DomEventFilter custom();
