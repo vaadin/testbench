@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vaadin.testbench.annotations.RunLocally;
 import com.vaadin.testbench.annotations.RunOnHub;
+import com.vaadin.testbench.commands.TestBenchCommands;
 import com.vaadin.testbench.parallel.Browser;
 
 public class Parameters {
@@ -37,6 +38,7 @@ public class Parameters {
     private static int readTimeout;
     private static int hubPort;
     private static String[] chromeOptions;
+    private static boolean nativeClick;
     static {
         isDebug = getSystemPropertyBoolean("debug", false);
 
@@ -68,6 +70,7 @@ public class Parameters {
                 (int) ClientConfig.defaultConfig().readTimeout().toSeconds());
         hubPort = getSystemPropertyInt("hubPort", 4444);
         setChromeOptions(getSystemPropertyString("chromeOptions", null));
+        nativeClick = getSystemPropertyBoolean("nativeClick", false);
     }
 
     /**
@@ -571,5 +574,39 @@ public class Parameters {
      */
     public static int getReadTimeout() {
         return readTimeout;
+    }
+
+    /**
+     * Returns whether {@link TestBenchElement#click()} simulates a real user
+     * click by default instead of clicking with JavaScript.
+     * <p>
+     * This is the default for drivers created afterwards. It can be changed per
+     * driver with {@link TestBenchCommands#setNativeClick(boolean)}.
+     *
+     * @return {@code true} if new drivers simulate a real user click,
+     *         {@code false} if they click with JavaScript (the default)
+     * @see TestBenchCommands#isNativeClick()
+     */
+    public static boolean isNativeClick() {
+        return nativeClick;
+    }
+
+    /**
+     * Sets whether {@link TestBenchElement#click()} simulates a real user click
+     * by default instead of clicking with JavaScript.
+     * <p>
+     * This is the default for drivers created afterwards. It can be changed per
+     * driver with {@link TestBenchCommands#setNativeClick(boolean)}.
+     * <p>
+     * Can also be set with the system property
+     * {@code com.vaadin.testbench.Parameters.nativeClick=true}.
+     *
+     * @param nativeClick
+     *            {@code true} to simulate a real user click, {@code false} to
+     *            click with JavaScript (the default)
+     * @see TestBenchCommands#isNativeClick()
+     */
+    public static void setNativeClick(boolean nativeClick) {
+        Parameters.nativeClick = nativeClick;
     }
 }
