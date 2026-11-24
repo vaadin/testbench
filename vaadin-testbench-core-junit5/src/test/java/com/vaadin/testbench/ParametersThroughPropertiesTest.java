@@ -39,6 +39,7 @@ public class ParametersThroughPropertiesTest {
         System.setProperty(Parameters.class.getName() + ".debug", "True");
         System.setProperty(Parameters.class.getName()
                 + ".screenshotComparisonCursorDetection", "true");
+        System.setProperty(Parameters.class.getName() + ".nativeClick", "true");
 
         Assertions.assertEquals(125, Parameters.getMaxScreenshotRetries());
         Assertions.assertEquals(126.12,
@@ -54,6 +55,7 @@ public class ParametersThroughPropertiesTest {
         Assertions.assertEquals(true, Parameters.isDebug());
         Assertions.assertEquals(true,
                 Parameters.isScreenshotComparisonCursorDetection());
+        Assertions.assertTrue(Parameters.isNativeClick());
     }
 
 }
