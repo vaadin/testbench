@@ -310,12 +310,14 @@ public class TestBenchCommandExecutorTest {
                 driver.executeAsyncScript(Mockito.anyString(), Mockito.any()))
                 .thenReturn(Boolean.FALSE)
                 .thenThrow(new ScriptTimeoutException("script timeout"),
-                        new JavascriptException("document unloaded"))
+                        new JavascriptException(
+                                "document unloaded while waiting for result"),
+                        new JavascriptException("Document was unloaded"))
                 .thenReturn(Boolean.TRUE);
 
         newCommandExecutor(driver).waitForVaadin();
 
-        Mockito.verify(driver, Mockito.times(4))
+        Mockito.verify(driver, Mockito.times(5))
                 .executeAsyncScript(Mockito.anyString(), Mockito.any());
     }
 
