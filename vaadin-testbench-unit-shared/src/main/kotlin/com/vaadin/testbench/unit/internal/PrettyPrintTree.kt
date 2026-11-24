@@ -163,10 +163,9 @@ fun Component.toPrettyString(): String {
                 list.add("@$attributeName='$value'")
             }
         }
-    if (this !is Html && !element.getProperty("innerHTML").isNullOrBlank()) {
-        val innerHTML =
-            element.getProperty("innerHTML").trim().replace(Regex("\\s+"), " ")
-        list.add("innerHTML='$innerHTML'")
+    val innerHTML: String? = element.getProperty("innerHTML")
+    if (this !is Html && !innerHTML.isNullOrBlank()) {
+        list.add("innerHTML='${innerHTML.trim().replace(Regex("\\s+"), " ")}'")
     }
     if (this.javaClass.hasCustomToString()) {
         // by default Vaadin components do not introduce toString() at all;
