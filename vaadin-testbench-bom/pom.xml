@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.vaadin</groupId>
-        <artifactId>vaadin-testbench-parent</artifactId>
-        <version>25.5-SNAPSHOT</version>
+        <artifactId>vaadin-parent</artifactId>
+        <version>3.0.3</version>
     </parent>
     <artifactId>vaadin-testbench-bom</artifactId>
     <packaging>pom</packaging>
