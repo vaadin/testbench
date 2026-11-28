@@ -249,17 +249,13 @@ jobs:
     runs-on: ubuntu-26.04
 
     steps:
-      - name: Merge test result artifacts
-        uses: actions/upload-artifact/merge@v4
-        with:
-          name: test-results
-          pattern: '{unit-test-results,integration-test-results-*}'
-          delete-merged: true
-
-      - name: Download merged test results
+      # Download the test results of the earlier jobs directly. Merging them
+      # into one artifact and downloading that right away in the same job
+      # failed intermittently: the just-uploaded artifact was not yet visible.
+      - name: Download test results
         uses: actions/download-artifact@v4
         with:
-          name: test-results
+          pattern: '{unit-test-results,integration-test-results-*}'
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
