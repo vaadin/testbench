@@ -32,7 +32,7 @@ jobs:
   format-check:
     name: Format Check
     needs: check-permissions
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
 
     steps:
@@ -61,7 +61,7 @@ jobs:
   build:
     name: Build Project
     needs: format-check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 15
 
     steps:
@@ -101,7 +101,7 @@ jobs:
   unit-tests:
     name: Unit Tests
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 15
 
     steps:
@@ -144,7 +144,7 @@ jobs:
   integration-tests:
     name: Integration Tests (${{ matrix.name }})
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 45
     concurrency:
       group: saucelabs-testbench  # Global queue for SauceLabs tests only
@@ -246,7 +246,7 @@ jobs:
       pull-requests: write
     if: always()
     needs: [format-check, build, unit-tests, integration-tests]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
 
     steps:
       - name: Merge test result artifacts
