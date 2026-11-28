@@ -248,6 +248,7 @@ jobs:
 
     steps:
       - name: Merge test result artifacts
+        if: ${{ !github.event.pull_request.head.repo.fork }}
         uses: actions/upload-artifact/merge@v4
         with:
           name: test-results
@@ -255,11 +256,13 @@ jobs:
           delete-merged: true
 
       - name: Download merged test results
+        if: ${{ !github.event.pull_request.head.repo.fork }}
         uses: actions/download-artifact@v4
         with:
           name: test-results
 
       - name: Publish test results
+        if: ${{ !github.event.pull_request.head.repo.fork }}
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           files: '**/TEST-*.xml'
