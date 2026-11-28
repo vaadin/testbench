@@ -59,7 +59,7 @@
         <dependency>
             <groupId>com.microsoft.playwright</groupId>
             <artifactId>playwright</artifactId>
-            <version>1.50.0</version>
+            <version>1.65.0</version>
             <optional>true</optional>
             <scope>provided</scope>
         </dependency>
