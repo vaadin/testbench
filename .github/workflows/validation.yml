@@ -146,11 +146,21 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    concurrency:
-      group: saucelabs-testbench  # Global queue for SauceLabs tests only
-      cancel-in-progress: false
+    services:
+      selenium:
+        image: selenium/standalone-chrome:latest
+        ports:
+          - 4444:4444
+        options: >-
+          --shm-size=2g
+          --add-host=host.docker.internal:host-gateway
+          --health-cmd "curl -fsS http://localhost:4444/wd/hub/status"
+          --health-interval=5s
+          --health-timeout=10s
+          --health-retries=30
+          --health-start-period=10s
     strategy:
-      max-parallel: 1  # Only one JUnit version at a time to stay within SauceLabs limit
+      fail-fast: false
       matrix:
         include:
           - name: JUnit 4
@@ -184,16 +194,6 @@ jobs:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ github.run_id }}
 
-      - name: Set up Sauce Labs tunnel
-        uses: saucelabs/sauce-connect-action@v3.0.0
-        with:
-          username: ${{ secrets.SAUCE_USERNAME }}
-          accessKey: ${{ secrets.SAUCE_ACCESS_KEY }}
-          tunnelName: ${{ github.run_id }}-${{ github.run_number }}
-          region: us-west-1
-          retryTimeout: 300
-          proxyLocalhost: allow
-
       - name: Set TB License
         run: |
           TB_LICENSE=${{secrets.TB_LICENSE}}
@@ -201,10 +201,6 @@ jobs:
           echo '{"username":"'`echo $TB_LICENSE | cut -d / -f1`'","proKey":"'`echo $TB_LICENSE | cut -d / -f2`'"}' > ~/.vaadin/proKey
 
       - name: Run Integration Tests
-        env:
-          SAUCE_USERNAME: ${{ secrets.SAUCE_USERNAME }}
-          SAUCE_ACCESS_KEY: ${{ secrets.SAUCE_ACCESS_KEY }}
-          SAUCE_TUNNEL_ID: ${{ github.run_id }}-${{ github.run_number }}
         run: |
           mvn verify \
             -pl ${{ matrix.module }} -am \
@@ -213,10 +209,8 @@ jobs:
             -Dsystem.com.vaadin.testbench.Parameters.testsInParallel=5 \
             -Dsystem.com.vaadin.testbench.Parameters.maxAttempts=2 \
             -Dcom.vaadin.testbench.Parameters.hubHostname=localhost \
-            -Dsauce.tunnelId=${SAUCE_TUNNEL_ID} \
+            -Ddeployment.hostname=host.docker.internal \
             -Dfailsafe.forkCount=5 \
-            -Dsystem.sauce.user=${SAUCE_USERNAME} \
-            -Dsystem.sauce.sauceAccessKey=${SAUCE_ACCESS_KEY} \
             -B
 
       - name: Upload error screenshots
