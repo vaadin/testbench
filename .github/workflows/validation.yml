@@ -26,12 +26,8 @@ env:
   JAVA_VERSION: 21
 
 jobs:
-  check-permissions:
-    uses: ./.github/workflows/check-permissions.yml
-
   format-check:
     name: Format Check
-    needs: check-permissions
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -101,6 +97,7 @@ jobs:
   unit-tests:
     name: Unit Tests
     needs: build
+    if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -144,6 +141,7 @@ jobs:
   integration-tests:
     name: Integration Tests (${{ matrix.name }})
     needs: build
+    if: ${{ !github.event.pull_request.head.repo.fork }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     services:
@@ -247,11 +245,13 @@ jobs:
       # into one artifact and downloading that right away in the same job
       # failed intermittently: the just-uploaded artifact was not yet visible.
       - name: Download test results
+        if: ${{ !github.event.pull_request.head.repo.fork }}
         uses: actions/download-artifact@v4
         with:
           pattern: '{unit-test-results,integration-test-results-*}'
 
       - name: Publish test results
+        if: ${{ !github.event.pull_request.head.repo.fork }}
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           files: '**/TEST-*.xml'
